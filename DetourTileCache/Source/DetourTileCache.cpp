@@ -350,7 +350,8 @@ dtStatus dtTileCache::removeTile(dtCompressedTileRef ref, unsigned char** data, 
 }
 
 
-dtObstacleRef dtTileCache::addObstacle(const float* pos, const float radius, const float height, dtObstacleRef* result)
+dtObstacleRef dtTileCache::addObstacle(
+	const float* pos, const float radius, const float height, dtObstacleRef* result)
 {
 	if (m_nreqs >= MAX_REQUESTS)
 		return DT_FAILURE | DT_BUFFER_TOO_SMALL;
@@ -400,7 +401,7 @@ dtObstacleRef dtTileCache::removeObstacle(const dtObstacleRef ref)
 }
 
 dtStatus dtTileCache::queryTiles(const float* bmin, const float* bmax,
-								 dtCompressedTileRef* results, int* resultCount, const int maxResults) const 
+	dtCompressedTileRef* results, int* resultCount, const int maxResults) const 
 {
 	const int MAX_TILES = 32;
 	dtCompressedTileRef tiles[MAX_TILES];
