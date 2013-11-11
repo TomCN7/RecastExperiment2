@@ -2,10 +2,10 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <Filter Include="Source Files">
-      <UniqueIdentifier>{7a1cdcd3-cc06-499a-9105-02fee6f9fe86}</UniqueIdentifier>
+      <UniqueIdentifier>{6e28afa5-7bd4-41d1-ae2a-7ec09db0d1f3}</UniqueIdentifier>
     </Filter>
     <Filter Include="Header Files">
-      <UniqueIdentifier>{a702a3b2-36d3-49c8-bd30-97c1d7843777}</UniqueIdentifier>
+      <UniqueIdentifier>{b1303444-594a-4b5f-a187-b431cc20cf6b}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -104,7 +104,7 @@
     <ClInclude Include="Include\MeshLoaderObj.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Include\NavMeshPruneTool.h">
+    <ClInclude Include="Include\NavmeshPruneTool.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Include\NavMeshTesterTool.h">
