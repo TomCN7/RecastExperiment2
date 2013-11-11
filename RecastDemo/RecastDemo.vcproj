@@ -1,14 +1,18 @@
-<?xml version="1.0" encoding = "Windows-1252"?>
+<?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="8.00"
 	Name="RecastDemo"
 	ProjectGUID="{445EC7E9-B562-426D-A88A-D702FFF02ADD}"
-	Keyword="Win32Proj">
+	Keyword="Win32Proj"
+	>
 	<Platforms>
 		<Platform
-			Name="Win32"/>
+			Name="Win32"
+		/>
 	</Platforms>
+	<ToolFiles>
+	</ToolFiles>
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
@@ -16,63 +20,101 @@
 			IntermediateDirectory="RecastDemo.dir\Debug"
 			ConfigurationType="1"
 			UseOfMFC="0"
-			ATLMinimizesCRunTimeLibraryUsage="FALSE"
-			CharacterSet="2">
+			ATLMinimizesCRunTimeLibraryUsage="false"
+			CharacterSet="2"
+			>
 			<Tool
-				Name="VCCLCompilerTool"
-				AdditionalOptions=" /Zm1000"
-				AdditionalIncludeDirectories="D:\ThomasLab\ReCast\RecastDemo\Include;D:\ThomasLab\ReCast\RecastDemo\Contrib;D:\ThomasLab\ReCast\RecastDemo\Contrib\fastlz;D:\ThomasLab\ReCast\RecastDemo\..\DebugUtils\Include;D:\ThomasLab\ReCast\RecastDemo\..\Detour\Include;D:\ThomasLab\ReCast\RecastDemo\..\DetourCrowd\Include;D:\ThomasLab\ReCast\RecastDemo\..\DetourTileCache\Include;D:\ThomasLab\ReCast\RecastDemo\..\Recast\Include;D:\ThomasLab\ReCast\RecastDemo\Contrib\SDL\include;"
-				BasicRuntimeChecks="3"
-				CompileAs="2"
-				DebugInformationFormat="3"
-				ExceptionHandling="1"
-				InlineFunctionExpansion="0"
-				Optimization="0"
-				RuntimeLibrary="3"
-				RuntimeTypeInfo="TRUE"
-				WarningLevel="3"
-				PreprocessorDefinitions="WIN32;_WINDOWS;_DEBUG;CMAKE_INTDIR=\&quot;Debug\&quot;"
-				AssemblerListingLocation="Debug"
-				ObjectFile="$(IntDir)\"
-				ProgramDataBaseFileName="D:\ThomasLab\ReCast\RecastDemo\Bin\Debug/RecastDemo.pdb"
-/>
+				Name="VCPreBuildEventTool"
+			/>
 			<Tool
-				Name="VCCustomBuildTool"/>
+				Name="VCCustomBuildTool"
+			/>
 			<Tool
-				Name="VCResourceCompilerTool"
-				AdditionalIncludeDirectories="D:\ThomasLab\ReCast\RecastDemo\Include;D:\ThomasLab\ReCast\RecastDemo\Contrib;D:\ThomasLab\ReCast\RecastDemo\Contrib\fastlz;D:\ThomasLab\ReCast\RecastDemo\..\DebugUtils\Include;D:\ThomasLab\ReCast\RecastDemo\..\Detour\Include;D:\ThomasLab\ReCast\RecastDemo\..\DetourCrowd\Include;D:\ThomasLab\ReCast\RecastDemo\..\DetourTileCache\Include;D:\ThomasLab\ReCast\RecastDemo\..\Recast\Include;D:\ThomasLab\ReCast\RecastDemo\Contrib\SDL\include;"
-				PreprocessorDefinitions="WIN32;_WINDOWS;_DEBUG;CMAKE_INTDIR=\&quot;Debug\&quot;"/>
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
 			<Tool
 				Name="VCMIDLTool"
 				AdditionalIncludeDirectories="D:\ThomasLab\ReCast\RecastDemo\Include;D:\ThomasLab\ReCast\RecastDemo\Contrib;D:\ThomasLab\ReCast\RecastDemo\Contrib\fastlz;D:\ThomasLab\ReCast\RecastDemo\..\DebugUtils\Include;D:\ThomasLab\ReCast\RecastDemo\..\Detour\Include;D:\ThomasLab\ReCast\RecastDemo\..\DetourCrowd\Include;D:\ThomasLab\ReCast\RecastDemo\..\DetourTileCache\Include;D:\ThomasLab\ReCast\RecastDemo\..\Recast\Include;D:\ThomasLab\ReCast\RecastDemo\Contrib\SDL\include;"
-				MkTypLibCompatible="FALSE"
+				MkTypLibCompatible="false"
 				TargetEnvironment="1"
-				GenerateStublessProxies="TRUE"
+				GenerateStublessProxies="true"
 				TypeLibraryName="$(InputName).tlb"
 				OutputDirectory="$(IntDir)"
 				HeaderFileName="$(InputName).h"
 				DLLDataFileName=""
 				InterfaceIdentifierFileName="$(InputName)_i.c"
-				ProxyFileName="$(InputName)_p.c"/>
+				ProxyFileName="$(InputName)_p.c"
+			/>
 			<Tool
-				Name="VCPreBuildEventTool"/>
+				Name="VCCLCompilerTool"
+				AdditionalOptions=" /Zm1000"
+				Optimization="0"
+				InlineFunctionExpansion="0"
+				AdditionalIncludeDirectories="D:\ThomasLab\ReCast\RecastDemo\Include;D:\ThomasLab\ReCast\RecastDemo\Contrib;D:\ThomasLab\ReCast\RecastDemo\Contrib\fastlz;D:\ThomasLab\ReCast\RecastDemo\..\DebugUtils\Include;D:\ThomasLab\ReCast\RecastDemo\..\Detour\Include;D:\ThomasLab\ReCast\RecastDemo\..\DetourCrowd\Include;D:\ThomasLab\ReCast\RecastDemo\..\DetourTileCache\Include;D:\ThomasLab\ReCast\RecastDemo\..\Recast\Include;D:\ThomasLab\ReCast\RecastDemo\Contrib\SDL\include;"
+				PreprocessorDefinitions="WIN32;_WINDOWS;_DEBUG;CMAKE_INTDIR=\&quot;Debug\&quot;"
+				ExceptionHandling="1"
+				BasicRuntimeChecks="3"
+				RuntimeLibrary="3"
+				RuntimeTypeInfo="true"
+				AssemblerListingLocation="Debug"
+				ObjectFile="$(IntDir)\"
+				ProgramDataBaseFileName="D:\ThomasLab\ReCast\RecastDemo\Bin\Debug/RecastDemo.pdb"
+				WarningLevel="3"
+				DebugInformationFormat="3"
+				CompileAs="2"
+			/>
 			<Tool
-				Name="VCPreLinkEventTool"/>
+				Name="VCManagedResourceCompilerTool"
+			/>
 			<Tool
-				Name="VCPostBuildEventTool"/>
+				Name="VCResourceCompilerTool"
+				PreprocessorDefinitions="WIN32;_WINDOWS;_DEBUG;CMAKE_INTDIR=\&quot;Debug\&quot;"
+				AdditionalIncludeDirectories="D:\ThomasLab\ReCast\RecastDemo\Include;D:\ThomasLab\ReCast\RecastDemo\Contrib;D:\ThomasLab\ReCast\RecastDemo\Contrib\fastlz;D:\ThomasLab\ReCast\RecastDemo\..\DebugUtils\Include;D:\ThomasLab\ReCast\RecastDemo\..\Detour\Include;D:\ThomasLab\ReCast\RecastDemo\..\DetourCrowd\Include;D:\ThomasLab\ReCast\RecastDemo\..\DetourTileCache\Include;D:\ThomasLab\ReCast\RecastDemo\..\Recast\Include;D:\ThomasLab\ReCast\RecastDemo\Contrib\SDL\include;"
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
 			<Tool
 				Name="VCLinkerTool"
 				LinkLibraryDependencies="false"
 				AdditionalOptions=" /STACK:10000000 /machine:X86 /debug"
-				AdditionalDependencies="$(NOINHERIT) kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib  ..\DebugUtils\Debug\DebugUtils.lib ..\Detour\Debug\Detour.lib ..\DetourCrowd\Debug\DetourCrowd.lib ..\DetourTileCache\Debug\DetourTileCache.lib ..\Recast\Debug\Recast.lib Contrib\SDL\lib\SDLmain.lib Contrib\SDL\lib\SDL.lib -lglu32.lib -lopengl32.lib "
+				AdditionalDependencies="kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib ..\DebugUtils\Debug\DebugUtils.lib ..\Detour\Debug\Detour.lib ..\DetourCrowd\Debug\DetourCrowd.lib ..\DetourTileCache\Debug\DetourTileCache.lib ..\Recast\Debug\Recast.lib Contrib\SDL\lib\SDLmain.lib Contrib\SDL\lib\SDL.lib glu32.lib opengl32.lib $(NOINHERIT)"
 				OutputFile="D:\ThomasLab\ReCast\RecastDemo\Bin\Debug\RecastDemo.exe"
 				Version="0.0"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories=""
+				GenerateDebugInformation="true"
 				ProgramDatabaseFile="D:\ThomasLab\ReCast\RecastDemo\Bin\Debug/RecastDemo.pdb"
-				GenerateDebugInformation="TRUE"
 				SubSystem="2"
-				ImportLibrary="D:\ThomasLab\ReCast\RecastDemo\Bin\Debug\RecastDemo.lib"/>
+				ImportLibrary="D:\ThomasLab\ReCast\RecastDemo\Bin\Debug\RecastDemo.lib"
+			/>
+			<Tool
+				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCManifestTool"
+			/>
+			<Tool
+				Name="VCXDCMakeTool"
+			/>
+			<Tool
+				Name="VCBscMakeTool"
+			/>
+			<Tool
+				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCAppVerifierTool"
+			/>
+			<Tool
+				Name="VCWebDeploymentTool"
+			/>
+			<Tool
+				Name="VCPostBuildEventTool"
+			/>
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
@@ -80,48 +122,61 @@
 			IntermediateDirectory="RecastDemo.dir\Release"
 			ConfigurationType="1"
 			UseOfMFC="0"
-			ATLMinimizesCRunTimeLibraryUsage="FALSE"
-			CharacterSet="2">
+			ATLMinimizesCRunTimeLibraryUsage="false"
+			CharacterSet="2"
+			>
 			<Tool
-				Name="VCCLCompilerTool"
-				AdditionalOptions=" /Zm1000"
-				AdditionalIncludeDirectories="D:\ThomasLab\ReCast\RecastDemo\Include;D:\ThomasLab\ReCast\RecastDemo\Contrib;D:\ThomasLab\ReCast\RecastDemo\Contrib\fastlz;D:\ThomasLab\ReCast\RecastDemo\..\DebugUtils\Include;D:\ThomasLab\ReCast\RecastDemo\..\Detour\Include;D:\ThomasLab\ReCast\RecastDemo\..\DetourCrowd\Include;D:\ThomasLab\ReCast\RecastDemo\..\DetourTileCache\Include;D:\ThomasLab\ReCast\RecastDemo\..\Recast\Include;D:\ThomasLab\ReCast\RecastDemo\Contrib\SDL\include;"
-				CompileAs="2"
-				ExceptionHandling="1"
-				InlineFunctionExpansion="2"
-				Optimization="2"
-				RuntimeLibrary="2"
-				RuntimeTypeInfo="TRUE"
-				WarningLevel="3"
-				PreprocessorDefinitions="WIN32;_WINDOWS;NDEBUG;CMAKE_INTDIR=\&quot;Release\&quot;"
-				AssemblerListingLocation="Release"
-				ObjectFile="$(IntDir)\"
-				ProgramDataBaseFileName="D:\ThomasLab\ReCast\RecastDemo\Bin\Release/RecastDemo.pdb"
-/>
+				Name="VCPreBuildEventTool"
+			/>
 			<Tool
-				Name="VCCustomBuildTool"/>
+				Name="VCCustomBuildTool"
+			/>
 			<Tool
-				Name="VCResourceCompilerTool"
-				AdditionalIncludeDirectories="D:\ThomasLab\ReCast\RecastDemo\Include;D:\ThomasLab\ReCast\RecastDemo\Contrib;D:\ThomasLab\ReCast\RecastDemo\Contrib\fastlz;D:\ThomasLab\ReCast\RecastDemo\..\DebugUtils\Include;D:\ThomasLab\ReCast\RecastDemo\..\Detour\Include;D:\ThomasLab\ReCast\RecastDemo\..\DetourCrowd\Include;D:\ThomasLab\ReCast\RecastDemo\..\DetourTileCache\Include;D:\ThomasLab\ReCast\RecastDemo\..\Recast\Include;D:\ThomasLab\ReCast\RecastDemo\Contrib\SDL\include;"
-				PreprocessorDefinitions="WIN32;_WINDOWS;NDEBUG;CMAKE_INTDIR=\&quot;Release\&quot;"/>
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
 			<Tool
 				Name="VCMIDLTool"
 				AdditionalIncludeDirectories="D:\ThomasLab\ReCast\RecastDemo\Include;D:\ThomasLab\ReCast\RecastDemo\Contrib;D:\ThomasLab\ReCast\RecastDemo\Contrib\fastlz;D:\ThomasLab\ReCast\RecastDemo\..\DebugUtils\Include;D:\ThomasLab\ReCast\RecastDemo\..\Detour\Include;D:\ThomasLab\ReCast\RecastDemo\..\DetourCrowd\Include;D:\ThomasLab\ReCast\RecastDemo\..\DetourTileCache\Include;D:\ThomasLab\ReCast\RecastDemo\..\Recast\Include;D:\ThomasLab\ReCast\RecastDemo\Contrib\SDL\include;"
-				MkTypLibCompatible="FALSE"
+				MkTypLibCompatible="false"
 				TargetEnvironment="1"
-				GenerateStublessProxies="TRUE"
+				GenerateStublessProxies="true"
 				TypeLibraryName="$(InputName).tlb"
 				OutputDirectory="$(IntDir)"
 				HeaderFileName="$(InputName).h"
 				DLLDataFileName=""
 				InterfaceIdentifierFileName="$(InputName)_i.c"
-				ProxyFileName="$(InputName)_p.c"/>
+				ProxyFileName="$(InputName)_p.c"
+			/>
 			<Tool
-				Name="VCPreBuildEventTool"/>
+				Name="VCCLCompilerTool"
+				AdditionalOptions=" /Zm1000"
+				Optimization="2"
+				InlineFunctionExpansion="2"
+				AdditionalIncludeDirectories="D:\ThomasLab\ReCast\RecastDemo\Include;D:\ThomasLab\ReCast\RecastDemo\Contrib;D:\ThomasLab\ReCast\RecastDemo\Contrib\fastlz;D:\ThomasLab\ReCast\RecastDemo\..\DebugUtils\Include;D:\ThomasLab\ReCast\RecastDemo\..\Detour\Include;D:\ThomasLab\ReCast\RecastDemo\..\DetourCrowd\Include;D:\ThomasLab\ReCast\RecastDemo\..\DetourTileCache\Include;D:\ThomasLab\ReCast\RecastDemo\..\Recast\Include;D:\ThomasLab\ReCast\RecastDemo\Contrib\SDL\include;"
+				PreprocessorDefinitions="WIN32;_WINDOWS;NDEBUG;CMAKE_INTDIR=\&quot;Release\&quot;"
+				ExceptionHandling="1"
+				RuntimeLibrary="2"
+				RuntimeTypeInfo="true"
+				AssemblerListingLocation="Release"
+				ObjectFile="$(IntDir)\"
+				ProgramDataBaseFileName="D:\ThomasLab\ReCast\RecastDemo\Bin\Release/RecastDemo.pdb"
+				WarningLevel="3"
+				CompileAs="2"
+			/>
 			<Tool
-				Name="VCPreLinkEventTool"/>
+				Name="VCManagedResourceCompilerTool"
+			/>
 			<Tool
-				Name="VCPostBuildEventTool"/>
+				Name="VCResourceCompilerTool"
+				PreprocessorDefinitions="WIN32;_WINDOWS;NDEBUG;CMAKE_INTDIR=\&quot;Release\&quot;"
+				AdditionalIncludeDirectories="D:\ThomasLab\ReCast\RecastDemo\Include;D:\ThomasLab\ReCast\RecastDemo\Contrib;D:\ThomasLab\ReCast\RecastDemo\Contrib\fastlz;D:\ThomasLab\ReCast\RecastDemo\..\DebugUtils\Include;D:\ThomasLab\ReCast\RecastDemo\..\Detour\Include;D:\ThomasLab\ReCast\RecastDemo\..\DetourCrowd\Include;D:\ThomasLab\ReCast\RecastDemo\..\DetourTileCache\Include;D:\ThomasLab\ReCast\RecastDemo\..\Recast\Include;D:\ThomasLab\ReCast\RecastDemo\Contrib\SDL\include;"
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
 			<Tool
 				Name="VCLinkerTool"
 				LinkLibraryDependencies="false"
@@ -133,7 +188,32 @@
 				AdditionalLibraryDirectories=""
 				ProgramDatabaseFile="D:\ThomasLab\ReCast\RecastDemo\Bin\Release/RecastDemo.pdb"
 				SubSystem="2"
-				ImportLibrary="D:\ThomasLab\ReCast\RecastDemo\Bin\Release\RecastDemo.lib"/>
+				ImportLibrary="D:\ThomasLab\ReCast\RecastDemo\Bin\Release\RecastDemo.lib"
+			/>
+			<Tool
+				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCManifestTool"
+			/>
+			<Tool
+				Name="VCXDCMakeTool"
+			/>
+			<Tool
+				Name="VCBscMakeTool"
+			/>
+			<Tool
+				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCAppVerifierTool"
+			/>
+			<Tool
+				Name="VCWebDeploymentTool"
+			/>
+			<Tool
+				Name="VCPostBuildEventTool"
+			/>
 		</Configuration>
 		<Configuration
 			Name="MinSizeRel|Win32"
@@ -141,48 +221,61 @@
 			IntermediateDirectory="RecastDemo.dir\MinSizeRel"
 			ConfigurationType="1"
 			UseOfMFC="0"
-			ATLMinimizesCRunTimeLibraryUsage="FALSE"
-			CharacterSet="2">
+			ATLMinimizesCRunTimeLibraryUsage="false"
+			CharacterSet="2"
+			>
 			<Tool
-				Name="VCCLCompilerTool"
-				AdditionalOptions=" /Zm1000"
-				AdditionalIncludeDirectories="D:\ThomasLab\ReCast\RecastDemo\Include;D:\ThomasLab\ReCast\RecastDemo\Contrib;D:\ThomasLab\ReCast\RecastDemo\Contrib\fastlz;D:\ThomasLab\ReCast\RecastDemo\..\DebugUtils\Include;D:\ThomasLab\ReCast\RecastDemo\..\Detour\Include;D:\ThomasLab\ReCast\RecastDemo\..\DetourCrowd\Include;D:\ThomasLab\ReCast\RecastDemo\..\DetourTileCache\Include;D:\ThomasLab\ReCast\RecastDemo\..\Recast\Include;D:\ThomasLab\ReCast\RecastDemo\Contrib\SDL\include;"
-				CompileAs="2"
-				ExceptionHandling="1"
-				InlineFunctionExpansion="1"
-				Optimization="1"
-				RuntimeLibrary="2"
-				RuntimeTypeInfo="TRUE"
-				WarningLevel="3"
-				PreprocessorDefinitions="WIN32;_WINDOWS;NDEBUG;CMAKE_INTDIR=\&quot;MinSizeRel\&quot;"
-				AssemblerListingLocation="MinSizeRel"
-				ObjectFile="$(IntDir)\"
-				ProgramDataBaseFileName="D:\ThomasLab\ReCast\RecastDemo\Bin\MinSizeRel/RecastDemo.pdb"
-/>
+				Name="VCPreBuildEventTool"
+			/>
 			<Tool
-				Name="VCCustomBuildTool"/>
+				Name="VCCustomBuildTool"
+			/>
 			<Tool
-				Name="VCResourceCompilerTool"
-				AdditionalIncludeDirectories="D:\ThomasLab\ReCast\RecastDemo\Include;D:\ThomasLab\ReCast\RecastDemo\Contrib;D:\ThomasLab\ReCast\RecastDemo\Contrib\fastlz;D:\ThomasLab\ReCast\RecastDemo\..\DebugUtils\Include;D:\ThomasLab\ReCast\RecastDemo\..\Detour\Include;D:\ThomasLab\ReCast\RecastDemo\..\DetourCrowd\Include;D:\ThomasLab\ReCast\RecastDemo\..\DetourTileCache\Include;D:\ThomasLab\ReCast\RecastDemo\..\Recast\Include;D:\ThomasLab\ReCast\RecastDemo\Contrib\SDL\include;"
-				PreprocessorDefinitions="WIN32;_WINDOWS;NDEBUG;CMAKE_INTDIR=\&quot;MinSizeRel\&quot;"/>
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
 			<Tool
 				Name="VCMIDLTool"
 				AdditionalIncludeDirectories="D:\ThomasLab\ReCast\RecastDemo\Include;D:\ThomasLab\ReCast\RecastDemo\Contrib;D:\ThomasLab\ReCast\RecastDemo\Contrib\fastlz;D:\ThomasLab\ReCast\RecastDemo\..\DebugUtils\Include;D:\ThomasLab\ReCast\RecastDemo\..\Detour\Include;D:\ThomasLab\ReCast\RecastDemo\..\DetourCrowd\Include;D:\ThomasLab\ReCast\RecastDemo\..\DetourTileCache\Include;D:\ThomasLab\ReCast\RecastDemo\..\Recast\Include;D:\ThomasLab\ReCast\RecastDemo\Contrib\SDL\include;"
-				MkTypLibCompatible="FALSE"
+				MkTypLibCompatible="false"
 				TargetEnvironment="1"
-				GenerateStublessProxies="TRUE"
+				GenerateStublessProxies="true"
 				TypeLibraryName="$(InputName).tlb"
 				OutputDirectory="$(IntDir)"
 				HeaderFileName="$(InputName).h"
 				DLLDataFileName=""
 				InterfaceIdentifierFileName="$(InputName)_i.c"
-				ProxyFileName="$(InputName)_p.c"/>
+				ProxyFileName="$(InputName)_p.c"
+			/>
 			<Tool
-				Name="VCPreBuildEventTool"/>
+				Name="VCCLCompilerTool"
+				AdditionalOptions=" /Zm1000"
+				Optimization="1"
+				InlineFunctionExpansion="1"
+				AdditionalIncludeDirectories="D:\ThomasLab\ReCast\RecastDemo\Include;D:\ThomasLab\ReCast\RecastDemo\Contrib;D:\ThomasLab\ReCast\RecastDemo\Contrib\fastlz;D:\ThomasLab\ReCast\RecastDemo\..\DebugUtils\Include;D:\ThomasLab\ReCast\RecastDemo\..\Detour\Include;D:\ThomasLab\ReCast\RecastDemo\..\DetourCrowd\Include;D:\ThomasLab\ReCast\RecastDemo\..\DetourTileCache\Include;D:\ThomasLab\ReCast\RecastDemo\..\Recast\Include;D:\ThomasLab\ReCast\RecastDemo\Contrib\SDL\include;"
+				PreprocessorDefinitions="WIN32;_WINDOWS;NDEBUG;CMAKE_INTDIR=\&quot;MinSizeRel\&quot;"
+				ExceptionHandling="1"
+				RuntimeLibrary="2"
+				RuntimeTypeInfo="true"
+				AssemblerListingLocation="MinSizeRel"
+				ObjectFile="$(IntDir)\"
+				ProgramDataBaseFileName="D:\ThomasLab\ReCast\RecastDemo\Bin\MinSizeRel/RecastDemo.pdb"
+				WarningLevel="3"
+				CompileAs="2"
+			/>
 			<Tool
-				Name="VCPreLinkEventTool"/>
+				Name="VCManagedResourceCompilerTool"
+			/>
 			<Tool
-				Name="VCPostBuildEventTool"/>
+				Name="VCResourceCompilerTool"
+				PreprocessorDefinitions="WIN32;_WINDOWS;NDEBUG;CMAKE_INTDIR=\&quot;MinSizeRel\&quot;"
+				AdditionalIncludeDirectories="D:\ThomasLab\ReCast\RecastDemo\Include;D:\ThomasLab\ReCast\RecastDemo\Contrib;D:\ThomasLab\ReCast\RecastDemo\Contrib\fastlz;D:\ThomasLab\ReCast\RecastDemo\..\DebugUtils\Include;D:\ThomasLab\ReCast\RecastDemo\..\Detour\Include;D:\ThomasLab\ReCast\RecastDemo\..\DetourCrowd\Include;D:\ThomasLab\ReCast\RecastDemo\..\DetourTileCache\Include;D:\ThomasLab\ReCast\RecastDemo\..\Recast\Include;D:\ThomasLab\ReCast\RecastDemo\Contrib\SDL\include;"
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
 			<Tool
 				Name="VCLinkerTool"
 				LinkLibraryDependencies="false"
@@ -194,7 +287,32 @@
 				AdditionalLibraryDirectories=""
 				ProgramDatabaseFile="D:\ThomasLab\ReCast\RecastDemo\Bin\MinSizeRel/RecastDemo.pdb"
 				SubSystem="2"
-				ImportLibrary="D:\ThomasLab\ReCast\RecastDemo\Bin\MinSizeRel\RecastDemo.lib"/>
+				ImportLibrary="D:\ThomasLab\ReCast\RecastDemo\Bin\MinSizeRel\RecastDemo.lib"
+			/>
+			<Tool
+				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCManifestTool"
+			/>
+			<Tool
+				Name="VCXDCMakeTool"
+			/>
+			<Tool
+				Name="VCBscMakeTool"
+			/>
+			<Tool
+				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCAppVerifierTool"
+			/>
+			<Tool
+				Name="VCWebDeploymentTool"
+			/>
+			<Tool
+				Name="VCPostBuildEventTool"
+			/>
 		</Configuration>
 		<Configuration
 			Name="RelWithDebInfo|Win32"
@@ -202,49 +320,62 @@
 			IntermediateDirectory="RecastDemo.dir\RelWithDebInfo"
 			ConfigurationType="1"
 			UseOfMFC="0"
-			ATLMinimizesCRunTimeLibraryUsage="FALSE"
-			CharacterSet="2">
+			ATLMinimizesCRunTimeLibraryUsage="false"
+			CharacterSet="2"
+			>
 			<Tool
-				Name="VCCLCompilerTool"
-				AdditionalOptions=" /Zm1000"
-				AdditionalIncludeDirectories="D:\ThomasLab\ReCast\RecastDemo\Include;D:\ThomasLab\ReCast\RecastDemo\Contrib;D:\ThomasLab\ReCast\RecastDemo\Contrib\fastlz;D:\ThomasLab\ReCast\RecastDemo\..\DebugUtils\Include;D:\ThomasLab\ReCast\RecastDemo\..\Detour\Include;D:\ThomasLab\ReCast\RecastDemo\..\DetourCrowd\Include;D:\ThomasLab\ReCast\RecastDemo\..\DetourTileCache\Include;D:\ThomasLab\ReCast\RecastDemo\..\Recast\Include;D:\ThomasLab\ReCast\RecastDemo\Contrib\SDL\include;"
-				CompileAs="2"
-				DebugInformationFormat="3"
-				ExceptionHandling="1"
-				InlineFunctionExpansion="1"
-				Optimization="2"
-				RuntimeLibrary="2"
-				RuntimeTypeInfo="TRUE"
-				WarningLevel="3"
-				PreprocessorDefinitions="WIN32;_WINDOWS;NDEBUG;CMAKE_INTDIR=\&quot;RelWithDebInfo\&quot;"
-				AssemblerListingLocation="RelWithDebInfo"
-				ObjectFile="$(IntDir)\"
-				ProgramDataBaseFileName="D:\ThomasLab\ReCast\RecastDemo\Bin\RelWithDebInfo/RecastDemo.pdb"
-/>
+				Name="VCPreBuildEventTool"
+			/>
 			<Tool
-				Name="VCCustomBuildTool"/>
+				Name="VCCustomBuildTool"
+			/>
 			<Tool
-				Name="VCResourceCompilerTool"
-				AdditionalIncludeDirectories="D:\ThomasLab\ReCast\RecastDemo\Include;D:\ThomasLab\ReCast\RecastDemo\Contrib;D:\ThomasLab\ReCast\RecastDemo\Contrib\fastlz;D:\ThomasLab\ReCast\RecastDemo\..\DebugUtils\Include;D:\ThomasLab\ReCast\RecastDemo\..\Detour\Include;D:\ThomasLab\ReCast\RecastDemo\..\DetourCrowd\Include;D:\ThomasLab\ReCast\RecastDemo\..\DetourTileCache\Include;D:\ThomasLab\ReCast\RecastDemo\..\Recast\Include;D:\ThomasLab\ReCast\RecastDemo\Contrib\SDL\include;"
-				PreprocessorDefinitions="WIN32;_WINDOWS;NDEBUG;CMAKE_INTDIR=\&quot;RelWithDebInfo\&quot;"/>
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
 			<Tool
 				Name="VCMIDLTool"
 				AdditionalIncludeDirectories="D:\ThomasLab\ReCast\RecastDemo\Include;D:\ThomasLab\ReCast\RecastDemo\Contrib;D:\ThomasLab\ReCast\RecastDemo\Contrib\fastlz;D:\ThomasLab\ReCast\RecastDemo\..\DebugUtils\Include;D:\ThomasLab\ReCast\RecastDemo\..\Detour\Include;D:\ThomasLab\ReCast\RecastDemo\..\DetourCrowd\Include;D:\ThomasLab\ReCast\RecastDemo\..\DetourTileCache\Include;D:\ThomasLab\ReCast\RecastDemo\..\Recast\Include;D:\ThomasLab\ReCast\RecastDemo\Contrib\SDL\include;"
-				MkTypLibCompatible="FALSE"
+				MkTypLibCompatible="false"
 				TargetEnvironment="1"
-				GenerateStublessProxies="TRUE"
+				GenerateStublessProxies="true"
 				TypeLibraryName="$(InputName).tlb"
 				OutputDirectory="$(IntDir)"
 				HeaderFileName="$(InputName).h"
 				DLLDataFileName=""
 				InterfaceIdentifierFileName="$(InputName)_i.c"
-				ProxyFileName="$(InputName)_p.c"/>
+				ProxyFileName="$(InputName)_p.c"
+			/>
 			<Tool
-				Name="VCPreBuildEventTool"/>
+				Name="VCCLCompilerTool"
+				AdditionalOptions=" /Zm1000"
+				Optimization="2"
+				InlineFunctionExpansion="1"
+				AdditionalIncludeDirectories="D:\ThomasLab\ReCast\RecastDemo\Include;D:\ThomasLab\ReCast\RecastDemo\Contrib;D:\ThomasLab\ReCast\RecastDemo\Contrib\fastlz;D:\ThomasLab\ReCast\RecastDemo\..\DebugUtils\Include;D:\ThomasLab\ReCast\RecastDemo\..\Detour\Include;D:\ThomasLab\ReCast\RecastDemo\..\DetourCrowd\Include;D:\ThomasLab\ReCast\RecastDemo\..\DetourTileCache\Include;D:\ThomasLab\ReCast\RecastDemo\..\Recast\Include;D:\ThomasLab\ReCast\RecastDemo\Contrib\SDL\include;"
+				PreprocessorDefinitions="WIN32;_WINDOWS;NDEBUG;CMAKE_INTDIR=\&quot;RelWithDebInfo\&quot;"
+				ExceptionHandling="1"
+				RuntimeLibrary="2"
+				RuntimeTypeInfo="true"
+				AssemblerListingLocation="RelWithDebInfo"
+				ObjectFile="$(IntDir)\"
+				ProgramDataBaseFileName="D:\ThomasLab\ReCast\RecastDemo\Bin\RelWithDebInfo/RecastDemo.pdb"
+				WarningLevel="3"
+				DebugInformationFormat="3"
+				CompileAs="2"
+			/>
 			<Tool
-				Name="VCPreLinkEventTool"/>
+				Name="VCManagedResourceCompilerTool"
+			/>
 			<Tool
-				Name="VCPostBuildEventTool"/>
+				Name="VCResourceCompilerTool"
+				PreprocessorDefinitions="WIN32;_WINDOWS;NDEBUG;CMAKE_INTDIR=\&quot;RelWithDebInfo\&quot;"
+				AdditionalIncludeDirectories="D:\ThomasLab\ReCast\RecastDemo\Include;D:\ThomasLab\ReCast\RecastDemo\Contrib;D:\ThomasLab\ReCast\RecastDemo\Contrib\fastlz;D:\ThomasLab\ReCast\RecastDemo\..\DebugUtils\Include;D:\ThomasLab\ReCast\RecastDemo\..\Detour\Include;D:\ThomasLab\ReCast\RecastDemo\..\DetourCrowd\Include;D:\ThomasLab\ReCast\RecastDemo\..\DetourTileCache\Include;D:\ThomasLab\ReCast\RecastDemo\..\Recast\Include;D:\ThomasLab\ReCast\RecastDemo\Contrib\SDL\include;"
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
 			<Tool
 				Name="VCLinkerTool"
 				LinkLibraryDependencies="false"
@@ -254,223 +385,308 @@
 				Version="0.0"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories=""
+				GenerateDebugInformation="true"
 				ProgramDatabaseFile="D:\ThomasLab\ReCast\RecastDemo\Bin\RelWithDebInfo/RecastDemo.pdb"
-				GenerateDebugInformation="TRUE"
 				SubSystem="2"
-				ImportLibrary="D:\ThomasLab\ReCast\RecastDemo\Bin\RelWithDebInfo\RecastDemo.lib"/>
+				ImportLibrary="D:\ThomasLab\ReCast\RecastDemo\Bin\RelWithDebInfo\RecastDemo.lib"
+			/>
+			<Tool
+				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCManifestTool"
+			/>
+			<Tool
+				Name="VCXDCMakeTool"
+			/>
+			<Tool
+				Name="VCBscMakeTool"
+			/>
+			<Tool
+				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCAppVerifierTool"
+			/>
+			<Tool
+				Name="VCWebDeploymentTool"
+			/>
+			<Tool
+				Name="VCPostBuildEventTool"
+			/>
 		</Configuration>
 	</Configurations>
+	<References>
+	</References>
 	<Files>
-			<File
-				RelativePath="D:\ThomasLab\ReCast\RecastDemo\CMakeLists.txt">
-				<FileConfiguration
-					Name="Debug|Win32">
-					<Tool
-					Name="VCCustomBuildTool"
-					Description="Building Custom Rule D:/ThomasLab/ReCast/RecastDemo/CMakeLists.txt"
-					CommandLine="&quot;C:\Program Files\CMake 2.8\bin\cmake.exe&quot; -HD:/ThomasLab/ReCast -BD:/ThomasLab/ReCast --check-stamp-file D:\ThomasLab\ReCast\RecastDemo\CMakeFiles\generate.stamp&#x0D;&#x0A;if errorlevel 1 goto :VCReportError"
-					AdditionalDependencies="D:\ThomasLab\ReCast\RecastDemo\CMakeLists.txt;&quot;C:\Program Files\CMake 2.8\share\cmake-2.8\Modules\FindOpenGL.cmake&quot;;&quot;C:\Program Files\CMake 2.8\share\cmake-2.8\Modules\FindPackageHandleStandardArgs.cmake&quot;;&quot;C:\Program Files\CMake 2.8\share\cmake-2.8\Modules\FindPackageMessage.cmake&quot;;&quot;C:\Program Files\CMake 2.8\share\cmake-2.8\Modules\CMakeParseArguments.cmake&quot;;&quot;C:\Program Files\CMake 2.8\share\cmake-2.8\Modules\FindSDL.cmake&quot;;&quot;C:\Program Files\CMake 2.8\share\cmake-2.8\Modules\FindThreads.cmake&quot;;&quot;C:\Program Files\CMake 2.8\share\cmake-2.8\Modules\CheckIncludeFiles.cmake&quot;;&quot;C:\Program Files\CMake 2.8\share\cmake-2.8\Modules\CheckLibraryExists.cmake&quot;;&quot;C:\Program Files\CMake 2.8\share\cmake-2.8\Modules\CheckSymbolExists.cmake&quot;;&quot;C:\Program Files\CMake 2.8\share\cmake-2.8\Modules\FindPackageHandleStandardArgs.cmake&quot;;&quot;C:\Program Files\CMake 2.8\share\cmake-2.8\Modules\FindPackageMessage.cmake&quot;;&quot;C:\Program Files\CMake 2.8\share\cmake-2.8\Modules\CMakeParseArguments.cmake&quot;;&quot;C:\Program Files\CMake 2.8\share\cmake-2.8\Modules\FindPackageHandleStandardArgs.cmake&quot;;&quot;C:\Program Files\CMake 2.8\share\cmake-2.8\Modules\FindPackageMessage.cmake&quot;;&quot;C:\Program Files\CMake 2.8\share\cmake-2.8\Modules\CMakeParseArguments.cmake&quot;;D:\ThomasLab\ReCast\RecastDemo\CMakeLists.txt;"
-					Outputs="D:\ThomasLab\ReCast\RecastDemo\CMakeFiles\generate.stamp"/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32">
-					<Tool
-					Name="VCCustomBuildTool"
-					Description="Building Custom Rule D:/ThomasLab/ReCast/RecastDemo/CMakeLists.txt"
-					CommandLine="&quot;C:\Program Files\CMake 2.8\bin\cmake.exe&quot; -HD:/ThomasLab/ReCast -BD:/ThomasLab/ReCast --check-stamp-file D:\ThomasLab\ReCast\RecastDemo\CMakeFiles\generate.stamp&#x0D;&#x0A;if errorlevel 1 goto :VCReportError"
-					AdditionalDependencies="D:\ThomasLab\ReCast\RecastDemo\CMakeLists.txt;&quot;C:\Program Files\CMake 2.8\share\cmake-2.8\Modules\FindOpenGL.cmake&quot;;&quot;C:\Program Files\CMake 2.8\share\cmake-2.8\Modules\FindPackageHandleStandardArgs.cmake&quot;;&quot;C:\Program Files\CMake 2.8\share\cmake-2.8\Modules\FindPackageMessage.cmake&quot;;&quot;C:\Program Files\CMake 2.8\share\cmake-2.8\Modules\CMakeParseArguments.cmake&quot;;&quot;C:\Program Files\CMake 2.8\share\cmake-2.8\Modules\FindSDL.cmake&quot;;&quot;C:\Program Files\CMake 2.8\share\cmake-2.8\Modules\FindThreads.cmake&quot;;&quot;C:\Program Files\CMake 2.8\share\cmake-2.8\Modules\CheckIncludeFiles.cmake&quot;;&quot;C:\Program Files\CMake 2.8\share\cmake-2.8\Modules\CheckLibraryExists.cmake&quot;;&quot;C:\Program Files\CMake 2.8\share\cmake-2.8\Modules\CheckSymbolExists.cmake&quot;;&quot;C:\Program Files\CMake 2.8\share\cmake-2.8\Modules\FindPackageHandleStandardArgs.cmake&quot;;&quot;C:\Program Files\CMake 2.8\share\cmake-2.8\Modules\FindPackageMessage.cmake&quot;;&quot;C:\Program Files\CMake 2.8\share\cmake-2.8\Modules\CMakeParseArguments.cmake&quot;;&quot;C:\Program Files\CMake 2.8\share\cmake-2.8\Modules\FindPackageHandleStandardArgs.cmake&quot;;&quot;C:\Program Files\CMake 2.8\share\cmake-2.8\Modules\FindPackageMessage.cmake&quot;;&quot;C:\Program Files\CMake 2.8\share\cmake-2.8\Modules\CMakeParseArguments.cmake&quot;;D:\ThomasLab\ReCast\RecastDemo\CMakeLists.txt;"
-					Outputs="D:\ThomasLab\ReCast\RecastDemo\CMakeFiles\generate.stamp"/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="MinSizeRel|Win32">
-					<Tool
-					Name="VCCustomBuildTool"
-					Description="Building Custom Rule D:/ThomasLab/ReCast/RecastDemo/CMakeLists.txt"
-					CommandLine="&quot;C:\Program Files\CMake 2.8\bin\cmake.exe&quot; -HD:/ThomasLab/ReCast -BD:/ThomasLab/ReCast --check-stamp-file D:\ThomasLab\ReCast\RecastDemo\CMakeFiles\generate.stamp&#x0D;&#x0A;if errorlevel 1 goto :VCReportError"
-					AdditionalDependencies="D:\ThomasLab\ReCast\RecastDemo\CMakeLists.txt;&quot;C:\Program Files\CMake 2.8\share\cmake-2.8\Modules\FindOpenGL.cmake&quot;;&quot;C:\Program Files\CMake 2.8\share\cmake-2.8\Modules\FindPackageHandleStandardArgs.cmake&quot;;&quot;C:\Program Files\CMake 2.8\share\cmake-2.8\Modules\FindPackageMessage.cmake&quot;;&quot;C:\Program Files\CMake 2.8\share\cmake-2.8\Modules\CMakeParseArguments.cmake&quot;;&quot;C:\Program Files\CMake 2.8\share\cmake-2.8\Modules\FindSDL.cmake&quot;;&quot;C:\Program Files\CMake 2.8\share\cmake-2.8\Modules\FindThreads.cmake&quot;;&quot;C:\Program Files\CMake 2.8\share\cmake-2.8\Modules\CheckIncludeFiles.cmake&quot;;&quot;C:\Program Files\CMake 2.8\share\cmake-2.8\Modules\CheckLibraryExists.cmake&quot;;&quot;C:\Program Files\CMake 2.8\share\cmake-2.8\Modules\CheckSymbolExists.cmake&quot;;&quot;C:\Program Files\CMake 2.8\share\cmake-2.8\Modules\FindPackageHandleStandardArgs.cmake&quot;;&quot;C:\Program Files\CMake 2.8\share\cmake-2.8\Modules\FindPackageMessage.cmake&quot;;&quot;C:\Program Files\CMake 2.8\share\cmake-2.8\Modules\CMakeParseArguments.cmake&quot;;&quot;C:\Program Files\CMake 2.8\share\cmake-2.8\Modules\FindPackageHandleStandardArgs.cmake&quot;;&quot;C:\Program Files\CMake 2.8\share\cmake-2.8\Modules\FindPackageMessage.cmake&quot;;&quot;C:\Program Files\CMake 2.8\share\cmake-2.8\Modules\CMakeParseArguments.cmake&quot;;D:\ThomasLab\ReCast\RecastDemo\CMakeLists.txt;"
-					Outputs="D:\ThomasLab\ReCast\RecastDemo\CMakeFiles\generate.stamp"/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="RelWithDebInfo|Win32">
-					<Tool
-					Name="VCCustomBuildTool"
-					Description="Building Custom Rule D:/ThomasLab/ReCast/RecastDemo/CMakeLists.txt"
-					CommandLine="&quot;C:\Program Files\CMake 2.8\bin\cmake.exe&quot; -HD:/ThomasLab/ReCast -BD:/ThomasLab/ReCast --check-stamp-file D:\ThomasLab\ReCast\RecastDemo\CMakeFiles\generate.stamp&#x0D;&#x0A;if errorlevel 1 goto :VCReportError"
-					AdditionalDependencies="D:\ThomasLab\ReCast\RecastDemo\CMakeLists.txt;&quot;C:\Program Files\CMake 2.8\share\cmake-2.8\Modules\FindOpenGL.cmake&quot;;&quot;C:\Program Files\CMake 2.8\share\cmake-2.8\Modules\FindPackageHandleStandardArgs.cmake&quot;;&quot;C:\Program Files\CMake 2.8\share\cmake-2.8\Modules\FindPackageMessage.cmake&quot;;&quot;C:\Program Files\CMake 2.8\share\cmake-2.8\Modules\CMakeParseArguments.cmake&quot;;&quot;C:\Program Files\CMake 2.8\share\cmake-2.8\Modules\FindSDL.cmake&quot;;&quot;C:\Program Files\CMake 2.8\share\cmake-2.8\Modules\FindThreads.cmake&quot;;&quot;C:\Program Files\CMake 2.8\share\cmake-2.8\Modules\CheckIncludeFiles.cmake&quot;;&quot;C:\Program Files\CMake 2.8\share\cmake-2.8\Modules\CheckLibraryExists.cmake&quot;;&quot;C:\Program Files\CMake 2.8\share\cmake-2.8\Modules\CheckSymbolExists.cmake&quot;;&quot;C:\Program Files\CMake 2.8\share\cmake-2.8\Modules\FindPackageHandleStandardArgs.cmake&quot;;&quot;C:\Program Files\CMake 2.8\share\cmake-2.8\Modules\FindPackageMessage.cmake&quot;;&quot;C:\Program Files\CMake 2.8\share\cmake-2.8\Modules\CMakeParseArguments.cmake&quot;;&quot;C:\Program Files\CMake 2.8\share\cmake-2.8\Modules\FindPackageHandleStandardArgs.cmake&quot;;&quot;C:\Program Files\CMake 2.8\share\cmake-2.8\Modules\FindPackageMessage.cmake&quot;;&quot;C:\Program Files\CMake 2.8\share\cmake-2.8\Modules\CMakeParseArguments.cmake&quot;;D:\ThomasLab\ReCast\RecastDemo\CMakeLists.txt;"
-					Outputs="D:\ThomasLab\ReCast\RecastDemo\CMakeFiles\generate.stamp"/>
-				</FileConfiguration>
-			</File>
 		<Filter
 			Name="Source Files"
-			Filter="">
+			>
 			<File
-				RelativePath="D:\ThomasLab\ReCast\RecastDemo\Source\ChunkyTriMesh.cpp">
+				RelativePath="D:\ThomasLab\ReCast\RecastDemo\Source\ChunkyTriMesh.cpp"
+				>
 			</File>
 			<File
-				RelativePath="D:\ThomasLab\ReCast\RecastDemo\Source\ConvexVolumeTool.cpp">
+				RelativePath="D:\ThomasLab\ReCast\RecastDemo\Source\ConvexVolumeTool.cpp"
+				>
 			</File>
 			<File
-				RelativePath="D:\ThomasLab\ReCast\RecastDemo\Source\CrowdTool.cpp">
+				RelativePath="D:\ThomasLab\ReCast\RecastDemo\Source\CrowdTool.cpp"
+				>
 			</File>
 			<File
-				RelativePath="D:\ThomasLab\ReCast\RecastDemo\Source\Filelist.cpp">
-			</File>
-			<File
-				RelativePath="D:\ThomasLab\ReCast\RecastDemo\Source\imgui.cpp">
-			</File>
-			<File
-				RelativePath="D:\ThomasLab\ReCast\RecastDemo\Source\imguiRenderGL.cpp">
-			</File>
-			<File
-				RelativePath="D:\ThomasLab\ReCast\RecastDemo\Source\InputGeom.cpp">
-			</File>
-			<File
-				RelativePath="D:\ThomasLab\ReCast\RecastDemo\Source\main.cpp">
-			</File>
-			<File
-				RelativePath="D:\ThomasLab\ReCast\RecastDemo\Source\MeshLoaderObj.cpp">
-			</File>
-			<File
-				RelativePath="D:\ThomasLab\ReCast\RecastDemo\Source\NavMeshPruneTool.cpp">
-			</File>
-			<File
-				RelativePath="D:\ThomasLab\ReCast\RecastDemo\Source\NavMeshTesterTool.cpp">
-			</File>
-			<File
-				RelativePath="D:\ThomasLab\ReCast\RecastDemo\Source\OffMeshConnectionTool.cpp">
-			</File>
-			<File
-				RelativePath="D:\ThomasLab\ReCast\RecastDemo\Source\PerfTimer.cpp">
-			</File>
-			<File
-				RelativePath="D:\ThomasLab\ReCast\RecastDemo\Source\Sample.cpp">
-			</File>
-			<File
-				RelativePath="D:\ThomasLab\ReCast\RecastDemo\Source\Sample_Debug.cpp">
-			</File>
-			<File
-				RelativePath="D:\ThomasLab\ReCast\RecastDemo\Source\Sample_SoloMesh.cpp">
-			</File>
-			<File
-				RelativePath="D:\ThomasLab\ReCast\RecastDemo\Source\Sample_TileMesh.cpp">
-			</File>
-			<File
-				RelativePath="D:\ThomasLab\ReCast\RecastDemo\Source\Sample_TempObstacles.cpp">
-			</File>
-			<File
-				RelativePath="D:\ThomasLab\ReCast\RecastDemo\Source\SampleInterfaces.cpp">
-			</File>
-			<File
-				RelativePath="D:\ThomasLab\ReCast\RecastDemo\Source\SlideShow.cpp">
-			</File>
-			<File
-				RelativePath="D:\ThomasLab\ReCast\RecastDemo\Source\TestCase.cpp">
-			</File>
-			<File
-				RelativePath="D:\ThomasLab\ReCast\RecastDemo\Source\ValueHistory.cpp">
-			</File>
-			<File
-				RelativePath="D:\ThomasLab\ReCast\RecastDemo\Contrib\fastlz\fastlz.c">
+				RelativePath="D:\ThomasLab\ReCast\RecastDemo\Contrib\fastlz\fastlz.c"
+				>
 				<FileConfiguration
-					Name="Debug|Win32">
+					Name="Debug|Win32"
+					>
 					<Tool
-					Name="VCCLCompilerTool"
-					CompileAs="1"
+						Name="VCCLCompilerTool"
+						CompileAs="1"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="MinSizeRel|Win32">
+					Name="Release|Win32"
+					>
 					<Tool
-					Name="VCCLCompilerTool"
-					CompileAs="1"
+						Name="VCCLCompilerTool"
+						CompileAs="1"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="RelWithDebInfo|Win32">
+					Name="MinSizeRel|Win32"
+					>
 					<Tool
-					Name="VCCLCompilerTool"
-					CompileAs="1"
+						Name="VCCLCompilerTool"
+						CompileAs="1"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Release|Win32">
+					Name="RelWithDebInfo|Win32"
+					>
 					<Tool
-					Name="VCCLCompilerTool"
-					CompileAs="1"
+						Name="VCCLCompilerTool"
+						CompileAs="1"
 					/>
 				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="D:\ThomasLab\ReCast\RecastDemo\Source\Filelist.cpp"
+				>
+			</File>
+			<File
+				RelativePath="D:\ThomasLab\ReCast\RecastDemo\Source\imgui.cpp"
+				>
+			</File>
+			<File
+				RelativePath="D:\ThomasLab\ReCast\RecastDemo\Source\imguiRenderGL.cpp"
+				>
+			</File>
+			<File
+				RelativePath="D:\ThomasLab\ReCast\RecastDemo\Source\InputGeom.cpp"
+				>
+			</File>
+			<File
+				RelativePath="D:\ThomasLab\ReCast\RecastDemo\Source\main.cpp"
+				>
+			</File>
+			<File
+				RelativePath="D:\ThomasLab\ReCast\RecastDemo\Source\MeshLoaderObj.cpp"
+				>
+			</File>
+			<File
+				RelativePath="D:\ThomasLab\ReCast\RecastDemo\Source\NavMeshPruneTool.cpp"
+				>
+			</File>
+			<File
+				RelativePath="D:\ThomasLab\ReCast\RecastDemo\Source\NavMeshTesterTool.cpp"
+				>
+			</File>
+			<File
+				RelativePath="D:\ThomasLab\ReCast\RecastDemo\Source\OffMeshConnectionTool.cpp"
+				>
+			</File>
+			<File
+				RelativePath="D:\ThomasLab\ReCast\RecastDemo\Source\PerfTimer.cpp"
+				>
+			</File>
+			<File
+				RelativePath="D:\ThomasLab\ReCast\RecastDemo\Source\Sample.cpp"
+				>
+			</File>
+			<File
+				RelativePath="D:\ThomasLab\ReCast\RecastDemo\Source\Sample_Debug.cpp"
+				>
+			</File>
+			<File
+				RelativePath="D:\ThomasLab\ReCast\RecastDemo\Source\Sample_SoloMesh.cpp"
+				>
+			</File>
+			<File
+				RelativePath="D:\ThomasLab\ReCast\RecastDemo\Source\Sample_TempObstacles.cpp"
+				>
+			</File>
+			<File
+				RelativePath="D:\ThomasLab\ReCast\RecastDemo\Source\Sample_TileMesh.cpp"
+				>
+			</File>
+			<File
+				RelativePath="D:\ThomasLab\ReCast\RecastDemo\Source\SampleInterfaces.cpp"
+				>
+			</File>
+			<File
+				RelativePath="D:\ThomasLab\ReCast\RecastDemo\Source\SlideShow.cpp"
+				>
+			</File>
+			<File
+				RelativePath="D:\ThomasLab\ReCast\RecastDemo\Source\TestCase.cpp"
+				>
+			</File>
+			<File
+				RelativePath="D:\ThomasLab\ReCast\RecastDemo\Source\ValueHistory.cpp"
+				>
 			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
-			Filter="">
+			>
 			<File
-				RelativePath="D:\ThomasLab\ReCast\RecastDemo\Include\ChunkyTriMesh.h">
+				RelativePath="D:\ThomasLab\ReCast\RecastDemo\Include\ChunkyTriMesh.h"
+				>
 			</File>
 			<File
-				RelativePath="D:\ThomasLab\ReCast\RecastDemo\Include\ConvexVolumeTool.h">
+				RelativePath="D:\ThomasLab\ReCast\RecastDemo\Include\ConvexVolumeTool.h"
+				>
 			</File>
 			<File
-				RelativePath="D:\ThomasLab\ReCast\RecastDemo\Include\CrowdTool.h">
+				RelativePath="D:\ThomasLab\ReCast\RecastDemo\Include\CrowdTool.h"
+				>
 			</File>
 			<File
-				RelativePath="D:\ThomasLab\ReCast\RecastDemo\Include\Filelist.h">
+				RelativePath="D:\ThomasLab\ReCast\RecastDemo\Include\Filelist.h"
+				>
 			</File>
 			<File
-				RelativePath="D:\ThomasLab\ReCast\RecastDemo\Include\imgui.h">
+				RelativePath="D:\ThomasLab\ReCast\RecastDemo\Include\imgui.h"
+				>
 			</File>
 			<File
-				RelativePath="D:\ThomasLab\ReCast\RecastDemo\Include\imguiRenderGL.h">
+				RelativePath="D:\ThomasLab\ReCast\RecastDemo\Include\imguiRenderGL.h"
+				>
 			</File>
 			<File
-				RelativePath="D:\ThomasLab\ReCast\RecastDemo\Include\InputGeom.h">
+				RelativePath="D:\ThomasLab\ReCast\RecastDemo\Include\InputGeom.h"
+				>
 			</File>
 			<File
-				RelativePath="D:\ThomasLab\ReCast\RecastDemo\Include\MeshLoaderObj.h">
+				RelativePath="D:\ThomasLab\ReCast\RecastDemo\Include\MeshLoaderObj.h"
+				>
 			</File>
 			<File
-				RelativePath="D:\ThomasLab\ReCast\RecastDemo\Include\NavmeshPruneTool.h">
+				RelativePath="D:\ThomasLab\ReCast\RecastDemo\Include\NavmeshPruneTool.h"
+				>
 			</File>
 			<File
-				RelativePath="D:\ThomasLab\ReCast\RecastDemo\Include\NavMeshTesterTool.h">
+				RelativePath="D:\ThomasLab\ReCast\RecastDemo\Include\NavMeshTesterTool.h"
+				>
 			</File>
 			<File
-				RelativePath="D:\ThomasLab\ReCast\RecastDemo\Include\OffMeshConnectionTool.h">
+				RelativePath="D:\ThomasLab\ReCast\RecastDemo\Include\OffMeshConnectionTool.h"
+				>
 			</File>
 			<File
-				RelativePath="D:\ThomasLab\ReCast\RecastDemo\Include\PerfTimer.h">
+				RelativePath="D:\ThomasLab\ReCast\RecastDemo\Include\PerfTimer.h"
+				>
 			</File>
 			<File
-				RelativePath="D:\ThomasLab\ReCast\RecastDemo\Include\Sample.h">
+				RelativePath="D:\ThomasLab\ReCast\RecastDemo\Include\Sample.h"
+				>
 			</File>
 			<File
-				RelativePath="D:\ThomasLab\ReCast\RecastDemo\Include\Sample_Debug.h">
+				RelativePath="D:\ThomasLab\ReCast\RecastDemo\Include\Sample_Debug.h"
+				>
 			</File>
 			<File
-				RelativePath="D:\ThomasLab\ReCast\RecastDemo\Include\Sample_SoloMesh.h">
+				RelativePath="D:\ThomasLab\ReCast\RecastDemo\Include\Sample_SoloMesh.h"
+				>
 			</File>
 			<File
-				RelativePath="D:\ThomasLab\ReCast\RecastDemo\Include\Sample_TileMesh.h">
+				RelativePath="D:\ThomasLab\ReCast\RecastDemo\Include\Sample_TempObstacles.h"
+				>
 			</File>
 			<File
-				RelativePath="D:\ThomasLab\ReCast\RecastDemo\Include\Sample_TempObstacles.h">
+				RelativePath="D:\ThomasLab\ReCast\RecastDemo\Include\Sample_TileMesh.h"
+				>
 			</File>
 			<File
-				RelativePath="D:\ThomasLab\ReCast\RecastDemo\Include\SampleInterfaces.h">
+				RelativePath="D:\ThomasLab\ReCast\RecastDemo\Include\SampleInterfaces.h"
+				>
 			</File>
 			<File
-				RelativePath="D:\ThomasLab\ReCast\RecastDemo\Include\SDLMain.h">
+				RelativePath="D:\ThomasLab\ReCast\RecastDemo\Include\SDLMain.h"
+				>
 			</File>
 			<File
-				RelativePath="D:\ThomasLab\ReCast\RecastDemo\Include\SlideShow.h">
+				RelativePath="D:\ThomasLab\ReCast\RecastDemo\Include\SlideShow.h"
+				>
 			</File>
 			<File
-				RelativePath="D:\ThomasLab\ReCast\RecastDemo\Include\TestCase.h">
+				RelativePath="D:\ThomasLab\ReCast\RecastDemo\Include\TestCase.h"
+				>
 			</File>
 			<File
-				RelativePath="D:\ThomasLab\ReCast\RecastDemo\Include\ValueHistory.h">
+				RelativePath="D:\ThomasLab\ReCast\RecastDemo\Include\ValueHistory.h"
+				>
 			</File>
 		</Filter>
+		<File
+			RelativePath="D:\ThomasLab\ReCast\RecastDemo\CMakeLists.txt"
+			>
+			<FileConfiguration
+				Name="Debug|Win32"
+				>
+				<Tool
+					Name="VCCustomBuildTool"
+					Description="Building Custom Rule D:/ThomasLab/ReCast/RecastDemo/CMakeLists.txt"
+					CommandLine="&quot;C:\Program Files\CMake 2.8\bin\cmake.exe&quot; -HD:/ThomasLab/ReCast -BD:/ThomasLab/ReCast --check-stamp-file D:\ThomasLab\ReCast\RecastDemo\CMakeFiles\generate.stamp&#x0D;&#x0A;if errorlevel 1 goto :VCReportError&#x0D;&#x0A;"
+					AdditionalDependencies="D:\ThomasLab\ReCast\RecastDemo\CMakeLists.txt;&quot;C:\Program Files\CMake 2.8\share\cmake-2.8\Modules\FindOpenGL.cmake&quot;;&quot;C:\Program Files\CMake 2.8\share\cmake-2.8\Modules\FindPackageHandleStandardArgs.cmake&quot;;&quot;C:\Program Files\CMake 2.8\share\cmake-2.8\Modules\FindPackageMessage.cmake&quot;;&quot;C:\Program Files\CMake 2.8\share\cmake-2.8\Modules\CMakeParseArguments.cmake&quot;;&quot;C:\Program Files\CMake 2.8\share\cmake-2.8\Modules\FindSDL.cmake&quot;;&quot;C:\Program Files\CMake 2.8\share\cmake-2.8\Modules\FindThreads.cmake&quot;;&quot;C:\Program Files\CMake 2.8\share\cmake-2.8\Modules\CheckIncludeFiles.cmake&quot;;&quot;C:\Program Files\CMake 2.8\share\cmake-2.8\Modules\CheckLibraryExists.cmake&quot;;&quot;C:\Program Files\CMake 2.8\share\cmake-2.8\Modules\CheckSymbolExists.cmake&quot;;&quot;C:\Program Files\CMake 2.8\share\cmake-2.8\Modules\FindPackageHandleStandardArgs.cmake&quot;;&quot;C:\Program Files\CMake 2.8\share\cmake-2.8\Modules\FindPackageMessage.cmake&quot;;&quot;C:\Program Files\CMake 2.8\share\cmake-2.8\Modules\CMakeParseArguments.cmake&quot;;&quot;C:\Program Files\CMake 2.8\share\cmake-2.8\Modules\FindPackageHandleStandardArgs.cmake&quot;;&quot;C:\Program Files\CMake 2.8\share\cmake-2.8\Modules\FindPackageMessage.cmake&quot;;&quot;C:\Program Files\CMake 2.8\share\cmake-2.8\Modules\CMakeParseArguments.cmake&quot;;D:\ThomasLab\ReCast\RecastDemo\CMakeLists.txt;"
+					Outputs="D:\ThomasLab\ReCast\RecastDemo\CMakeFiles\generate.stamp"
+				/>
+			</FileConfiguration>
+			<FileConfiguration
+				Name="Release|Win32"
+				>
+				<Tool
+					Name="VCCustomBuildTool"
+					Description="Building Custom Rule D:/ThomasLab/ReCast/RecastDemo/CMakeLists.txt"
+					CommandLine="&quot;C:\Program Files\CMake 2.8\bin\cmake.exe&quot; -HD:/ThomasLab/ReCast -BD:/ThomasLab/ReCast --check-stamp-file D:\ThomasLab\ReCast\RecastDemo\CMakeFiles\generate.stamp&#x0D;&#x0A;if errorlevel 1 goto :VCReportError&#x0D;&#x0A;"
+					AdditionalDependencies="D:\ThomasLab\ReCast\RecastDemo\CMakeLists.txt;&quot;C:\Program Files\CMake 2.8\share\cmake-2.8\Modules\FindOpenGL.cmake&quot;;&quot;C:\Program Files\CMake 2.8\share\cmake-2.8\Modules\FindPackageHandleStandardArgs.cmake&quot;;&quot;C:\Program Files\CMake 2.8\share\cmake-2.8\Modules\FindPackageMessage.cmake&quot;;&quot;C:\Program Files\CMake 2.8\share\cmake-2.8\Modules\CMakeParseArguments.cmake&quot;;&quot;C:\Program Files\CMake 2.8\share\cmake-2.8\Modules\FindSDL.cmake&quot;;&quot;C:\Program Files\CMake 2.8\share\cmake-2.8\Modules\FindThreads.cmake&quot;;&quot;C:\Program Files\CMake 2.8\share\cmake-2.8\Modules\CheckIncludeFiles.cmake&quot;;&quot;C:\Program Files\CMake 2.8\share\cmake-2.8\Modules\CheckLibraryExists.cmake&quot;;&quot;C:\Program Files\CMake 2.8\share\cmake-2.8\Modules\CheckSymbolExists.cmake&quot;;&quot;C:\Program Files\CMake 2.8\share\cmake-2.8\Modules\FindPackageHandleStandardArgs.cmake&quot;;&quot;C:\Program Files\CMake 2.8\share\cmake-2.8\Modules\FindPackageMessage.cmake&quot;;&quot;C:\Program Files\CMake 2.8\share\cmake-2.8\Modules\CMakeParseArguments.cmake&quot;;&quot;C:\Program Files\CMake 2.8\share\cmake-2.8\Modules\FindPackageHandleStandardArgs.cmake&quot;;&quot;C:\Program Files\CMake 2.8\share\cmake-2.8\Modules\FindPackageMessage.cmake&quot;;&quot;C:\Program Files\CMake 2.8\share\cmake-2.8\Modules\CMakeParseArguments.cmake&quot;;D:\ThomasLab\ReCast\RecastDemo\CMakeLists.txt;"
+					Outputs="D:\ThomasLab\ReCast\RecastDemo\CMakeFiles\generate.stamp"
+				/>
+			</FileConfiguration>
+			<FileConfiguration
+				Name="MinSizeRel|Win32"
+				>
+				<Tool
+					Name="VCCustomBuildTool"
+					Description="Building Custom Rule D:/ThomasLab/ReCast/RecastDemo/CMakeLists.txt"
+					CommandLine="&quot;C:\Program Files\CMake 2.8\bin\cmake.exe&quot; -HD:/ThomasLab/ReCast -BD:/ThomasLab/ReCast --check-stamp-file D:\ThomasLab\ReCast\RecastDemo\CMakeFiles\generate.stamp&#x0D;&#x0A;if errorlevel 1 goto :VCReportError&#x0D;&#x0A;"
+					AdditionalDependencies="D:\ThomasLab\ReCast\RecastDemo\CMakeLists.txt;&quot;C:\Program Files\CMake 2.8\share\cmake-2.8\Modules\FindOpenGL.cmake&quot;;&quot;C:\Program Files\CMake 2.8\share\cmake-2.8\Modules\FindPackageHandleStandardArgs.cmake&quot;;&quot;C:\Program Files\CMake 2.8\share\cmake-2.8\Modules\FindPackageMessage.cmake&quot;;&quot;C:\Program Files\CMake 2.8\share\cmake-2.8\Modules\CMakeParseArguments.cmake&quot;;&quot;C:\Program Files\CMake 2.8\share\cmake-2.8\Modules\FindSDL.cmake&quot;;&quot;C:\Program Files\CMake 2.8\share\cmake-2.8\Modules\FindThreads.cmake&quot;;&quot;C:\Program Files\CMake 2.8\share\cmake-2.8\Modules\CheckIncludeFiles.cmake&quot;;&quot;C:\Program Files\CMake 2.8\share\cmake-2.8\Modules\CheckLibraryExists.cmake&quot;;&quot;C:\Program Files\CMake 2.8\share\cmake-2.8\Modules\CheckSymbolExists.cmake&quot;;&quot;C:\Program Files\CMake 2.8\share\cmake-2.8\Modules\FindPackageHandleStandardArgs.cmake&quot;;&quot;C:\Program Files\CMake 2.8\share\cmake-2.8\Modules\FindPackageMessage.cmake&quot;;&quot;C:\Program Files\CMake 2.8\share\cmake-2.8\Modules\CMakeParseArguments.cmake&quot;;&quot;C:\Program Files\CMake 2.8\share\cmake-2.8\Modules\FindPackageHandleStandardArgs.cmake&quot;;&quot;C:\Program Files\CMake 2.8\share\cmake-2.8\Modules\FindPackageMessage.cmake&quot;;&quot;C:\Program Files\CMake 2.8\share\cmake-2.8\Modules\CMakeParseArguments.cmake&quot;;D:\ThomasLab\ReCast\RecastDemo\CMakeLists.txt;"
+					Outputs="D:\ThomasLab\ReCast\RecastDemo\CMakeFiles\generate.stamp"
+				/>
+			</FileConfiguration>
+			<FileConfiguration
+				Name="RelWithDebInfo|Win32"
+				>
+				<Tool
+					Name="VCCustomBuildTool"
+					Description="Building Custom Rule D:/ThomasLab/ReCast/RecastDemo/CMakeLists.txt"
+					CommandLine="&quot;C:\Program Files\CMake 2.8\bin\cmake.exe&quot; -HD:/ThomasLab/ReCast -BD:/ThomasLab/ReCast --check-stamp-file D:\ThomasLab\ReCast\RecastDemo\CMakeFiles\generate.stamp&#x0D;&#x0A;if errorlevel 1 goto :VCReportError&#x0D;&#x0A;"
+					AdditionalDependencies="D:\ThomasLab\ReCast\RecastDemo\CMakeLists.txt;&quot;C:\Program Files\CMake 2.8\share\cmake-2.8\Modules\FindOpenGL.cmake&quot;;&quot;C:\Program Files\CMake 2.8\share\cmake-2.8\Modules\FindPackageHandleStandardArgs.cmake&quot;;&quot;C:\Program Files\CMake 2.8\share\cmake-2.8\Modules\FindPackageMessage.cmake&quot;;&quot;C:\Program Files\CMake 2.8\share\cmake-2.8\Modules\CMakeParseArguments.cmake&quot;;&quot;C:\Program Files\CMake 2.8\share\cmake-2.8\Modules\FindSDL.cmake&quot;;&quot;C:\Program Files\CMake 2.8\share\cmake-2.8\Modules\FindThreads.cmake&quot;;&quot;C:\Program Files\CMake 2.8\share\cmake-2.8\Modules\CheckIncludeFiles.cmake&quot;;&quot;C:\Program Files\CMake 2.8\share\cmake-2.8\Modules\CheckLibraryExists.cmake&quot;;&quot;C:\Program Files\CMake 2.8\share\cmake-2.8\Modules\CheckSymbolExists.cmake&quot;;&quot;C:\Program Files\CMake 2.8\share\cmake-2.8\Modules\FindPackageHandleStandardArgs.cmake&quot;;&quot;C:\Program Files\CMake 2.8\share\cmake-2.8\Modules\FindPackageMessage.cmake&quot;;&quot;C:\Program Files\CMake 2.8\share\cmake-2.8\Modules\CMakeParseArguments.cmake&quot;;&quot;C:\Program Files\CMake 2.8\share\cmake-2.8\Modules\FindPackageHandleStandardArgs.cmake&quot;;&quot;C:\Program Files\CMake 2.8\share\cmake-2.8\Modules\FindPackageMessage.cmake&quot;;&quot;C:\Program Files\CMake 2.8\share\cmake-2.8\Modules\CMakeParseArguments.cmake&quot;;D:\ThomasLab\ReCast\RecastDemo\CMakeLists.txt;"
+					Outputs="D:\ThomasLab\ReCast\RecastDemo\CMakeFiles\generate.stamp"
+				/>
+			</FileConfiguration>
+		</File>
 	</Files>
 	<Globals>
 	</Globals>
