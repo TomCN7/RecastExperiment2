@@ -1,0 +1,6 @@
+﻿  Building Custom Rule D:/ThomasLab/ReCast/DetourTileCache/CMakeLists.txt
+  CMake does not need to re-run because D:\ThomasLab\ReCast\DetourTileCache\CMakeFiles\generate.stamp is up-to-date.
+  DetourTileCache.cpp
+  DetourTileCacheBuilder.cpp
+  Generating Code...
+  DetourTileCache.vcxproj -> D:\ThomasLab\ReCast\DetourTileCache\Debug\DetourTileCache.lib

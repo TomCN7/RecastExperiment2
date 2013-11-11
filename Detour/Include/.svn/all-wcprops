@@ -1,0 +1,53 @@
+K 25
+svn:wc:ra_dav:version-url
+V 38
+/svn/!svn/ver/346/trunk/Detour/Include
+END
+DetourNavMeshQuery.h
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/svn/!svn/ver/346/trunk/Detour/Include/DetourNavMeshQuery.h
+END
+DetourNavMeshBuilder.h
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/svn/!svn/ver/312/trunk/Detour/Include/DetourNavMeshBuilder.h
+END
+DetourCommon.h
+K 25
+svn:wc:ra_dav:version-url
+V 53
+/svn/!svn/ver/346/trunk/Detour/Include/DetourCommon.h
+END
+DetourAlloc.h
+K 25
+svn:wc:ra_dav:version-url
+V 52
+/svn/!svn/ver/311/trunk/Detour/Include/DetourAlloc.h
+END
+DetourAssert.h
+K 25
+svn:wc:ra_dav:version-url
+V 53
+/svn/!svn/ver/335/trunk/Detour/Include/DetourAssert.h
+END
+DetourNavMesh.h
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/svn/!svn/ver/346/trunk/Detour/Include/DetourNavMesh.h
+END
+DetourStatus.h
+K 25
+svn:wc:ra_dav:version-url
+V 53
+/svn/!svn/ver/288/trunk/Detour/Include/DetourStatus.h
+END
+DetourNode.h
+K 25
+svn:wc:ra_dav:version-url
+V 51
+/svn/!svn/ver/295/trunk/Detour/Include/DetourNode.h
+END

@@ -1,0 +1,41 @@
+K 25
+svn:wc:ra_dav:version-url
+V 37
+/svn/!svn/ver/346/trunk/Detour/Source
+END
+DetourNavMesh.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 55
+/svn/!svn/ver/346/trunk/Detour/Source/DetourNavMesh.cpp
+END
+DetourNode.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 52
+/svn/!svn/ver/271/trunk/Detour/Source/DetourNode.cpp
+END
+DetourNavMeshQuery.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/svn/!svn/ver/346/trunk/Detour/Source/DetourNavMeshQuery.cpp
+END
+DetourNavMeshBuilder.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/svn/!svn/ver/344/trunk/Detour/Source/DetourNavMeshBuilder.cpp
+END
+DetourCommon.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/svn/!svn/ver/346/trunk/Detour/Source/DetourCommon.cpp
+END
+DetourAlloc.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 53
+/svn/!svn/ver/177/trunk/Detour/Source/DetourAlloc.cpp
+END

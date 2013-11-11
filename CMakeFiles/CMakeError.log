@@ -1,0 +1,60 @@
+Determining if files pthread.h exist failed with the following output:
+Change Dir: D:/ThomasLab/ReCast/CMakeFiles/CMakeTmp
+
+Run Build Command:C:\PROGRA~1\MICROS~2\Common7\IDE\devenv.com CMAKE_TRY_COMPILE.sln /build Debug /project cmTryCompileExec
+
+Microsoft (R) Visual Studio Version 8.0.50727.762.
+Copyright (C) Microsoft Corp 1984-2005. All rights reserved.
+1>------ Build started: Project: cmTryCompileExec, Configuration: Debug Win32 ------
+1>Compiling...
+1>Microsoft (R) 32-bit C/C++ Optimizing Compiler Version 14.00.50727.762 for 80x86
+1>Copyright (C) Microsoft Corporation.  All rights reserved.
+1>cl /Od /D "WIN32" /D "_WINDOWS" /D "_DEBUG" /D "CMAKE_INTDIR=\"Debug\"" /D "_MBCS" /FD /RTC1 /MDd /Fo"cmTryCompileExec.dir\Debug\\" /Fd"D:\ThomasLab\ReCast\CMakeFiles\CMakeTmp\Debug/cmTryCompileExec.pdb" /W3 /c /Zi /TC   /Zm1000
+1>   .\CheckIncludeFiles.c
+1>CheckIncludeFiles.c
+1>.\CheckIncludeFiles.c(2) : fatal error C1083: Cannot open include file: 'pthread.h': No such file or directory
+1>Build log was saved at "file://d:\ThomasLab\ReCast\CMakeFiles\CMakeTmp\cmTryCompileExec.dir\Debug\BuildLog.htm"
+1>cmTryCompileExec - 1 error(s), 0 warning(s)
+========== Build: 0 succeeded, 1 failed, 0 up-to-date, 0 skipped ==========
+
+Source:
+/* */
+#include <pthread.h>
+
+
+int main(){return 0;}
+
+Compiling the C compiler identification source file "CMakeCCompilerId.c" failed.
+Compiler: cl 
+Build flags: ;/DWIN32;/D_WINDOWS;/W3;/Zm1000
+Id flags: 
+
+The output was:
+系统找不到指定的文件。
+
+
+Compiling the CXX compiler identification source file "CMakeCXXCompilerId.cpp" failed.
+Compiler: cl 
+Build flags: ;/DWIN32;/D_WINDOWS;/W3;/Zm1000;/EHsc;/GR
+Id flags: 
+
+The output was:
+系统找不到指定的文件。
+
+
+Detecting C compiler ABI info failed to compile with the following output:
+Change Dir: D:/ThomasLab/ReCast/CMakeFiles/CMakeTmp
+
+Run Build Command:C:\PROGRA~1\MICROS~2\Common7\IDE\devenv.com CMAKE_TRY_COMPILE.sln /build Debug /project cmTryCompileExec4267798979
+系统找不到指定的文件。
+Generator: execution of make failed. Make command was: C:\PROGRA~1\MICROS~2\Common7\IDE\devenv.com CMAKE_TRY_COMPILE.sln /build Debug /project cmTryCompileExec4267798979
+
+
+Detecting CXX compiler ABI info failed to compile with the following output:
+Change Dir: D:/ThomasLab/ReCast/CMakeFiles/CMakeTmp
+
+Run Build Command:C:\PROGRA~1\MICROS~2\Common7\IDE\devenv.com CMAKE_TRY_COMPILE.sln /build Debug /project cmTryCompileExec4080038193
+系统找不到指定的文件。
+Generator: execution of make failed. Make command was: C:\PROGRA~1\MICROS~2\Common7\IDE\devenv.com CMAKE_TRY_COMPILE.sln /build Debug /project cmTryCompileExec4080038193
+
+

@@ -1,0 +1,29 @@
+K 25
+svn:wc:ra_dav:version-url
+V 42
+/svn/!svn/ver/325/trunk/DebugUtils/Include
+END
+DebugDraw.h
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/svn/!svn/ver/295/trunk/DebugUtils/Include/DebugDraw.h
+END
+RecastDebugDraw.h
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/svn/!svn/ver/288/trunk/DebugUtils/Include/RecastDebugDraw.h
+END
+RecastDump.h
+K 25
+svn:wc:ra_dav:version-url
+V 55
+/svn/!svn/ver/206/trunk/DebugUtils/Include/RecastDump.h
+END
+DetourDebugDraw.h
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/svn/!svn/ver/325/trunk/DebugUtils/Include/DetourDebugDraw.h
+END

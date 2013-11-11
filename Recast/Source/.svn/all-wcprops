@@ -1,0 +1,65 @@
+K 25
+svn:wc:ra_dav:version-url
+V 37
+/svn/!svn/ver/343/trunk/Recast/Source
+END
+RecastMesh.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 52
+/svn/!svn/ver/337/trunk/Recast/Source/RecastMesh.cpp
+END
+RecastRasterization.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/svn/!svn/ver/305/trunk/Recast/Source/RecastRasterization.cpp
+END
+RecastMeshDetail.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/svn/!svn/ver/328/trunk/Recast/Source/RecastMeshDetail.cpp
+END
+Recast.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 48
+/svn/!svn/ver/328/trunk/Recast/Source/Recast.cpp
+END
+RecastLayers.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/svn/!svn/ver/328/trunk/Recast/Source/RecastLayers.cpp
+END
+RecastRegion.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/svn/!svn/ver/328/trunk/Recast/Source/RecastRegion.cpp
+END
+RecastFilter.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 54
+/svn/!svn/ver/305/trunk/Recast/Source/RecastFilter.cpp
+END
+RecastArea.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 52
+/svn/!svn/ver/343/trunk/Recast/Source/RecastArea.cpp
+END
+RecastContour.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 55
+/svn/!svn/ver/332/trunk/Recast/Source/RecastContour.cpp
+END
+RecastAlloc.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 53
+/svn/!svn/ver/303/trunk/Recast/Source/RecastAlloc.cpp
+END
