@@ -223,9 +223,6 @@ struct MeshProcess : public dtTileCacheMeshProcess
 	}
 };
 
-
-
-
 static const int MAX_LAYERS = 32;
 
 struct TileCacheData
@@ -318,7 +315,7 @@ static int rasterizeTileLayers(BuildContext* ctx, InputGeom* geom,
 	
 	// Allocate array that can hold triangle flags.
 	// If you have multiple meshes you need to process, allocate
-	// and array which can hold the max number of triangles you need to process.
+	// an array which can hold the max number of triangles you need to process.
 	rc.triareas = new unsigned char[chunkyMesh->maxTrisPerChunk];
 	if (!rc.triareas)
 	{
@@ -435,7 +432,7 @@ static int rasterizeTileLayers(BuildContext* ctx, InputGeom* geom,
 		}
 	}
 
-	// Transfer ownsership of tile data from build context to the caller.
+	// Transfer ownership of tile data from build context to the caller.
 	int n = 0;
 	for (int i = 0; i < rcMin(rc.ntiles, maxTiles); ++i)
 	{
