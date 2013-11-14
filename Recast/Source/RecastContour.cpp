@@ -29,7 +29,7 @@ static int getCornerHeight(int x, int y, int i, int dir,
 						   const rcCompactHeightfield& chf,
 						   bool& isBorderVertex)
 {
-	const rcCompactSpan& s = chf.spans[i];
+	const rcCompactSpan& s = chf.pCompactSpans[i];
 	int ch = (int)s.y;
 	int dirp = (dir+1) & 0x3;
 	
@@ -37,42 +37,42 @@ static int getCornerHeight(int x, int y, int i, int dir,
 	
 	// Combine region and area codes in order to prevent
 	// border vertices which are in between two areas to be removed. 
-	regs[0] = chf.spans[i].reg | (chf.areas[i] << 16);
+	regs[0] = chf.pCompactSpans[i].reg | (chf.pAreas[i] << 16);
 	
 	if (rcGetCon(s, dir) != RC_NOT_CONNECTED)
 	{
 		const int ax = x + rcGetDirOffsetX(dir);
 		const int ay = y + rcGetDirOffsetY(dir);
-		const int ai = (int)chf.cells[ax+ay*chf.width].index + rcGetCon(s, dir);
-		const rcCompactSpan& as = chf.spans[ai];
+		const int ai = (int)chf.pCompactCells[ax+ay*chf.nWidth].index + rcGetCon(s, dir);
+		const rcCompactSpan& as = chf.pCompactSpans[ai];
 		ch = rcMax(ch, (int)as.y);
-		regs[1] = chf.spans[ai].reg | (chf.areas[ai] << 16);
+		regs[1] = chf.pCompactSpans[ai].reg | (chf.pAreas[ai] << 16);
 		if (rcGetCon(as, dirp) != RC_NOT_CONNECTED)
 		{
 			const int ax2 = ax + rcGetDirOffsetX(dirp);
 			const int ay2 = ay + rcGetDirOffsetY(dirp);
-			const int ai2 = (int)chf.cells[ax2+ay2*chf.width].index + rcGetCon(as, dirp);
-			const rcCompactSpan& as2 = chf.spans[ai2];
+			const int ai2 = (int)chf.pCompactCells[ax2+ay2*chf.nWidth].index + rcGetCon(as, dirp);
+			const rcCompactSpan& as2 = chf.pCompactSpans[ai2];
 			ch = rcMax(ch, (int)as2.y);
-			regs[2] = chf.spans[ai2].reg | (chf.areas[ai2] << 16);
+			regs[2] = chf.pCompactSpans[ai2].reg | (chf.pAreas[ai2] << 16);
 		}
 	}
 	if (rcGetCon(s, dirp) != RC_NOT_CONNECTED)
 	{
 		const int ax = x + rcGetDirOffsetX(dirp);
 		const int ay = y + rcGetDirOffsetY(dirp);
-		const int ai = (int)chf.cells[ax+ay*chf.width].index + rcGetCon(s, dirp);
-		const rcCompactSpan& as = chf.spans[ai];
+		const int ai = (int)chf.pCompactCells[ax+ay*chf.nWidth].index + rcGetCon(s, dirp);
+		const rcCompactSpan& as = chf.pCompactSpans[ai];
 		ch = rcMax(ch, (int)as.y);
-		regs[3] = chf.spans[ai].reg | (chf.areas[ai] << 16);
+		regs[3] = chf.pCompactSpans[ai].reg | (chf.pAreas[ai] << 16);
 		if (rcGetCon(as, dir) != RC_NOT_CONNECTED)
 		{
 			const int ax2 = ax + rcGetDirOffsetX(dir);
 			const int ay2 = ay + rcGetDirOffsetY(dir);
-			const int ai2 = (int)chf.cells[ax2+ay2*chf.width].index + rcGetCon(as, dir);
-			const rcCompactSpan& as2 = chf.spans[ai2];
+			const int ai2 = (int)chf.pCompactCells[ax2+ay2*chf.nWidth].index + rcGetCon(as, dir);
+			const rcCompactSpan& as2 = chf.pCompactSpans[ai2];
 			ch = rcMax(ch, (int)as2.y);
-			regs[2] = chf.spans[ai2].reg | (chf.areas[ai2] << 16);
+			regs[2] = chf.pCompactSpans[ai2].reg | (chf.pAreas[ai2] << 16);
 		}
 	}
 
@@ -112,7 +112,7 @@ static void walkContour(int x, int y, int i,
 	unsigned char startDir = dir;
 	int starti = i;
 	
-	const unsigned char area = chf.areas[i];
+	const unsigned char area = chf.pAreas[i];
 	
 	int iter = 0;
 	while (++iter < 40000)
@@ -132,14 +132,14 @@ static void walkContour(int x, int y, int i,
 				case 2: px++; break;
 			}
 			int r = 0;
-			const rcCompactSpan& s = chf.spans[i];
+			const rcCompactSpan& s = chf.pCompactSpans[i];
 			if (rcGetCon(s, dir) != RC_NOT_CONNECTED)
 			{
 				const int ax = x + rcGetDirOffsetX(dir);
 				const int ay = y + rcGetDirOffsetY(dir);
-				const int ai = (int)chf.cells[ax+ay*chf.width].index + rcGetCon(s, dir);
-				r = (int)chf.spans[ai].reg;
-				if (area != chf.areas[ai])
+				const int ai = (int)chf.pCompactCells[ax+ay*chf.nWidth].index + rcGetCon(s, dir);
+				r = (int)chf.pCompactSpans[ai].reg;
+				if (area != chf.pAreas[ai])
 					isAreaBorder = true;
 			}
 			if (isBorderVertex)
@@ -159,10 +159,10 @@ static void walkContour(int x, int y, int i,
 			int ni = -1;
 			const int nx = x + rcGetDirOffsetX(dir);
 			const int ny = y + rcGetDirOffsetY(dir);
-			const rcCompactSpan& s = chf.spans[i];
+			const rcCompactSpan& s = chf.pCompactSpans[i];
 			if (rcGetCon(s, dir) != RC_NOT_CONNECTED)
 			{
-				const rcCompactCell& nc = chf.cells[nx+ny*chf.width];
+				const rcCompactCell& nc = chf.pCompactCells[nx+ny*chf.nWidth];
 				ni = (int)nc.index + rcGetCon(s, dir);
 			}
 			if (ni == -1)
@@ -245,9 +245,9 @@ static void simplifyContour(rcIntArray& points, rcIntArray& simplified,
 	{
 		// The contour has some portals to other regions.
 		// Add a new point to every location where the region changes.
-		for (int i = 0, ni = points.size()/4; i < ni; ++i)
+		for (int i = 0, ni = points.size() / 4; i < ni; ++i)
 		{
-			int ii = (i+1) % ni;
+			int ii = (i + 1) % ni;
 			const bool differentRegs = (points[i*4+3] & RC_CONTOUR_REG_MASK) != (points[ii*4+3] & RC_CONTOUR_REG_MASK);
 			const bool areaBorders = (points[i*4+3] & RC_AREA_BORDER) != (points[ii*4+3] & RC_AREA_BORDER);
 			if (differentRegs || areaBorders)
@@ -609,39 +609,39 @@ bool rcBuildContours(rcContext* ctx, rcCompactHeightfield& chf,
 {
 	rcAssert(ctx);
 	
-	const int w = chf.width;
-	const int h = chf.height;
-	const int borderSize = chf.borderSize;
+	const int w = chf.nWidth;
+	const int h = chf.nHeight;
+	const int borderSize = chf.nBorderSize;
 	
 	ctx->startTimer(RC_TIMER_BUILD_CONTOURS);
 	
-	rcVcopy(cset.bmin, chf.bmin);
-	rcVcopy(cset.bmax, chf.bmax);
+	rcVcopy(cset.fBMin, chf.fBMin);
+	rcVcopy(cset.fBMax, chf.fBMax);
 	if (borderSize > 0)
 	{
-		// If the heightfield was build with bordersize, remove the offset.
-		const float pad = borderSize*chf.cs;
-		cset.bmin[0] += pad;
-		cset.bmin[2] += pad;
-		cset.bmax[0] -= pad;
-		cset.bmax[2] -= pad;
+		// If the heightfield was built with border size, remove the offset.
+		const float pad = borderSize * chf.fCellSize;
+		cset.fBMin[0] += pad;
+		cset.fBMin[2] += pad;
+		cset.fBMax[0] -= pad;
+		cset.fBMax[2] -= pad;
 	}
-	cset.cs = chf.cs;
-	cset.ch = chf.ch;
-	cset.width = chf.width - chf.borderSize*2;
-	cset.height = chf.height - chf.borderSize*2;
-	cset.borderSize = chf.borderSize;
+	cset.fCellSize = chf.fCellSize;
+	cset.fCellHeight = chf.fCellHeight;
+	cset.nWidth = chf.nWidth - chf.nBorderSize * 2;
+	cset.nHeight = chf.nHeight - chf.nBorderSize * 2;
+	cset.nBorderSize = chf.nBorderSize;
 	
-	int maxContours = rcMax((int)chf.maxRegions, 8);
-	cset.conts = (rcContour*)rcAlloc(sizeof(rcContour)*maxContours, RC_ALLOC_PERM);
-	if (!cset.conts)
+	int maxContours = rcMax((int)chf.uMaxRegions, 8);
+	cset.pContours = (rcContour*)rcAlloc(sizeof(rcContour) * maxContours, RC_ALLOC_PERM);
+	if (!cset.pContours)
 		return false;
-	cset.nconts = 0;
+	cset.nContours = 0;
 	
-	rcScopedDelete<unsigned char> flags = (unsigned char*)rcAlloc(sizeof(unsigned char)*chf.spanCount, RC_ALLOC_TEMP);
+	rcScopedDelete<unsigned char> flags = (unsigned char*)rcAlloc(sizeof(unsigned char) * chf.nSpanCount, RC_ALLOC_TEMP);
 	if (!flags)
 	{
-		ctx->log(RC_LOG_ERROR, "rcBuildContours: Out of memory 'flags' (%d).", chf.spanCount);
+		ctx->log(RC_LOG_ERROR, "rcBuildContours: Out of memory 'flags' (%d).", chf.nSpanCount);
 		return false;
 	}
 	
@@ -652,12 +652,12 @@ bool rcBuildContours(rcContext* ctx, rcCompactHeightfield& chf,
 	{
 		for (int x = 0; x < w; ++x)
 		{
-			const rcCompactCell& c = chf.cells[x+y*w];
-			for (int i = (int)c.index, ni = (int)(c.index+c.count); i < ni; ++i)
+			const rcCompactCell& c = chf.pCompactCells[x + y * w];
+			for (int i = (int)c.index, ni = (int)(c.index + c.count); i < ni; ++i)
 			{
 				unsigned char res = 0;
-				const rcCompactSpan& s = chf.spans[i];
-				if (!chf.spans[i].reg || (chf.spans[i].reg & RC_BORDER_REG))
+				const rcCompactSpan& s = chf.pCompactSpans[i];
+				if (!chf.pCompactSpans[i].reg || (chf.pCompactSpans[i].reg & RC_BORDER_REG))
 				{
 					flags[i] = 0;
 					continue;
@@ -669,10 +669,10 @@ bool rcBuildContours(rcContext* ctx, rcCompactHeightfield& chf,
 					{
 						const int ax = x + rcGetDirOffsetX(dir);
 						const int ay = y + rcGetDirOffsetY(dir);
-						const int ai = (int)chf.cells[ax+ay*w].index + rcGetCon(s, dir);
-						r = chf.spans[ai].reg;
+						const int ai = (int)chf.pCompactCells[ax + ay * w].index + rcGetCon(s, dir);
+						r = chf.pCompactSpans[ai].reg;
 					}
-					if (r == chf.spans[i].reg)
+					if (r == chf.pCompactSpans[i].reg)
 						res |= (1 << dir);
 				}
 				flags[i] = res ^ 0xf; // Inverse, mark non connected edges.
@@ -689,7 +689,7 @@ bool rcBuildContours(rcContext* ctx, rcCompactHeightfield& chf,
 	{
 		for (int x = 0; x < w; ++x)
 		{
-			const rcCompactCell& c = chf.cells[x+y*w];
+			const rcCompactCell& c = chf.pCompactCells[x+y*w];
 			for (int i = (int)c.index, ni = (int)(c.index+c.count); i < ni; ++i)
 			{
 				if (flags[i] == 0 || flags[i] == 0xf)
@@ -697,10 +697,10 @@ bool rcBuildContours(rcContext* ctx, rcCompactHeightfield& chf,
 					flags[i] = 0;
 					continue;
 				}
-				const unsigned short reg = chf.spans[i].reg;
+				const unsigned short reg = chf.pCompactSpans[i].reg;
 				if (!reg || (reg & RC_BORDER_REG))
 					continue;
-				const unsigned char area = chf.areas[i];
+				const unsigned char area = chf.pAreas[i];
 				
 				verts.resize(0);
 				simplified.resize(0);
@@ -717,63 +717,63 @@ bool rcBuildContours(rcContext* ctx, rcCompactHeightfield& chf,
 
 				// Store region->contour remap info.
 				// Create contour.
-				if (simplified.size()/4 >= 3)
+				if (simplified.size() / 4 >= 3)
 				{
-					if (cset.nconts >= maxContours)
+					if (cset.nContours >= maxContours)
 					{
 						// Allocate more contours.
 						// This can happen when there are tiny holes in the heightfield.
 						const int oldMax = maxContours;
 						maxContours *= 2;
-						rcContour* newConts = (rcContour*)rcAlloc(sizeof(rcContour)*maxContours, RC_ALLOC_PERM);
-						for (int j = 0; j < cset.nconts; ++j)
+						rcContour* newConts = (rcContour*)rcAlloc(sizeof(rcContour) * maxContours, RC_ALLOC_PERM);
+						for (int j = 0; j < cset.nContours; ++j)
 						{
-							newConts[j] = cset.conts[j];
+							newConts[j] = cset.pContours[j];
 							// Reset source pointers to prevent data deletion.
-							cset.conts[j].verts = 0;
-							cset.conts[j].rverts = 0;
+							cset.pContours[j].verts = 0;
+							cset.pContours[j].rverts = 0;
 						}
-						rcFree(cset.conts);
-						cset.conts = newConts;
+						rcFree(cset.pContours);
+						cset.pContours = newConts;
 					
 						ctx->log(RC_LOG_WARNING, "rcBuildContours: Expanding max contours from %d to %d.", oldMax, maxContours);
 					}
 						
-					rcContour* cont = &cset.conts[cset.nconts++];
+					rcContour* cont = &cset.pContours[cset.nContours++];
 					
-					cont->nverts = simplified.size()/4;
-					cont->verts = (int*)rcAlloc(sizeof(int)*cont->nverts*4, RC_ALLOC_PERM);
+					cont->nverts = simplified.size() / 4;
+					cont->verts = (int*)rcAlloc(sizeof(int) * cont->nverts * 4, RC_ALLOC_PERM);
 					if (!cont->verts)
 					{
 						ctx->log(RC_LOG_ERROR, "rcBuildContours: Out of memory 'verts' (%d).", cont->nverts);
 						return false;
 					}
-					memcpy(cont->verts, &simplified[0], sizeof(int)*cont->nverts*4);
+					memcpy(cont->verts, &simplified[0], sizeof(int) * cont->nverts * 4);
 					if (borderSize > 0)
 					{
 						// If the heightfield was build with bordersize, remove the offset.
 						for (int j = 0; j < cont->nverts; ++j)
 						{
-							int* v = &cont->verts[j*4];
+							int* v = &cont->verts[j * 4];
 							v[0] -= borderSize;
 							v[2] -= borderSize;
 						}
 					}
 					
-					cont->nrverts = verts.size()/4;
-					cont->rverts = (int*)rcAlloc(sizeof(int)*cont->nrverts*4, RC_ALLOC_PERM);
+					cont->nrverts = verts.size() / 4;
+					cont->rverts = (int*)rcAlloc(sizeof(int) * cont->nrverts * 4, RC_ALLOC_PERM);
 					if (!cont->rverts)
 					{
 						ctx->log(RC_LOG_ERROR, "rcBuildContours: Out of memory 'rverts' (%d).", cont->nrverts);
 						return false;
 					}
-					memcpy(cont->rverts, &verts[0], sizeof(int)*cont->nrverts*4);
+					memcpy(cont->rverts, &verts[0], sizeof(int) * cont->nrverts * 4);
 					if (borderSize > 0)
 					{
 						// If the heightfield was build with bordersize, remove the offset.
 						for (int j = 0; j < cont->nrverts; ++j)
 						{
-							int* v = &cont->rverts[j*4];
+							int* v = &cont->rverts[j * 4];
 							v[0] -= borderSize;
 							v[2] -= borderSize;
 						}
@@ -800,21 +800,21 @@ bool rcBuildContours(rcContext* ctx, rcCompactHeightfield& chf,
 	// Check and merge droppings.
 	// Sometimes the previous algorithms can fail and create several contours
 	// per area. This pass will try to merge the holes into the main region.
-	for (int i = 0; i < cset.nconts; ++i)
+	for (int i = 0; i < cset.nContours; ++i)
 	{
-		rcContour& cont = cset.conts[i];
+		rcContour& cont = cset.pContours[i];
 		// Check if the contour is would backwards.
 		if (calcAreaOfPolygon2D(cont.verts, cont.nverts) < 0)
 		{
 			// Find another contour which has the same region ID.
 			int mergeIdx = -1;
-			for (int j = 0; j < cset.nconts; ++j)
+			for (int j = 0; j < cset.nContours; ++j)
 			{
 				if (i == j) continue;
-				if (cset.conts[j].nverts && cset.conts[j].reg == cont.reg)
+				if (cset.pContours[j].nverts && cset.pContours[j].reg == cont.reg)
 				{
 					// Make sure the polygon is correctly oriented.
-					if (calcAreaOfPolygon2D(cset.conts[j].verts, cset.conts[j].nverts))
+					if (calcAreaOfPolygon2D(cset.pContours[j].verts, cset.pContours[j].nverts))
 					{
 						mergeIdx = j;
 						break;
@@ -827,7 +827,7 @@ bool rcBuildContours(rcContext* ctx, rcCompactHeightfield& chf,
 			}
 			else
 			{
-				rcContour& mcont = cset.conts[mergeIdx];
+				rcContour& mcont = cset.pContours[mergeIdx];
 				// Merge by closest points.
 				int ia = 0, ib = 0;
 				getClosestIndices(mcont.verts, mcont.nverts, cont.verts, cont.nverts, ia, ib);

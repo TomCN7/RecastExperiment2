@@ -907,30 +907,30 @@ unsigned char* Sample_TileMesh::buildTileMesh(const int tx, const int ty, const 
 		
 	// Init build configuration from GUI
 	memset(&m_cfg, 0, sizeof(m_cfg));
-	m_cfg.cs = m_cellSize;
-	m_cfg.ch = m_cellHeight;
-	m_cfg.walkableSlopeAngle = m_agentMaxSlope;
-	m_cfg.walkableHeight = (int)ceilf(m_agentHeight / m_cfg.ch);
-	m_cfg.walkableClimb = (int)floorf(m_agentMaxClimb / m_cfg.ch);
-	m_cfg.walkableRadius = (int)ceilf(m_agentRadius / m_cfg.cs);
-	m_cfg.maxEdgeLen = (int)(m_edgeMaxLen / m_cellSize);
-	m_cfg.maxSimplificationError = m_edgeMaxError;
-	m_cfg.minRegionArea = (int)rcSqr(m_regionMinSize);		// Note: area = size*size
-	m_cfg.mergeRegionArea = (int)rcSqr(m_regionMergeSize);	// Note: area = size*size
-	m_cfg.maxVertsPerPoly = (int)m_vertsPerPoly;
-	m_cfg.tileSize = (int)m_tileSize;
-	m_cfg.borderSize = m_cfg.walkableRadius + 3; // Reserve enough padding.
-	m_cfg.width = m_cfg.tileSize + m_cfg.borderSize*2;
-	m_cfg.height = m_cfg.tileSize + m_cfg.borderSize*2;
-	m_cfg.detailSampleDist = m_detailSampleDist < 0.9f ? 0 : m_cellSize * m_detailSampleDist;
-	m_cfg.detailSampleMaxError = m_cellHeight * m_detailSampleMaxError;
+	m_cfg.fCellSize = m_cellSize;
+	m_cfg.fCellHeight = m_cellHeight;
+	m_cfg.fWalkableSlopeAngle = m_agentMaxSlope;
+	m_cfg.nWalkableHeight = (int)ceilf(m_agentHeight / m_cfg.fCellHeight);
+	m_cfg.nWalkableClimb = (int)floorf(m_agentMaxClimb / m_cfg.fCellHeight);
+	m_cfg.nWalkableRadius = (int)ceilf(m_agentRadius / m_cfg.fCellSize);
+	m_cfg.nMaxEdgeLen = (int)(m_edgeMaxLen / m_cellSize);
+	m_cfg.fMaxSimplificationError = m_edgeMaxError;
+	m_cfg.nMinRegionArea = (int)rcSqr(m_regionMinSize);		// Note: area = size*size
+	m_cfg.nMergeRegionArea = (int)rcSqr(m_regionMergeSize);	// Note: area = size*size
+	m_cfg.nMaxVertsPerPoly = (int)m_vertsPerPoly;
+	m_cfg.nTileSize = (int)m_tileSize;
+	m_cfg.nBorderSize = m_cfg.nWalkableRadius + 3; // Reserve enough padding.
+	m_cfg.nWidth = m_cfg.nTileSize + m_cfg.nBorderSize*2;
+	m_cfg.nHeight = m_cfg.nTileSize + m_cfg.nBorderSize*2;
+	m_cfg.fDetailSampleDist = m_detailSampleDist < 0.9f ? 0 : m_cellSize * m_detailSampleDist;
+	m_cfg.fDetailSampleMaxError = m_cellHeight * m_detailSampleMaxError;
 	
-	rcVcopy(m_cfg.bmin, bmin);
-	rcVcopy(m_cfg.bmax, bmax);
-	m_cfg.bmin[0] -= m_cfg.borderSize*m_cfg.cs;
-	m_cfg.bmin[2] -= m_cfg.borderSize*m_cfg.cs;
-	m_cfg.bmax[0] += m_cfg.borderSize*m_cfg.cs;
-	m_cfg.bmax[2] += m_cfg.borderSize*m_cfg.cs;
+	rcVcopy(m_cfg.fBMin, bmin);
+	rcVcopy(m_cfg.fBMax, bmax);
+	m_cfg.fBMin[0] -= m_cfg.nBorderSize*m_cfg.fCellSize;
+	m_cfg.fBMin[2] -= m_cfg.nBorderSize*m_cfg.fCellSize;
+	m_cfg.fBMax[0] += m_cfg.nBorderSize*m_cfg.fCellSize;
+	m_cfg.fBMax[2] += m_cfg.nBorderSize*m_cfg.fCellSize;
 	
 	// Reset build times gathering.
 	m_ctx->resetTimers();
@@ -939,7 +939,7 @@ unsigned char* Sample_TileMesh::buildTileMesh(const int tx, const int ty, const 
 	m_ctx->startTimer(RC_TIMER_TOTAL);
 	
 	m_ctx->log(RC_LOG_PROGRESS, "Building navigation:");
-	m_ctx->log(RC_LOG_PROGRESS, " - %d x %d cells", m_cfg.width, m_cfg.height);
+	m_ctx->log(RC_LOG_PROGRESS, " - %d x %d cells", m_cfg.nWidth, m_cfg.nHeight);
 	m_ctx->log(RC_LOG_PROGRESS, " - %.1fK verts, %.1fK tris", nverts/1000.0f, ntris/1000.0f);
 	
 	// Allocate voxel heightfield where we rasterize our input data to.
@@ -949,7 +949,7 @@ unsigned char* Sample_TileMesh::buildTileMesh(const int tx, const int ty, const 
 		m_ctx->log(RC_LOG_ERROR, "buildNavigation: Out of memory 'solid'.");
 		return 0;
 	}
-	if (!rcCreateHeightfield(m_ctx, *m_solid, m_cfg.width, m_cfg.height, m_cfg.bmin, m_cfg.bmax, m_cfg.cs, m_cfg.ch))
+	if (!rcCreateHeightfield(m_ctx, *m_solid, m_cfg.nWidth, m_cfg.nHeight, m_cfg.fBMin, m_cfg.fBMax, m_cfg.fCellSize, m_cfg.fCellHeight))
 	{
 		m_ctx->log(RC_LOG_ERROR, "buildNavigation: Could not create solid heightfield.");
 		return 0;
@@ -966,10 +966,10 @@ unsigned char* Sample_TileMesh::buildTileMesh(const int tx, const int ty, const 
 	}
 	
 	float tbmin[2], tbmax[2];
-	tbmin[0] = m_cfg.bmin[0];
-	tbmin[1] = m_cfg.bmin[2];
-	tbmax[0] = m_cfg.bmax[0];
-	tbmax[1] = m_cfg.bmax[2];
+	tbmin[0] = m_cfg.fBMin[0];
+	tbmin[1] = m_cfg.fBMin[2];
+	tbmax[0] = m_cfg.fBMax[0];
+	tbmax[1] = m_cfg.fBMax[2];
 	int cid[512];// TODO: Make grow when returning too many items.
 	const int ncid = rcGetChunksOverlappingRect(chunkyMesh, tbmin, tbmax, cid, 512);
 	if (!ncid)
@@ -986,10 +986,10 @@ unsigned char* Sample_TileMesh::buildTileMesh(const int tx, const int ty, const 
 		m_tileTriCount += nctris;
 		
 		memset(m_triareas, 0, nctris*sizeof(unsigned char));
-		rcMarkWalkableTriangles(m_ctx, m_cfg.walkableSlopeAngle,
+		rcMarkWalkableTriangles(m_ctx, m_cfg.fWalkableSlopeAngle,
 								verts, nverts, ctris, nctris, m_triareas);
 		
-		rcRasterizeTriangles(m_ctx, verts, nverts, ctris, m_triareas, nctris, *m_solid, m_cfg.walkableClimb);
+		rcRasterizeTriangles(m_ctx, verts, nverts, ctris, m_triareas, nctris, *m_solid, m_cfg.nWalkableClimb);
 	}
 	
 	if (!m_keepInterResults)
@@ -1001,9 +1001,9 @@ unsigned char* Sample_TileMesh::buildTileMesh(const int tx, const int ty, const 
 	// Once all geometry is rasterized, we do initial pass of filtering to
 	// remove unwanted overhangs caused by the conservative rasterization
 	// as well as filter spans where the character cannot possibly stand.
-	rcFilterLowHangingWalkableObstacles(m_ctx, m_cfg.walkableClimb, *m_solid);
-	rcFilterLedgeSpans(m_ctx, m_cfg.walkableHeight, m_cfg.walkableClimb, *m_solid);
-	rcFilterWalkableLowHeightSpans(m_ctx, m_cfg.walkableHeight, *m_solid);
+	rcFilterLowHangingWalkableObstacles(m_ctx, m_cfg.nWalkableClimb, *m_solid);
+	rcFilterLedgeSpans(m_ctx, m_cfg.nWalkableHeight, m_cfg.nWalkableClimb, *m_solid);
+	rcFilterWalkableLowHeightSpans(m_ctx, m_cfg.nWalkableHeight, *m_solid);
 	
 	// Compact the heightfield so that it is faster to handle from now on.
 	// This will result more cache coherent data as well as the neighbours
@@ -1014,7 +1014,7 @@ unsigned char* Sample_TileMesh::buildTileMesh(const int tx, const int ty, const 
 		m_ctx->log(RC_LOG_ERROR, "buildNavigation: Out of memory 'chf'.");
 		return 0;
 	}
-	if (!rcBuildCompactHeightfield(m_ctx, m_cfg.walkableHeight, m_cfg.walkableClimb, *m_solid, *m_chf))
+	if (!rcBuildCompactHeightfield(m_ctx, m_cfg.nWalkableHeight, m_cfg.nWalkableClimb, *m_solid, *m_chf))
 	{
 		m_ctx->log(RC_LOG_ERROR, "buildNavigation: Could not build compact data.");
 		return 0;
@@ -1027,7 +1027,7 @@ unsigned char* Sample_TileMesh::buildTileMesh(const int tx, const int ty, const 
 	}
 
 	// Erode the walkable area by agent radius.
-	if (!rcErodeWalkableArea(m_ctx, m_cfg.walkableRadius, *m_chf))
+	if (!rcErodeWalkableArea(m_ctx, m_cfg.nWalkableRadius, *m_chf))
 	{
 		m_ctx->log(RC_LOG_ERROR, "buildNavigation: Could not erode.");
 		return 0;
@@ -1041,7 +1041,7 @@ unsigned char* Sample_TileMesh::buildTileMesh(const int tx, const int ty, const 
 	if (m_monotonePartitioning)
 	{
 		// Partition the walkable surface into simple regions without holes.
-		if (!rcBuildRegionsMonotone(m_ctx, *m_chf, m_cfg.borderSize, m_cfg.minRegionArea, m_cfg.mergeRegionArea))
+		if (!rcBuildRegionsMonotone(m_ctx, *m_chf, m_cfg.nBorderSize, m_cfg.nMinRegionArea, m_cfg.nMergeRegionArea))
 		{
 			m_ctx->log(RC_LOG_ERROR, "buildNavigation: Could not build regions.");
 			return 0;
@@ -1057,7 +1057,7 @@ unsigned char* Sample_TileMesh::buildTileMesh(const int tx, const int ty, const 
 		}
 		
 		// Partition the walkable surface into simple regions without holes.
-		if (!rcBuildRegions(m_ctx, *m_chf, m_cfg.borderSize, m_cfg.minRegionArea, m_cfg.mergeRegionArea))
+		if (!rcBuildRegions(m_ctx, *m_chf, m_cfg.nBorderSize, m_cfg.nMinRegionArea, m_cfg.nMergeRegionArea))
 		{
 			m_ctx->log(RC_LOG_ERROR, "buildNavigation: Could not build regions.");
 			return 0;
@@ -1071,13 +1071,13 @@ unsigned char* Sample_TileMesh::buildTileMesh(const int tx, const int ty, const 
 		m_ctx->log(RC_LOG_ERROR, "buildNavigation: Out of memory 'cset'.");
 		return 0;
 	}
-	if (!rcBuildContours(m_ctx, *m_chf, m_cfg.maxSimplificationError, m_cfg.maxEdgeLen, *m_cset))
+	if (!rcBuildContours(m_ctx, *m_chf, m_cfg.fMaxSimplificationError, m_cfg.nMaxEdgeLen, *m_cset))
 	{
 		m_ctx->log(RC_LOG_ERROR, "buildNavigation: Could not create contours.");
 		return 0;
 	}
 	
-	if (m_cset->nconts == 0)
+	if (m_cset->nContours == 0)
 	{
 		return 0;
 	}
@@ -1089,7 +1089,7 @@ unsigned char* Sample_TileMesh::buildTileMesh(const int tx, const int ty, const 
 		m_ctx->log(RC_LOG_ERROR, "buildNavigation: Out of memory 'pmesh'.");
 		return 0;
 	}
-	if (!rcBuildPolyMesh(m_ctx, *m_cset, m_cfg.maxVertsPerPoly, *m_pmesh))
+	if (!rcBuildPolyMesh(m_ctx, *m_cset, m_cfg.nMaxVertsPerPoly, *m_pmesh))
 	{
 		m_ctx->log(RC_LOG_ERROR, "buildNavigation: Could not triangulate contours.");
 		return 0;
@@ -1104,7 +1104,7 @@ unsigned char* Sample_TileMesh::buildTileMesh(const int tx, const int ty, const 
 	}
 	
 	if (!rcBuildPolyMeshDetail(m_ctx, *m_pmesh, *m_chf,
-							   m_cfg.detailSampleDist, m_cfg.detailSampleMaxError,
+							   m_cfg.fDetailSampleDist, m_cfg.fDetailSampleMaxError,
 							   *m_dmesh))
 	{
 		m_ctx->log(RC_LOG_ERROR, "buildNavigation: Could build polymesh detail.");
@@ -1121,7 +1121,7 @@ unsigned char* Sample_TileMesh::buildTileMesh(const int tx, const int ty, const 
 	
 	unsigned char* navData = 0;
 	int navDataSize = 0;
-	if (m_cfg.maxVertsPerPoly <= DT_VERTS_PER_POLYGON)
+	if (m_cfg.nMaxVertsPerPoly <= DT_VERTS_PER_POLYGON)
 	{
 		if (m_pmesh->nverts >= 0xffff)
 		{
@@ -1181,8 +1181,8 @@ unsigned char* Sample_TileMesh::buildTileMesh(const int tx, const int ty, const 
 		params.tileLayer = 0;
 		rcVcopy(params.bmin, m_pmesh->bmin);
 		rcVcopy(params.bmax, m_pmesh->bmax);
-		params.cs = m_cfg.cs;
-		params.ch = m_cfg.ch;
+		params.cs = m_cfg.fCellSize;
+		params.ch = m_cfg.fCellHeight;
 		params.buildBvTree = true;
 		
 		if (!dtCreateNavMeshData(&params, &navData, &navDataSize))

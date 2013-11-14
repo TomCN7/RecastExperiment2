@@ -153,21 +153,21 @@ bool duDumpContourSet(struct rcContourSet& cset, duFileIO* io)
 	io->write(&CSET_MAGIC, sizeof(CSET_MAGIC));
 	io->write(&CSET_VERSION, sizeof(CSET_VERSION));
 
-	io->write(&cset.nconts, sizeof(cset.nconts));
+	io->write(&cset.nContours, sizeof(cset.nContours));
 	
-	io->write(cset.bmin, sizeof(cset.bmin));
-	io->write(cset.bmax, sizeof(cset.bmax));
+	io->write(cset.fBMin, sizeof(cset.fBMin));
+	io->write(cset.fBMax, sizeof(cset.fBMax));
 	
-	io->write(&cset.cs, sizeof(cset.cs));
-	io->write(&cset.ch, sizeof(cset.ch));
+	io->write(&cset.fCellSize, sizeof(cset.fCellSize));
+	io->write(&cset.fCellHeight, sizeof(cset.fCellHeight));
 
-	io->write(&cset.width, sizeof(cset.width));
-	io->write(&cset.height, sizeof(cset.height));
-	io->write(&cset.borderSize, sizeof(cset.borderSize));
+	io->write(&cset.nWidth, sizeof(cset.nWidth));
+	io->write(&cset.nHeight, sizeof(cset.nHeight));
+	io->write(&cset.nBorderSize, sizeof(cset.nBorderSize));
 
-	for (int i = 0; i < cset.nconts; ++i)
+	for (int i = 0; i < cset.nContours; ++i)
 	{
-		const rcContour& cont = cset.conts[i];
+		const rcContour& cont = cset.pContours[i];
 		io->write(&cont.nverts, sizeof(cont.nverts));
 		io->write(&cont.nrverts, sizeof(cont.nrverts));
 		io->write(&cont.reg, sizeof(cont.reg));
@@ -209,29 +209,29 @@ bool duReadContourSet(struct rcContourSet& cset, duFileIO* io)
 		return false;
 	}
 	
-	io->read(&cset.nconts, sizeof(cset.nconts));
+	io->read(&cset.nContours, sizeof(cset.nContours));
 
-	cset.conts = (rcContour*)rcAlloc(sizeof(rcContour)*cset.nconts, RC_ALLOC_PERM);
-	if (!cset.conts)
+	cset.pContours = (rcContour*)rcAlloc(sizeof(rcContour)*cset.nContours, RC_ALLOC_PERM);
+	if (!cset.pContours)
 	{
-		printf("duReadContourSet: Could not alloc contours (%d)\n", cset.nconts);
+		printf("duReadContourSet: Could not alloc contours (%d)\n", cset.nContours);
 		return false;
 	}
-	memset(cset.conts, 0, sizeof(rcContour)*cset.nconts);
+	memset(cset.pContours, 0, sizeof(rcContour)*cset.nContours);
 	
-	io->read(cset.bmin, sizeof(cset.bmin));
-	io->read(cset.bmax, sizeof(cset.bmax));
+	io->read(cset.fBMin, sizeof(cset.fBMin));
+	io->read(cset.fBMax, sizeof(cset.fBMax));
 	
-	io->read(&cset.cs, sizeof(cset.cs));
-	io->read(&cset.ch, sizeof(cset.ch));
+	io->read(&cset.fCellSize, sizeof(cset.fCellSize));
+	io->read(&cset.fCellHeight, sizeof(cset.fCellHeight));
 	
-	io->read(&cset.width, sizeof(cset.width));
-	io->read(&cset.height, sizeof(cset.height));
-	io->read(&cset.borderSize, sizeof(cset.borderSize));
+	io->read(&cset.nWidth, sizeof(cset.nWidth));
+	io->read(&cset.nHeight, sizeof(cset.nHeight));
+	io->read(&cset.nBorderSize, sizeof(cset.nBorderSize));
 	
-	for (int i = 0; i < cset.nconts; ++i)
+	for (int i = 0; i < cset.nContours; ++i)
 	{
-		rcContour& cont = cset.conts[i];
+		rcContour& cont = cset.pContours[i];
 		io->read(&cont.nverts, sizeof(cont.nverts));
 		io->read(&cont.nrverts, sizeof(cont.nrverts));
 		io->read(&cont.reg, sizeof(cont.reg));
@@ -277,39 +277,39 @@ bool duDumpCompactHeightfield(struct rcCompactHeightfield& chf, duFileIO* io)
 	io->write(&CHF_MAGIC, sizeof(CHF_MAGIC));
 	io->write(&CHF_VERSION, sizeof(CHF_VERSION));
 	
-	io->write(&chf.width, sizeof(chf.width));
-	io->write(&chf.height, sizeof(chf.height));
-	io->write(&chf.spanCount, sizeof(chf.spanCount));
+	io->write(&chf.nWidth, sizeof(chf.nWidth));
+	io->write(&chf.nHeight, sizeof(chf.nHeight));
+	io->write(&chf.nSpanCount, sizeof(chf.nSpanCount));
 
-	io->write(&chf.walkableHeight, sizeof(chf.walkableHeight));
-	io->write(&chf.walkableClimb, sizeof(chf.walkableClimb));
-	io->write(&chf.borderSize, sizeof(chf.borderSize));
+	io->write(&chf.nWalkableHeight, sizeof(chf.nWalkableHeight));
+	io->write(&chf.nWalkableClimb, sizeof(chf.nWalkableClimb));
+	io->write(&chf.nBorderSize, sizeof(chf.nBorderSize));
 
-	io->write(&chf.maxDistance, sizeof(chf.maxDistance));
-	io->write(&chf.maxRegions, sizeof(chf.maxRegions));
+	io->write(&chf.uMaxDistance, sizeof(chf.uMaxDistance));
+	io->write(&chf.uMaxRegions, sizeof(chf.uMaxRegions));
 
-	io->write(chf.bmin, sizeof(chf.bmin));
-	io->write(chf.bmax, sizeof(chf.bmax));
+	io->write(chf.fBMin, sizeof(chf.fBMin));
+	io->write(chf.fBMax, sizeof(chf.fBMax));
 
-	io->write(&chf.cs, sizeof(chf.cs));
-	io->write(&chf.ch, sizeof(chf.ch));
+	io->write(&chf.fCellSize, sizeof(chf.fCellSize));
+	io->write(&chf.fCellHeight, sizeof(chf.fCellHeight));
 
 	int tmp = 0;
-	if (chf.cells) tmp |= 1;
-	if (chf.spans) tmp |= 2;
-	if (chf.dist) tmp |= 4;
-	if (chf.areas) tmp |= 8;
+	if (chf.pCompactCells) tmp |= 1;
+	if (chf.pCompactSpans) tmp |= 2;
+	if (chf.pBorderDist) tmp |= 4;
+	if (chf.pAreas) tmp |= 8;
 
 	io->write(&tmp, sizeof(tmp));
 
-	if (chf.cells)
-		io->write(chf.cells, sizeof(rcCompactCell)*chf.width*chf.height);
-	if (chf.spans)
-		io->write(chf.spans, sizeof(rcCompactSpan)*chf.spanCount);
-	if (chf.dist)
-		io->write(chf.dist, sizeof(unsigned short)*chf.spanCount);
-	if (chf.areas)
-		io->write(chf.areas, sizeof(unsigned char)*chf.spanCount);
+	if (chf.pCompactCells)
+		io->write(chf.pCompactCells, sizeof(rcCompactCell)*chf.nWidth*chf.nHeight);
+	if (chf.pCompactSpans)
+		io->write(chf.pCompactSpans, sizeof(rcCompactSpan)*chf.nSpanCount);
+	if (chf.pBorderDist)
+		io->write(chf.pBorderDist, sizeof(unsigned short)*chf.nSpanCount);
+	if (chf.pAreas)
+		io->write(chf.pAreas, sizeof(unsigned char)*chf.nSpanCount);
 
 	return true;
 }
@@ -344,65 +344,65 @@ bool duReadCompactHeightfield(struct rcCompactHeightfield& chf, duFileIO* io)
 		return false;
 	}
 	
-	io->read(&chf.width, sizeof(chf.width));
-	io->read(&chf.height, sizeof(chf.height));
-	io->read(&chf.spanCount, sizeof(chf.spanCount));
+	io->read(&chf.nWidth, sizeof(chf.nWidth));
+	io->read(&chf.nHeight, sizeof(chf.nHeight));
+	io->read(&chf.nSpanCount, sizeof(chf.nSpanCount));
 	
-	io->read(&chf.walkableHeight, sizeof(chf.walkableHeight));
-	io->read(&chf.walkableClimb, sizeof(chf.walkableClimb));
-	io->write(&chf.borderSize, sizeof(chf.borderSize));
+	io->read(&chf.nWalkableHeight, sizeof(chf.nWalkableHeight));
+	io->read(&chf.nWalkableClimb, sizeof(chf.nWalkableClimb));
+	io->write(&chf.nBorderSize, sizeof(chf.nBorderSize));
 
-	io->read(&chf.maxDistance, sizeof(chf.maxDistance));
-	io->read(&chf.maxRegions, sizeof(chf.maxRegions));
+	io->read(&chf.uMaxDistance, sizeof(chf.uMaxDistance));
+	io->read(&chf.uMaxRegions, sizeof(chf.uMaxRegions));
 	
-	io->read(chf.bmin, sizeof(chf.bmin));
-	io->read(chf.bmax, sizeof(chf.bmax));
+	io->read(chf.fBMin, sizeof(chf.fBMin));
+	io->read(chf.fBMax, sizeof(chf.fBMax));
 	
-	io->read(&chf.cs, sizeof(chf.cs));
-	io->read(&chf.ch, sizeof(chf.ch));
+	io->read(&chf.fCellSize, sizeof(chf.fCellSize));
+	io->read(&chf.fCellHeight, sizeof(chf.fCellHeight));
 	
 	int tmp = 0;
 	io->read(&tmp, sizeof(tmp));
 	
 	if (tmp & 1)
 	{
-		chf.cells = (rcCompactCell*)rcAlloc(sizeof(rcCompactCell)*chf.width*chf.height, RC_ALLOC_PERM);
-		if (!chf.cells)
+		chf.pCompactCells = (rcCompactCell*)rcAlloc(sizeof(rcCompactCell)*chf.nWidth*chf.nHeight, RC_ALLOC_PERM);
+		if (!chf.pCompactCells)
 		{
-			printf("duReadCompactHeightfield: Could not alloc cells (%d)\n", chf.width*chf.height);
+			printf("duReadCompactHeightfield: Could not alloc cells (%d)\n", chf.nWidth*chf.nHeight);
 			return false;
 		}
-		io->read(chf.cells, sizeof(rcCompactCell)*chf.width*chf.height);
+		io->read(chf.pCompactCells, sizeof(rcCompactCell)*chf.nWidth*chf.nHeight);
 	}
 	if (tmp & 2)
 	{
-		chf.spans = (rcCompactSpan*)rcAlloc(sizeof(rcCompactSpan)*chf.spanCount, RC_ALLOC_PERM);
-		if (!chf.spans)
+		chf.pCompactSpans = (rcCompactSpan*)rcAlloc(sizeof(rcCompactSpan)*chf.nSpanCount, RC_ALLOC_PERM);
+		if (!chf.pCompactSpans)
 		{
-			printf("duReadCompactHeightfield: Could not alloc spans (%d)\n", chf.spanCount);
+			printf("duReadCompactHeightfield: Could not alloc spans (%d)\n", chf.nSpanCount);
 			return false;
 		}
-		io->read(chf.spans, sizeof(rcCompactSpan)*chf.spanCount);
+		io->read(chf.pCompactSpans, sizeof(rcCompactSpan)*chf.nSpanCount);
 	}
 	if (tmp & 4)
 	{
-		chf.dist = (unsigned short*)rcAlloc(sizeof(unsigned short)*chf.spanCount, RC_ALLOC_PERM);
-		if (!chf.dist)
+		chf.pBorderDist = (unsigned short*)rcAlloc(sizeof(unsigned short)*chf.nSpanCount, RC_ALLOC_PERM);
+		if (!chf.pBorderDist)
 		{
-			printf("duReadCompactHeightfield: Could not alloc dist (%d)\n", chf.spanCount);
+			printf("duReadCompactHeightfield: Could not alloc dist (%d)\n", chf.nSpanCount);
 			return false;
 		}
-		io->read(chf.dist, sizeof(unsigned short)*chf.spanCount);
+		io->read(chf.pBorderDist, sizeof(unsigned short)*chf.nSpanCount);
 	}
 	if (tmp & 8)
 	{
-		chf.areas = (unsigned char*)rcAlloc(sizeof(unsigned char)*chf.spanCount, RC_ALLOC_PERM);
-		if (!chf.areas)
+		chf.pAreas = (unsigned char*)rcAlloc(sizeof(unsigned char)*chf.nSpanCount, RC_ALLOC_PERM);
+		if (!chf.pAreas)
 		{
-			printf("duReadCompactHeightfield: Could not alloc areas (%d)\n", chf.spanCount);
+			printf("duReadCompactHeightfield: Could not alloc areas (%d)\n", chf.nSpanCount);
 			return false;
 		}
-		io->read(chf.areas, sizeof(unsigned char)*chf.spanCount);
+		io->read(chf.pAreas, sizeof(unsigned char)*chf.nSpanCount);
 	}
 	
 	return true;

@@ -176,22 +176,21 @@ static bool canMerge(unsigned char oldRegId, unsigned char newRegId, const dtLay
 }
 
 
-dtStatus dtBuildTileCacheRegions(dtTileCacheAlloc* alloc,
-								 dtTileCacheLayer& layer,
-								 const int walkableClimb)
+dtStatus dtBuildTileCacheRegions(
+    dtTileCacheAlloc* alloc, dtTileCacheLayer& layer, const int walkableClimb)
 {
 	dtAssert(alloc);
 	
 	const int w = (int)layer.header->width;
 	const int h = (int)layer.header->height;
 	
-	memset(layer.regs,0xff,sizeof(unsigned char)*w*h);
+	memset(layer.regs, 0xff, sizeof(unsigned char) * w * h);
 	
 	const int nsweeps = w;
 	dtFixedArray<dtLayerSweepSpan> sweeps(alloc, nsweeps);
 	if (!sweeps)
 		return DT_FAILURE | DT_OUT_OF_MEMORY;
-	memset(sweeps,0,sizeof(dtLayerSweepSpan)*nsweeps);
+	memset(sweeps, 0, sizeof(dtLayerSweepSpan) * nsweeps);
 	
 	// Partition walkable area into monotone regions.
 	unsigned char prevCount[256];
@@ -200,12 +199,14 @@ dtStatus dtBuildTileCacheRegions(dtTileCacheAlloc* alloc,
 	for (int y = 0; y < h; ++y)
 	{
 		if (regId > 0)
-			memset(prevCount,0,sizeof(unsigned char)*regId);
+			memset(prevCount, 0, sizeof(unsigned char) * regId);
+
 		unsigned char sweepId = 0;
 		
 		for (int x = 0; x < w; ++x)
 		{
 			const int idx = x + y*w;
+
 			if (layer.areas[idx] == DT_TILECACHE_NULL_AREA) continue;
 			
 			unsigned char sid = 0xff;
@@ -232,7 +233,7 @@ dtStatus dtBuildTileCacheRegions(dtTileCacheAlloc* alloc,
 				const unsigned char nr = layer.regs[yidx];
 				if (nr != 0xff)
 				{
-					// Set neighbour when first valid neighbour is encoutered.
+					// Set neighbour when first valid neighbour is encountered.
 					if (sweeps[sid].ns == 0)
 						sweeps[sid].nei = nr;
 					
@@ -244,7 +245,7 @@ dtStatus dtBuildTileCacheRegions(dtTileCacheAlloc* alloc,
 					}
 					else
 					{
-						// This is hit if there is nore than one neighbour.
+						// This is hit if there is more than one neighbour.
 						// Invalidate the neighbour.
 						sweeps[sid].nei = 0xff;
 					}
@@ -298,7 +299,7 @@ dtStatus dtBuildTileCacheRegions(dtTileCacheAlloc* alloc,
 	{
 		for (int x = 0; x < w; ++x)
 		{
-			const int idx = x+y*w;
+			const int idx = x + y * w;
 			const unsigned char ri = layer.regs[idx];
 			if (ri == 0xff)
 				continue;
@@ -308,7 +309,7 @@ dtStatus dtBuildTileCacheRegions(dtTileCacheAlloc* alloc,
 			regs[ri].areaId = layer.areas[idx];
 			
 			// Update neighbours
-			const int ymi = x+(y-1)*w;
+			const int ymi = x + (y - 1) * w;
 			if (y > 0 && isConnected(layer, idx, ymi, walkableClimb))
 			{
 				const unsigned char rai = layer.regs[ymi];
@@ -755,7 +756,7 @@ dtStatus dtBuildTileCacheContours(dtTileCacheAlloc* alloc,
 	memset(lcset.conts, 0, sizeof(dtTileCacheContour)*lcset.nconts);
 	
 	// Allocate temp buffer for contour tracing.
-	const int maxTempVerts = (w+h)*2 * 2; // Twice around the layer.
+	const int maxTempVerts = (w + h) * 2 * 2; // Twice around the layer.
 	
 	dtFixedArray<unsigned char> tempVerts(alloc, maxTempVerts*4);
 	if (!tempVerts)
@@ -1875,9 +1876,9 @@ dtStatus dtBuildTileCachePolyMesh(dtTileCacheAlloc* alloc,
 				for (int j = 0; j < npolys-1; ++j)
 				{
 					unsigned short* pj = &polys[j*MAX_VERTS_PER_POLY];
-					for (int k = j+1; k < npolys; ++k)
+					for (int k = j + 1; k < npolys; ++k)
 					{
-						unsigned short* pk = &polys[k*MAX_VERTS_PER_POLY];
+						unsigned short* pk = &polys[k * MAX_VERTS_PER_POLY];
 						int ea, eb;
 						int v = getPolyMergeValue(pj, pk, mesh.verts, ea, eb);
 						if (v > bestMergeVal)
@@ -1921,7 +1922,6 @@ dtStatus dtBuildTileCachePolyMesh(dtTileCacheAlloc* alloc,
 				return DT_FAILURE | DT_BUFFER_TOO_SMALL;
 		}
 	}
-	
 	
 	// Remove edge vertices.
 	for (int i = 0; i < mesh.nverts; ++i)

@@ -907,22 +907,22 @@ bool rcBuildPolyMesh(rcContext* ctx, rcContourSet& cset, const int nvp, rcPolyMe
 	
 	ctx->startTimer(RC_TIMER_BUILD_POLYMESH);
 
-	rcVcopy(mesh.bmin, cset.bmin);
-	rcVcopy(mesh.bmax, cset.bmax);
-	mesh.cs = cset.cs;
-	mesh.ch = cset.ch;
-	mesh.borderSize = cset.borderSize;
+	rcVcopy(mesh.bmin, cset.fBMin);
+	rcVcopy(mesh.bmax, cset.fBMax);
+	mesh.cs = cset.fCellSize;
+	mesh.ch = cset.fCellHeight;
+	mesh.borderSize = cset.nBorderSize;
 	
 	int maxVertices = 0;
 	int maxTris = 0;
 	int maxVertsPerCont = 0;
-	for (int i = 0; i < cset.nconts; ++i)
+	for (int i = 0; i < cset.nContours; ++i)
 	{
 		// Skip null contours.
-		if (cset.conts[i].nverts < 3) continue;
-		maxVertices += cset.conts[i].nverts;
-		maxTris += cset.conts[i].nverts - 2;
-		maxVertsPerCont = rcMax(maxVertsPerCont, cset.conts[i].nverts);
+		if (cset.pContours[i].nverts < 3) continue;
+		maxVertices += cset.pContours[i].nverts;
+		maxTris += cset.pContours[i].nverts - 2;
+		maxVertsPerCont = rcMax(maxVertsPerCont, cset.pContours[i].nverts);
 	}
 	
 	if (maxVertices >= 0xfffe)
@@ -1011,9 +1011,9 @@ bool rcBuildPolyMesh(rcContext* ctx, rcContourSet& cset, const int nvp, rcPolyMe
 	}
 	unsigned short* tmpPoly = &polys[maxVertsPerCont*nvp];
 
-	for (int i = 0; i < cset.nconts; ++i)
+	for (int i = 0; i < cset.nContours; ++i)
 	{
-		rcContour& cont = cset.conts[i];
+		rcContour& cont = cset.pContours[i];
 		
 		// Skip null contours.
 		if (cont.nverts < 3)
@@ -1167,8 +1167,8 @@ bool rcBuildPolyMesh(rcContext* ctx, rcContourSet& cset, const int nvp, rcPolyMe
 	// Find portal edges
 	if (mesh.borderSize > 0)
 	{
-		const int w = cset.width;
-		const int h = cset.height;
+		const int w = cset.nWidth;
+		const int h = cset.nHeight;
 		for (int i = 0; i < mesh.npolys; ++i)
 		{
 			unsigned short* p = &mesh.polys[i*2*nvp];

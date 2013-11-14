@@ -178,68 +178,68 @@ protected:
 struct rcConfig
 {
 	/// The width of the field along the x-axis. [Limit: >= 0] [Units: vx]
-	int width;
+	int nWidth;
 
 	/// The height of the field along the z-axis. [Limit: >= 0] [Units: vx]
-	int height;
+	int nHeight;
 	
 	/// The width/height size of tile's on the xz-plane. [Limit: >= 0] [Units: vx]
-	int tileSize;
+	int nTileSize;
 	
 	/// The size of the non-navigable border around the heightfield. [Limit: >=0] [Units: vx]
-	int borderSize;
+	int nBorderSize;
 
 	/// The xz-plane cell size to use for fields. [Limit: > 0] [Units: wu] 
-	float cs;
+	float fCellSize;
 
 	/// The y-axis cell size to use for fields. [Limit: > 0] [Units: wu]
-	float ch;
+	float fCellHeight;
 
 	/// The minimum bounds of the field's AABB. [(x, y, z)] [Units: wu]
-	float bmin[3]; 
+	float fBMin[3]; 
 
 	/// The maximum bounds of the field's AABB. [(x, y, z)] [Units: wu]
-	float bmax[3];
+	float fBMax[3];
 
 	/// The maximum slope that is considered walkable. [Limits: 0 <= value < 90] [Units: Degrees] 
-	float walkableSlopeAngle;
+	float fWalkableSlopeAngle;
 
 	/// Minimum floor to 'ceiling' height that will still allow the floor area to 
 	/// be considered walkable. [Limit: >= 3] [Units: vx] 
-	int walkableHeight;
+	int nWalkableHeight;
 	
 	/// Maximum ledge height that is considered to still be traversable. [Limit: >=0] [Units: vx] 
-	int walkableClimb;
+	int nWalkableClimb;
 	
 	/// The distance to erode/shrink the walkable area of the heightfield away from 
 	/// obstructions.  [Limit: >=0] [Units: vx] 
-	int walkableRadius;
+	int nWalkableRadius;
 	
 	/// The maximum allowed length for contour edges along the border of the mesh. [Limit: >=0] [Units: vx] 
-	int maxEdgeLen;
+	int nMaxEdgeLen;
 	
 	/// The maximum distance a simplfied contour's border edges should deviate 
 	/// the original raw contour. [Limit: >=0] [Units: wu]
-	float maxSimplificationError;
+	float fMaxSimplificationError;
 	
 	/// The minimum number of cells allowed to form isolated island areas. [Limit: >=0] [Units: vx] 
-	int minRegionArea;
+	int nMinRegionArea;
 	
 	/// Any regions with a span count smaller than this value will, if possible, 
 	/// be merged with larger regions. [Limit: >=0] [Units: vx] 
-	int mergeRegionArea;
+	int nMergeRegionArea;
 	
 	/// The maximum number of vertices allowed for polygons generated during the 
 	/// contour to polygon conversion process. [Limit: >= 3] 
-	int maxVertsPerPoly;
+	int nMaxVertsPerPoly;
 	
 	/// Sets the sampling distance to use when generating the detail mesh.
 	/// (For height detail only.) [Limits: 0 or >= 0.9] [Units: wu] 
-	float detailSampleDist;
+	float fDetailSampleDist;
 	
 	/// The maximum distance the detail mesh surface should deviate from heightfield
 	/// data. (For height detail only.) [Limit: >=0] [Units: wu] 
-	float detailSampleMaxError;
+	float fDetailSampleMaxError;
 };
 
 /// Defines the number of bits allocated to rcSpan::smin and rcSpan::smax.
@@ -255,10 +255,10 @@ static const int RC_SPANS_PER_POOL = 2048;
 /// @see rcHeightfield
 struct rcSpan
 {
-	unsigned int smin : 13;			///< The lower limit of the span. [Limit: < #smax]
-	unsigned int smax : 13;			///< The upper limit of the span. [Limit: <= #RC_SPAN_MAX_HEIGHT]
-	unsigned int area : 6;			///< The area id assigned to the span.
-	rcSpan* next;					///< The next span higher up in column.
+	unsigned int nSpanMin : 13;			///< The lower limit of the span. [Limit: < #smax]
+	unsigned int nSpanMax : 13;			///< The upper limit of the span. [Limit: <= #RC_SPAN_MAX_HEIGHT]
+	unsigned int nAreaID : 6;			///< The area id assigned to the span.
+	rcSpan* pNext;					///< The next span higher up in column.
 };
 
 /// A memory pool used for quick allocation of spans within a heightfield.
@@ -273,15 +273,15 @@ struct rcSpanPool
 /// @ingroup recast
 struct rcHeightfield
 {
-	int width;			///< The width of the heightfield. (Along the x-axis in cell units.)
-	int height;			///< The height of the heightfield. (Along the z-axis in cell units.)
-	float bmin[3];  	///< The minimum bounds in world space. [(x, y, z)]
-	float bmax[3];		///< The maximum bounds in world space. [(x, y, z)]
-	float cs;			///< The size of each cell. (On the xz-plane.)
-	float ch;			///< The height of each cell. (The minimum increment along the y-axis.)
-	rcSpan** spans;		///< Heightfield of spans (width*height).
-	rcSpanPool* pools;	///< Linked list of span pools.
-	rcSpan* freelist;	///< The next free span.
+	int nWidth;			///< The width of the heightfield. (Along the x-axis in cell units.)
+	int nHeight;			///< The height of the heightfield. (Along the z-axis in cell units.)
+	float fBMin[3];  	///< The minimum bounds in world space. [(x, y, z)]
+	float fBMax[3];		///< The maximum bounds in world space. [(x, y, z)]
+	float fCellSize;			///< The size of each cell. (On the xz-plane.)
+	float fCellHeight;			///< The height of each cell. (The minimum increment along the y-axis.)
+	rcSpan** pSpans;		///< Heightfield of spans (width*height).
+	rcSpanPool* pSpanPools;	///< Linked list of span pools.
+	rcSpan* pFreelist;	///< The next free span.
 };
 
 /// Provides information on the content of a cell column in a compact heightfield. 
@@ -304,43 +304,43 @@ struct rcCompactSpan
 /// @ingroup recast
 struct rcCompactHeightfield
 {
-	int width;					///< The width of the heightfield. (Along the x-axis in cell units.)
-	int height;					///< The height of the heightfield. (Along the z-axis in cell units.)
-	int spanCount;				///< The number of spans in the heightfield.
-	int walkableHeight;			///< The walkable height used during the build of the field.  (See: rcConfig::walkableHeight)
-	int walkableClimb;			///< The walkable climb used during the build of the field. (See: rcConfig::walkableClimb)
-	int borderSize;				///< The AABB border size used during the build of the field. (See: rcConfig::borderSize)
-	unsigned short maxDistance;	///< The maximum distance value of any span within the field. 
-	unsigned short maxRegions;	///< The maximum region id of any span within the field. 
-	float bmin[3];				///< The minimum bounds in world space. [(x, y, z)]
-	float bmax[3];				///< The maximum bounds in world space. [(x, y, z)]
-	float cs;					///< The size of each cell. (On the xz-plane.)
-	float ch;					///< The height of each cell. (The minimum increment along the y-axis.)
-	rcCompactCell* cells;		///< Array of cells. [Size: #width*#height]
-	rcCompactSpan* spans;		///< Array of spans. [Size: #spanCount]
-	unsigned short* dist;		///< Array containing border distance data. [Size: #spanCount]
-	unsigned char* areas;		///< Array containing area id data. [Size: #spanCount]
+	int nWidth;					///< The width of the heightfield. (Along the x-axis in cell units.)
+	int nHeight;					///< The height of the heightfield. (Along the z-axis in cell units.)
+	int nSpanCount;				///< The number of spans in the heightfield.
+	int nWalkableHeight;			///< The walkable height used during the build of the field.  (See: rcConfig::walkableHeight)
+	int nWalkableClimb;			///< The walkable climb used during the build of the field. (See: rcConfig::walkableClimb)
+	int nBorderSize;				///< The AABB border size used during the build of the field. (See: rcConfig::borderSize)
+	unsigned short uMaxDistance;	///< The maximum distance value of any span within the field. 
+	unsigned short uMaxRegions;	///< The maximum region id of any span within the field. 
+	float fBMin[3];				///< The minimum bounds in world space. [(x, y, z)]
+	float fBMax[3];				///< The maximum bounds in world space. [(x, y, z)]
+	float fCellSize;					///< The size of each cell. (On the xz-plane.)
+	float fCellHeight;					///< The height of each cell. (The minimum increment along the y-axis.)
+	rcCompactCell* pCompactCells;		///< Array of cells. [Size: #width*#height]
+	rcCompactSpan* pCompactSpans;		///< Array of spans. [Size: #spanCount]
+	unsigned short* pBorderDist;		///< Array containing border distance data. [Size: #spanCount]
+	unsigned char* pAreas;		///< Array containing area id data. [Size: #spanCount]
 };
 
 /// Represents a heightfield layer within a layer set.
 /// @see rcHeightfieldLayerSet
 struct rcHeightfieldLayer
 {
-	float bmin[3];				///< The minimum bounds in world space. [(x, y, z)]
-	float bmax[3];				///< The maximum bounds in world space. [(x, y, z)]
-	float cs;					///< The size of each cell. (On the xz-plane.)
-	float ch;					///< The height of each cell. (The minimum increment along the y-axis.)
-	int width;					///< The width of the heightfield. (Along the x-axis in cell units.)
-	int height;					///< The height of the heightfield. (Along the z-axis in cell units.)
-	int minx;					///< The minimum x-bounds of usable data.
-	int maxx;					///< The maximum x-bounds of usable data.
-	int miny;					///< The minimum y-bounds of usable data. (Along the z-axis.)
-	int maxy;					///< The maximum y-bounds of usable data. (Along the z-axis.)
-	int hmin;					///< The minimum height bounds of usable data. (Along the y-axis.)
-	int hmax;					///< The maximum height bounds of usable data. (Along the y-axis.)
-	unsigned char* heights;		///< The heightfield. [Size: (width - borderSize*2) * (h - borderSize*2)]
-	unsigned char* areas;		///< Area ids. [Size: Same as #heights]
-	unsigned char* cons;		///< Packed neighbor connection information. [Size: Same as #heights]
+	float fBMin[3];				///< The minimum bounds in world space. [(x, y, z)]
+	float fBMax[3];				///< The maximum bounds in world space. [(x, y, z)]
+	float fCellSize;					///< The size of each cell. (On the xz-plane.)
+	float fCellHeight;					///< The height of each cell. (The minimum increment along the y-axis.)
+	int nWidth;					///< The width of the heightfield. (Along the x-axis in cell units.)
+	int nHeight;					///< The height of the heightfield. (Along the z-axis in cell units.)
+	int nMinX;					///< The minimum x-bounds of usable data.
+	int nMaxX;					///< The maximum x-bounds of usable data.
+	int nMinY;					///< The minimum y-bounds of usable data. (Along the z-axis.)
+	int nMaxY;					///< The maximum y-bounds of usable data. (Along the z-axis.)
+	int nMinHeight;					///< The minimum height bounds of usable data. (Along the y-axis.)
+	int nMaxHeight;					///< The maximum height bounds of usable data. (Along the y-axis.)
+	unsigned char* pHeights;		///< The heightfield. [Size: (width - borderSize*2) * (h - borderSize*2)]
+	unsigned char* pAreas;		///< Area ids. [Size: Same as #heights]
+	unsigned char* pConnects;		///< Packed neighbor connection information. [Size: Same as #heights]
 };
 
 /// Represents a set of heightfield layers.
@@ -367,15 +367,15 @@ struct rcContour
 /// @ingroup recast
 struct rcContourSet
 {
-	rcContour* conts;	///< An array of the contours in the set. [Size: #nconts]
-	int nconts;			///< The number of contours in the set.
-	float bmin[3];  	///< The minimum bounds in world space. [(x, y, z)]
-	float bmax[3];		///< The maximum bounds in world space. [(x, y, z)]
-	float cs;			///< The size of each cell. (On the xz-plane.)
-	float ch;			///< The height of each cell. (The minimum increment along the y-axis.)
-	int width;			///< The width of the set. (Along the x-axis in cell units.) 
-	int height;			///< The height of the set. (Along the z-axis in cell units.) 
-	int borderSize;		///< The AABB border size used to generate the source data from which the contours were derived.
+	rcContour* pContours;	///< An array of the contours in the set. [Size: #nconts]
+	int nContours;			///< The number of contours in the set.
+	float fBMin[3];  	///< The minimum bounds in world space. [(x, y, z)]
+	float fBMax[3];		///< The maximum bounds in world space. [(x, y, z)]
+	float fCellSize;			///< The size of each cell. (On the xz-plane.)
+	float fCellHeight;			///< The height of each cell. (The minimum increment along the y-axis.)
+	int nWidth;			///< The width of the set. (Along the x-axis in cell units.) 
+	int nHeight;			///< The height of the set. (Along the z-axis in cell units.) 
+	int nBorderSize;		///< The AABB border size used to generate the source data from which the contours were derived.
 };
 
 /// Represents a polygon mesh suitable for use in building a navigation mesh. 

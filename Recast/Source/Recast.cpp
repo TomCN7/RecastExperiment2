@@ -81,13 +81,13 @@ void rcFreeHeightField(rcHeightfield* hf)
 {
 	if (!hf) return;
 	// Delete span array.
-	rcFree(hf->spans);
+	rcFree(hf->pSpans);
 	// Delete span pools.
-	while (hf->pools)
+	while (hf->pSpanPools)
 	{
-		rcSpanPool* next = hf->pools->next;
-		rcFree(hf->pools);
-		hf->pools = next;
+		rcSpanPool* next = hf->pSpanPools->next;
+		rcFree(hf->pSpanPools);
+		hf->pSpanPools = next;
 	}
 	rcFree(hf);
 }
@@ -102,10 +102,10 @@ rcCompactHeightfield* rcAllocCompactHeightfield()
 void rcFreeCompactHeightfield(rcCompactHeightfield* chf)
 {
 	if (!chf) return;
-	rcFree(chf->cells);
-	rcFree(chf->spans);
-	rcFree(chf->dist);
-	rcFree(chf->areas);
+	rcFree(chf->pCompactCells);
+	rcFree(chf->pCompactSpans);
+	rcFree(chf->pBorderDist);
+	rcFree(chf->pAreas);
 	rcFree(chf);
 }
 
@@ -122,9 +122,9 @@ void rcFreeHeightfieldLayerSet(rcHeightfieldLayerSet* lset)
 	if (!lset) return;
 	for (int i = 0; i < lset->nlayers; ++i)
 	{
-		rcFree(lset->layers[i].heights);
-		rcFree(lset->layers[i].areas);
-		rcFree(lset->layers[i].cons);
+		rcFree(lset->layers[i].pHeights);
+		rcFree(lset->layers[i].pAreas);
+		rcFree(lset->layers[i].pConnects);
 	}
 	rcFree(lset->layers);
 	rcFree(lset);
@@ -141,12 +141,12 @@ rcContourSet* rcAllocContourSet()
 void rcFreeContourSet(rcContourSet* cset)
 {
 	if (!cset) return;
-	for (int i = 0; i < cset->nconts; ++i)
+	for (int i = 0; i < cset->nContours; ++i)
 	{
-		rcFree(cset->conts[i].verts);
-		rcFree(cset->conts[i].rverts);
+		rcFree(cset->pContours[i].verts);
+		rcFree(cset->pContours[i].rverts);
 	}
-	rcFree(cset->conts);
+	rcFree(cset->pContours);
 	rcFree(cset);
 }
 
@@ -215,16 +215,16 @@ bool rcCreateHeightfield(rcContext* /*ctx*/, rcHeightfield& hf, int width, int h
 	// TODO: VC complains about unref formal variable, figure out a way to handle this better.
 //	rcAssert(ctx);
 	
-	hf.width = width;
-	hf.height = height;
-	rcVcopy(hf.bmin, bmin);
-	rcVcopy(hf.bmax, bmax);
-	hf.cs = cs;
-	hf.ch = ch;
-	hf.spans = (rcSpan**)rcAlloc(sizeof(rcSpan*)*hf.width*hf.height, RC_ALLOC_PERM);
-	if (!hf.spans)
+	hf.nWidth = width;
+	hf.nHeight = height;
+	rcVcopy(hf.fBMin, bmin);
+	rcVcopy(hf.fBMax, bmax);
+	hf.fCellSize = cs;
+	hf.fCellHeight = ch;
+	hf.pSpans = (rcSpan**)rcAlloc(sizeof(rcSpan*)*hf.nWidth*hf.nHeight, RC_ALLOC_PERM);
+	if (!hf.pSpans)
 		return false;
-	memset(hf.spans, 0, sizeof(rcSpan*)*hf.width*hf.height);
+	memset(hf.pSpans, 0, sizeof(rcSpan*)*hf.nWidth*hf.nHeight);
 	return true;
 }
 
@@ -302,16 +302,16 @@ int rcGetHeightFieldSpanCount(rcContext* /*ctx*/, rcHeightfield& hf)
 	// TODO: VC complains about unref formal variable, figure out a way to handle this better.
 //	rcAssert(ctx);
 	
-	const int w = hf.width;
-	const int h = hf.height;
+	const int w = hf.nWidth;
+	const int h = hf.nHeight;
 	int spanCount = 0;
 	for (int y = 0; y < h; ++y)
 	{
 		for (int x = 0; x < w; ++x)
 		{
-			for (rcSpan* s = hf.spans[x + y*w]; s; s = s->next)
+			for (rcSpan* s = hf.pSpans[x + y*w]; s; s = s->pNext)
 			{
-				if (s->area != RC_NULL_AREA)
+				if (s->nAreaID != RC_NULL_AREA)
 					spanCount++;
 			}
 		}
@@ -335,43 +335,43 @@ bool rcBuildCompactHeightfield(rcContext* ctx, const int walkableHeight, const i
 	
 	ctx->startTimer(RC_TIMER_BUILD_COMPACTHEIGHTFIELD);
 	
-	const int w = hf.width;
-	const int h = hf.height;
+	const int w = hf.nWidth;
+	const int h = hf.nHeight;
 	const int spanCount = rcGetHeightFieldSpanCount(ctx, hf);
 
 	// Fill in header.
-	chf.width = w;
-	chf.height = h;
-	chf.spanCount = spanCount;
-	chf.walkableHeight = walkableHeight;
-	chf.walkableClimb = walkableClimb;
-	chf.maxRegions = 0;
-	rcVcopy(chf.bmin, hf.bmin);
-	rcVcopy(chf.bmax, hf.bmax);
-	chf.bmax[1] += walkableHeight*hf.ch;
-	chf.cs = hf.cs;
-	chf.ch = hf.ch;
-	chf.cells = (rcCompactCell*)rcAlloc(sizeof(rcCompactCell)*w*h, RC_ALLOC_PERM);
-	if (!chf.cells)
+	chf.nWidth = w;
+	chf.nHeight = h;
+	chf.nSpanCount = spanCount;
+	chf.nWalkableHeight = walkableHeight;
+	chf.nWalkableClimb = walkableClimb;
+	chf.uMaxRegions = 0;
+	rcVcopy(chf.fBMin, hf.fBMin);
+	rcVcopy(chf.fBMax, hf.fBMax);
+	chf.fBMax[1] += walkableHeight*hf.fCellHeight;
+	chf.fCellSize = hf.fCellSize;
+	chf.fCellHeight = hf.fCellHeight;
+	chf.pCompactCells = (rcCompactCell*)rcAlloc(sizeof(rcCompactCell)*w*h, RC_ALLOC_PERM);
+	if (!chf.pCompactCells)
 	{
 		ctx->log(RC_LOG_ERROR, "rcBuildCompactHeightfield: Out of memory 'chf.cells' (%d)", w*h);
 		return false;
 	}
-	memset(chf.cells, 0, sizeof(rcCompactCell)*w*h);
-	chf.spans = (rcCompactSpan*)rcAlloc(sizeof(rcCompactSpan)*spanCount, RC_ALLOC_PERM);
-	if (!chf.spans)
+	memset(chf.pCompactCells, 0, sizeof(rcCompactCell)*w*h);
+	chf.pCompactSpans = (rcCompactSpan*)rcAlloc(sizeof(rcCompactSpan)*spanCount, RC_ALLOC_PERM);
+	if (!chf.pCompactSpans)
 	{
 		ctx->log(RC_LOG_ERROR, "rcBuildCompactHeightfield: Out of memory 'chf.spans' (%d)", spanCount);
 		return false;
 	}
-	memset(chf.spans, 0, sizeof(rcCompactSpan)*spanCount);
-	chf.areas = (unsigned char*)rcAlloc(sizeof(unsigned char)*spanCount, RC_ALLOC_PERM);
-	if (!chf.areas)
+	memset(chf.pCompactSpans, 0, sizeof(rcCompactSpan)*spanCount);
+	chf.pAreas = (unsigned char*)rcAlloc(sizeof(unsigned char)*spanCount, RC_ALLOC_PERM);
+	if (!chf.pAreas)
 	{
 		ctx->log(RC_LOG_ERROR, "rcBuildCompactHeightfield: Out of memory 'chf.areas' (%d)", spanCount);
 		return false;
 	}
-	memset(chf.areas, RC_NULL_AREA, sizeof(unsigned char)*spanCount);
+	memset(chf.pAreas, RC_NULL_AREA, sizeof(unsigned char)*spanCount);
 	
 	const int MAX_HEIGHT = 0xffff;
 	
@@ -381,25 +381,25 @@ bool rcBuildCompactHeightfield(rcContext* ctx, const int walkableHeight, const i
 	{
 		for (int x = 0; x < w; ++x)
 		{
-			const rcSpan* s = hf.spans[x + y*w];
+			const rcSpan* s = hf.pSpans[x + y*w];
 			// If there are no spans at this cell, just leave the data to index=0, count=0.
 			if (!s) continue;
-			rcCompactCell& c = chf.cells[x+y*w];
+			rcCompactCell& c = chf.pCompactCells[x+y*w];
 			c.index = idx;
 			c.count = 0;
 			while (s)
 			{
-				if (s->area != RC_NULL_AREA)
+				if (s->nAreaID != RC_NULL_AREA)
 				{
-					const int bot = (int)s->smax;
-					const int top = s->next ? (int)s->next->smin : MAX_HEIGHT;
-					chf.spans[idx].y = (unsigned short)rcClamp(bot, 0, 0xffff);
-					chf.spans[idx].h = (unsigned char)rcClamp(top - bot, 0, 0xff);
-					chf.areas[idx] = s->area;
+					const int bot = (int)s->nSpanMax;
+					const int top = s->pNext ? (int)s->pNext->nSpanMin : MAX_HEIGHT;
+					chf.pCompactSpans[idx].y = (unsigned short)rcClamp(bot, 0, 0xffff);
+					chf.pCompactSpans[idx].h = (unsigned char)rcClamp(top - bot, 0, 0xff);
+					chf.pAreas[idx] = s->nAreaID;
 					idx++;
 					c.count++;
 				}
-				s = s->next;
+				s = s->pNext;
 			}
 		}
 	}
@@ -411,10 +411,10 @@ bool rcBuildCompactHeightfield(rcContext* ctx, const int walkableHeight, const i
 	{
 		for (int x = 0; x < w; ++x)
 		{
-			const rcCompactCell& c = chf.cells[x+y*w];
+			const rcCompactCell& c = chf.pCompactCells[x+y*w];
 			for (int i = (int)c.index, ni = (int)(c.index+c.count); i < ni; ++i)
 			{
-				rcCompactSpan& s = chf.spans[i];
+				rcCompactSpan& s = chf.pCompactSpans[i];
 				
 				for (int dir = 0; dir < 4; ++dir)
 				{
@@ -427,10 +427,10 @@ bool rcBuildCompactHeightfield(rcContext* ctx, const int walkableHeight, const i
 						
 					// Iterate over all neighbour spans and check if any of the is
 					// accessible from current cell.
-					const rcCompactCell& nc = chf.cells[nx+ny*w];
+					const rcCompactCell& nc = chf.pCompactCells[nx+ny*w];
 					for (int k = (int)nc.index, nk = (int)(nc.index+nc.count); k < nk; ++k)
 					{
-						const rcCompactSpan& ns = chf.spans[k];
+						const rcCompactSpan& ns = chf.pCompactSpans[k];
 						const int bot = rcMax(s.y, ns.y);
 						const int top = rcMin(s.y+s.h, ns.y+ns.h);
 

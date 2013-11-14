@@ -139,12 +139,12 @@ void duDebugDrawHeightfieldSolid(duDebugDraw* dd, const rcHeightfield& hf)
 {
 	if (!dd) return;
 
-	const float* orig = hf.bmin;
-	const float cs = hf.cs;
-	const float ch = hf.ch;
+	const float* orig = hf.fBMin;
+	const float cs = hf.fCellSize;
+	const float ch = hf.fCellHeight;
 	
-	const int w = hf.width;
-	const int h = hf.height;
+	const int w = hf.nWidth;
+	const int h = hf.nHeight;
 		
 	unsigned int fcol[6];
 	duCalcBoxColors(fcol, duRGBA(255,255,255,255), duRGBA(255,255,255,255));
@@ -157,11 +157,11 @@ void duDebugDrawHeightfieldSolid(duDebugDraw* dd, const rcHeightfield& hf)
 		{
 			float fx = orig[0] + x*cs;
 			float fz = orig[2] + y*cs;
-			const rcSpan* s = hf.spans[x + y*w];
+			const rcSpan* s = hf.pSpans[x + y*w];
 			while (s)
 			{
-				duAppendBox(dd, fx, orig[1]+s->smin*ch, fz, fx+cs, orig[1] + s->smax*ch, fz+cs, fcol);
-				s = s->next;
+				duAppendBox(dd, fx, orig[1]+s->nSpanMin*ch, fz, fx+cs, orig[1] + s->nSpanMax*ch, fz+cs, fcol);
+				s = s->pNext;
 			}
 		}
 	}
@@ -172,12 +172,12 @@ void duDebugDrawHeightfieldWalkable(duDebugDraw* dd, const rcHeightfield& hf)
 {
 	if (!dd) return;
 
-	const float* orig = hf.bmin;
-	const float cs = hf.cs;
-	const float ch = hf.ch;
+	const float* orig = hf.fBMin;
+	const float cs = hf.fCellSize;
+	const float ch = hf.fCellHeight;
 	
-	const int w = hf.width;
-	const int h = hf.height;
+	const int w = hf.nWidth;
+	const int h = hf.nHeight;
 	
 	unsigned int fcol[6];
 	duCalcBoxColors(fcol, duRGBA(255,255,255,255), duRGBA(217,217,217,255));
@@ -190,18 +190,18 @@ void duDebugDrawHeightfieldWalkable(duDebugDraw* dd, const rcHeightfield& hf)
 		{
 			float fx = orig[0] + x*cs;
 			float fz = orig[2] + y*cs;
-			const rcSpan* s = hf.spans[x + y*w];
+			const rcSpan* s = hf.pSpans[x + y*w];
 			while (s)
 			{
-				if (s->area == RC_WALKABLE_AREA)
+				if (s->nAreaID == RC_WALKABLE_AREA)
 					fcol[0] = duRGBA(64,128,160,255);
-				else if (s->area == RC_NULL_AREA)
+				else if (s->nAreaID == RC_NULL_AREA)
 					fcol[0] = duRGBA(64,64,64,255);
 				else
-					fcol[0] = duMultCol(duIntToCol(s->area, 255), 200);
+					fcol[0] = duMultCol(duIntToCol(s->nAreaID, 255), 200);
 				
-				duAppendBox(dd, fx, orig[1]+s->smin*ch, fz, fx+cs, orig[1] + s->smax*ch, fz+cs, fcol);
-				s = s->next;
+				duAppendBox(dd, fx, orig[1]+s->nSpanMin*ch, fz, fx+cs, orig[1] + s->nSpanMax*ch, fz+cs, fcol);
+				s = s->pNext;
 			}
 		}
 	}
@@ -213,32 +213,32 @@ void duDebugDrawCompactHeightfieldSolid(duDebugDraw* dd, const rcCompactHeightfi
 {
 	if (!dd) return;
 
-	const float cs = chf.cs;
-	const float ch = chf.ch;
+	const float cs = chf.fCellSize;
+	const float ch = chf.fCellHeight;
 
 	dd->begin(DU_DRAW_QUADS);
 	
-	for (int y = 0; y < chf.height; ++y)
+	for (int y = 0; y < chf.nHeight; ++y)
 	{
-		for (int x = 0; x < chf.width; ++x)
+		for (int x = 0; x < chf.nWidth; ++x)
 		{
-			const float fx = chf.bmin[0] + x*cs;
-			const float fz = chf.bmin[2] + y*cs;
-			const rcCompactCell& c = chf.cells[x+y*chf.width];
+			const float fx = chf.fBMin[0] + x*cs;
+			const float fz = chf.fBMin[2] + y*cs;
+			const rcCompactCell& c = chf.pCompactCells[x+y*chf.nWidth];
 
 			for (unsigned i = c.index, ni = c.index+c.count; i < ni; ++i)
 			{
-				const rcCompactSpan& s = chf.spans[i];
+				const rcCompactSpan& s = chf.pCompactSpans[i];
 
 				unsigned int color;
-				if (chf.areas[i] == RC_WALKABLE_AREA)
+				if (chf.pAreas[i] == RC_WALKABLE_AREA)
 					color = duRGBA(0,192,255,64);
-				else if (chf.areas[i] == RC_NULL_AREA)
+				else if (chf.pAreas[i] == RC_NULL_AREA)
 					color = duRGBA(0,0,0,64);
 				else
-					color = duIntToCol(chf.areas[i], 255);
+					color = duIntToCol(chf.pAreas[i], 255);
 				
-				const float fy = chf.bmin[1] + (s.y+1)*ch;
+				const float fy = chf.fBMin[1] + (s.y+1)*ch;
 				dd->vertex(fx, fy, fz, color);
 				dd->vertex(fx, fy, fz+cs, color);
 				dd->vertex(fx+cs, fy, fz+cs, color);
@@ -253,23 +253,23 @@ void duDebugDrawCompactHeightfieldRegions(duDebugDraw* dd, const rcCompactHeight
 {
 	if (!dd) return;
 
-	const float cs = chf.cs;
-	const float ch = chf.ch;
+	const float cs = chf.fCellSize;
+	const float ch = chf.fCellHeight;
 
 	dd->begin(DU_DRAW_QUADS);
 
-	for (int y = 0; y < chf.height; ++y)
+	for (int y = 0; y < chf.nHeight; ++y)
 	{
-		for (int x = 0; x < chf.width; ++x)
+		for (int x = 0; x < chf.nWidth; ++x)
 		{
-			const float fx = chf.bmin[0] + x*cs;
-			const float fz = chf.bmin[2] + y*cs;
-			const rcCompactCell& c = chf.cells[x+y*chf.width];
+			const float fx = chf.fBMin[0] + x*cs;
+			const float fz = chf.fBMin[2] + y*cs;
+			const rcCompactCell& c = chf.pCompactCells[x+y*chf.nWidth];
 			
 			for (unsigned i = c.index, ni = c.index+c.count; i < ni; ++i)
 			{
-				const rcCompactSpan& s = chf.spans[i];
-				const float fy = chf.bmin[1] + (s.y)*ch;
+				const rcCompactSpan& s = chf.pCompactSpans[i];
+				const float fy = chf.fBMin[1] + (s.y)*ch;
 				unsigned int color;
 				if (s.reg)
 					color = duIntToCol(s.reg, 192);
@@ -291,30 +291,30 @@ void duDebugDrawCompactHeightfieldRegions(duDebugDraw* dd, const rcCompactHeight
 void duDebugDrawCompactHeightfieldDistance(duDebugDraw* dd, const rcCompactHeightfield& chf)
 {
 	if (!dd) return;
-	if (!chf.dist) return;
+	if (!chf.pBorderDist) return;
 		
-	const float cs = chf.cs;
-	const float ch = chf.ch;
+	const float cs = chf.fCellSize;
+	const float ch = chf.fCellHeight;
 			
-	float maxd = chf.maxDistance;
+	float maxd = chf.uMaxDistance;
 	if (maxd < 1.0f) maxd = 1;
 	const float dscale = 255.0f / maxd;
 	
 	dd->begin(DU_DRAW_QUADS);
 	
-	for (int y = 0; y < chf.height; ++y)
+	for (int y = 0; y < chf.nHeight; ++y)
 	{
-		for (int x = 0; x < chf.width; ++x)
+		for (int x = 0; x < chf.nWidth; ++x)
 		{
-			const float fx = chf.bmin[0] + x*cs;
-			const float fz = chf.bmin[2] + y*cs;
-			const rcCompactCell& c = chf.cells[x+y*chf.width];
+			const float fx = chf.fBMin[0] + x*cs;
+			const float fz = chf.fBMin[2] + y*cs;
+			const rcCompactCell& c = chf.pCompactCells[x+y*chf.nWidth];
 			
 			for (unsigned i = c.index, ni = c.index+c.count; i < ni; ++i)
 			{
-				const rcCompactSpan& s = chf.spans[i];
-				const float fy = chf.bmin[1] + (s.y+1)*ch;
-				const unsigned char cd = (unsigned char)(chf.dist[i] * dscale);
+				const rcCompactSpan& s = chf.pCompactSpans[i];
+				const float fy = chf.fBMin[1] + (s.y+1)*ch;
+				const unsigned char cd = (unsigned char)(chf.pBorderDist[i] * dscale);
 				const unsigned int color = duRGBA(cd,cd,cd,255);
 				dd->vertex(fx, fy, fz, color);
 				dd->vertex(fx, fy, fz+cs, color);
@@ -328,10 +328,10 @@ void duDebugDrawCompactHeightfieldDistance(duDebugDraw* dd, const rcCompactHeigh
 
 static void drawLayerPortals(duDebugDraw* dd, const rcHeightfieldLayer* layer)
 {
-	const float cs = layer->cs;
-	const float ch = layer->ch;
-	const int w = layer->width;
-	const int h = layer->height;
+	const float cs = layer->fCellSize;
+	const float ch = layer->fCellHeight;
+	const int w = layer->nWidth;
+	const int h = layer->nHeight;
 	
 	unsigned int pcol = duRGBA(255,255,255,255);
 	
@@ -344,20 +344,20 @@ static void drawLayerPortals(duDebugDraw* dd, const rcHeightfieldLayer* layer)
 		for (int x = 0; x < w; ++x)
 		{
 			const int idx = x+y*w;
-			const int lh = (int)layer->heights[idx];
+			const int lh = (int)layer->pHeights[idx];
 			if (lh == 255) continue;
 			
 			for (int dir = 0; dir < 4; ++dir)
 			{
-				if (layer->cons[idx] & (1<<(dir+4)))
+				if (layer->pConnects[idx] & (1<<(dir+4)))
 				{
 					const int* seg = &segs[dir*4];
-					const float ax = layer->bmin[0] + (x+seg[0])*cs;
-					const float ay = layer->bmin[1] + (lh+2)*ch;
-					const float az = layer->bmin[2] + (y+seg[1])*cs;
-					const float bx = layer->bmin[0] + (x+seg[2])*cs;
-					const float by = layer->bmin[1] + (lh+2)*ch;
-					const float bz = layer->bmin[2] + (y+seg[3])*cs;
+					const float ax = layer->fBMin[0] + (x+seg[0])*cs;
+					const float ay = layer->fBMin[1] + (lh+2)*ch;
+					const float az = layer->fBMin[2] + (y+seg[1])*cs;
+					const float bx = layer->fBMin[0] + (x+seg[2])*cs;
+					const float by = layer->fBMin[1] + (lh+2)*ch;
+					const float bz = layer->fBMin[2] + (y+seg[3])*cs;
 					dd->vertex(ax, ay, az, pcol);
 					dd->vertex(bx, by, bz, pcol);
 				}
@@ -369,21 +369,21 @@ static void drawLayerPortals(duDebugDraw* dd, const rcHeightfieldLayer* layer)
 
 void duDebugDrawHeightfieldLayer(duDebugDraw* dd, const struct rcHeightfieldLayer& layer, const int idx)
 {
-	const float cs = layer.cs;
-	const float ch = layer.ch;
-	const int w = layer.width;
-	const int h = layer.height;
+	const float cs = layer.fCellSize;
+	const float ch = layer.fCellHeight;
+	const int w = layer.nWidth;
+	const int h = layer.nHeight;
 	
 	unsigned int color = duIntToCol(idx+1, 255);
 	
 	// Layer bounds
 	float bmin[3], bmax[3];
-	bmin[0] = layer.bmin[0] + layer.minx*cs;
-	bmin[1] = layer.bmin[1];
-	bmin[2] = layer.bmin[2] + layer.miny*cs;
-	bmax[0] = layer.bmin[0] + (layer.maxx+1)*cs;
-	bmax[1] = layer.bmax[1];
-	bmax[2] = layer.bmin[2] + (layer.maxy+1)*cs;
+	bmin[0] = layer.fBMin[0] + layer.nMinX*cs;
+	bmin[1] = layer.fBMin[1];
+	bmin[2] = layer.fBMin[2] + layer.nMinY*cs;
+	bmax[0] = layer.fBMin[0] + (layer.nMaxX+1)*cs;
+	bmax[1] = layer.fBMax[1];
+	bmax[2] = layer.fBMin[2] + (layer.nMaxY+1)*cs;
 	duDebugDrawBoxWire(dd, bmin[0],bmin[1],bmin[2], bmax[0],bmax[1],bmax[2], duTransCol(color,128), 2.0f);
 	
 	// Layer height
@@ -393,9 +393,9 @@ void duDebugDrawHeightfieldLayer(duDebugDraw* dd, const struct rcHeightfieldLaye
 		for (int x = 0; x < w; ++x)
 		{
 			const int lidx = x+y*w;
-			const int lh = (int)layer.heights[lidx];
+			const int lh = (int)layer.pHeights[lidx];
 			if (h == 0xff) continue;
-			const unsigned char area = layer.areas[lidx];
+			const unsigned char area = layer.pAreas[lidx];
 			
 			unsigned int col;
 			if (area == RC_WALKABLE_AREA)
@@ -405,9 +405,9 @@ void duDebugDrawHeightfieldLayer(duDebugDraw* dd, const struct rcHeightfieldLaye
 			else
 				col = duLerpCol(color, duIntToCol(area, 255), 32);
 			
-			const float fx = layer.bmin[0] + x*cs;
-			const float fy = layer.bmin[1] + (lh+1)*ch;
-			const float fz = layer.bmin[2] + y*cs;
+			const float fx = layer.fBMin[0] + x*cs;
+			const float fy = layer.fBMin[1] + (lh+1)*ch;
+			const float fz = layer.fBMin[2] + y*cs;
 			
 			dd->vertex(fx, fy, fz, col);
 			dd->vertex(fx, fy, fz+cs, col);
@@ -670,10 +670,10 @@ static void getContourCenter(const rcContour* cont, const float* orig, float cs,
 
 static const rcContour* findContourFromSet(const rcContourSet& cset, unsigned short reg)
 {
-	for (int i = 0; i < cset.nconts; ++i)
+	for (int i = 0; i < cset.nContours; ++i)
 	{
-		if (cset.conts[i].reg == reg)
-			return &cset.conts[i];
+		if (cset.pContours[i].reg == reg)
+			return &cset.pContours[i];
 	}
 	return 0;
 }
@@ -682,9 +682,9 @@ void duDebugDrawRegionConnections(duDebugDraw* dd, const rcContourSet& cset, con
 {
 	if (!dd) return;
 	
-	const float* orig = cset.bmin;
-	const float cs = cset.cs;
-	const float ch = cset.ch;
+	const float* orig = cset.fBMin;
+	const float cs = cset.fCellSize;
+	const float ch = cset.fCellHeight;
 	
 	// Draw centers
 	float pos[3], pos2[3];
@@ -693,9 +693,9 @@ void duDebugDrawRegionConnections(duDebugDraw* dd, const rcContourSet& cset, con
 
 	dd->begin(DU_DRAW_LINES, 2.0f);
 
-	for (int i = 0; i < cset.nconts; ++i)
+	for (int i = 0; i < cset.nContours; ++i)
 	{
-		const rcContour* cont = &cset.conts[i];
+		const rcContour* cont = &cset.pContours[i];
 		getContourCenter(cont, orig, cs, ch, pos);
 		for (int j = 0; j < cont->nverts; ++j)
 		{
@@ -716,9 +716,9 @@ void duDebugDrawRegionConnections(duDebugDraw* dd, const rcContourSet& cset, con
 
 	dd->begin(DU_DRAW_POINTS, 7.0f);
 
-	for (int i = 0; i < cset.nconts; ++i)
+	for (int i = 0; i < cset.nContours; ++i)
 	{
-		const rcContour* cont = &cset.conts[i];
+		const rcContour* cont = &cset.pContours[i];
 		unsigned int col = duDarkenCol(duIntToCol(cont->reg,a));
 		getContourCenter(cont, orig, cs, ch, pos);
 		dd->vertex(pos, col);
@@ -730,17 +730,17 @@ void duDebugDrawRawContours(duDebugDraw* dd, const rcContourSet& cset, const flo
 {
 	if (!dd) return;
 
-	const float* orig = cset.bmin;
-	const float cs = cset.cs;
-	const float ch = cset.ch;
+	const float* orig = cset.fBMin;
+	const float cs = cset.fCellSize;
+	const float ch = cset.fCellHeight;
 	
 	const unsigned char a = (unsigned char)(alpha*255.0f);
 	
 	dd->begin(DU_DRAW_LINES, 2.0f);
 			
-	for (int i = 0; i < cset.nconts; ++i)
+	for (int i = 0; i < cset.nContours; ++i)
 	{
-		const rcContour& c = cset.conts[i];
+		const rcContour& c = cset.pContours[i];
 		unsigned int color = duIntToCol(c.reg, a);
 
 		for (int j = 0; j < c.nrverts; ++j)
@@ -764,9 +764,9 @@ void duDebugDrawRawContours(duDebugDraw* dd, const rcContourSet& cset, const flo
 
 	dd->begin(DU_DRAW_POINTS, 2.0f);	
 
-	for (int i = 0; i < cset.nconts; ++i)
+	for (int i = 0; i < cset.nContours; ++i)
 	{
-		const rcContour& c = cset.conts[i];
+		const rcContour& c = cset.pContours[i];
 		unsigned int color = duDarkenCol(duIntToCol(c.reg, a));
 		
 		for (int j = 0; j < c.nrverts; ++j)
@@ -793,17 +793,17 @@ void duDebugDrawContours(duDebugDraw* dd, const rcContourSet& cset, const float 
 {
 	if (!dd) return;
 
-	const float* orig = cset.bmin;
-	const float cs = cset.cs;
-	const float ch = cset.ch;
+	const float* orig = cset.fBMin;
+	const float cs = cset.fCellSize;
+	const float ch = cset.fCellHeight;
 	
 	const unsigned char a = (unsigned char)(alpha*255.0f);
 	
 	dd->begin(DU_DRAW_LINES, 2.5f);
 	
-	for (int i = 0; i < cset.nconts; ++i)
+	for (int i = 0; i < cset.nContours; ++i)
 	{
-		const rcContour& c = cset.conts[i];
+		const rcContour& c = cset.pContours[i];
 		if (!c.nverts)
 			continue;
 		const unsigned int color = duIntToCol(c.reg, a);
@@ -828,9 +828,9 @@ void duDebugDrawContours(duDebugDraw* dd, const rcContourSet& cset, const float 
 
 	dd->begin(DU_DRAW_POINTS, 3.0f);
 	
-	for (int i = 0; i < cset.nconts; ++i)
+	for (int i = 0; i < cset.nContours; ++i)
 	{
-		const rcContour& c = cset.conts[i];
+		const rcContour& c = cset.pContours[i];
 		unsigned int color = duDarkenCol(duIntToCol(c.reg, a));
 		for (int j = 0; j < c.nverts; ++j)
 		{

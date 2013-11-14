@@ -44,7 +44,7 @@ inline bool overlapInterval(unsigned short amin, unsigned short amax,
 static rcSpan* allocSpan(rcHeightfield& hf)
 {
 	// If running out of memory, allocate new page and update the freelist.
-	if (!hf.freelist || !hf.freelist->next)
+	if (!hf.pFreelist || !hf.pFreelist->pNext)
 	{
 		// Create new page.
 		// Allocate memory for the new pool.
@@ -52,25 +52,25 @@ static rcSpan* allocSpan(rcHeightfield& hf)
 		if (!pool) return 0;
 		pool->next = 0;
 		// Add the pool into the list of pools.
-		pool->next = hf.pools;
-		hf.pools = pool;
+		pool->next = hf.pSpanPools;
+		hf.pSpanPools = pool;
 		// Add new items to the free list.
-		rcSpan* freelist = hf.freelist;
+		rcSpan* freelist = hf.pFreelist;
 		rcSpan* head = &pool->items[0];
 		rcSpan* it = &pool->items[RC_SPANS_PER_POOL];
 		do
 		{
 			--it;
-			it->next = freelist;
+			it->pNext = freelist;
 			freelist = it;
 		}
 		while (it != head);
-		hf.freelist = it;
+		hf.pFreelist = it;
 	}
 	
 	// Pop item from in front of the free list.
-	rcSpan* it = hf.freelist;
-	hf.freelist = hf.freelist->next;
+	rcSpan* it = hf.pFreelist;
+	hf.pFreelist = hf.pFreelist->pNext;
 	return it;
 }
 
@@ -78,8 +78,8 @@ static void freeSpan(rcHeightfield& hf, rcSpan* ptr)
 {
 	if (!ptr) return;
 	// Add the node in front of the free list.
-	ptr->next = hf.freelist;
-	hf.freelist = ptr;
+	ptr->pNext = hf.pFreelist;
+	hf.pFreelist = ptr;
 }
 
 static void addSpan(rcHeightfield& hf, const int x, const int y,
@@ -87,56 +87,56 @@ static void addSpan(rcHeightfield& hf, const int x, const int y,
 					const unsigned char area, const int flagMergeThr)
 {
 	
-	int idx = x + y*hf.width;
+	int idx = x + y*hf.nWidth;
 	
 	rcSpan* s = allocSpan(hf);
-	s->smin = smin;
-	s->smax = smax;
-	s->area = area;
-	s->next = 0;
+	s->nSpanMin = smin;
+	s->nSpanMax = smax;
+	s->nAreaID = area;
+	s->pNext = 0;
 	
 	// Empty cell, add he first span.
-	if (!hf.spans[idx])
+	if (!hf.pSpans[idx])
 	{
-		hf.spans[idx] = s;
+		hf.pSpans[idx] = s;
 		return;
 	}
 	rcSpan* prev = 0;
-	rcSpan* cur = hf.spans[idx];
+	rcSpan* cur = hf.pSpans[idx];
 	
 	// Insert and merge spans.
 	while (cur)
 	{
-		if (cur->smin > s->smax)
+		if (cur->nSpanMin > s->nSpanMax)
 		{
 			// Current span is further than the new span, break.
 			break;
 		}
-		else if (cur->smax < s->smin)
+		else if (cur->nSpanMax < s->nSpanMin)
 		{
 			// Current span is before the new span advance.
 			prev = cur;
-			cur = cur->next;
+			cur = cur->pNext;
 		}
 		else
 		{
 			// Merge spans.
-			if (cur->smin < s->smin)
-				s->smin = cur->smin;
-			if (cur->smax > s->smax)
-				s->smax = cur->smax;
+			if (cur->nSpanMin < s->nSpanMin)
+				s->nSpanMin = cur->nSpanMin;
+			if (cur->nSpanMax > s->nSpanMax)
+				s->nSpanMax = cur->nSpanMax;
 			
 			// Merge flags.
-			if (rcAbs((int)s->smax - (int)cur->smax) <= flagMergeThr)
-				s->area = rcMax(s->area, cur->area);
+			if (rcAbs((int)s->nSpanMax - (int)cur->nSpanMax) <= flagMergeThr)
+				s->nAreaID = rcMax(s->nAreaID, cur->nAreaID);
 			
 			// Remove current span.
-			rcSpan* next = cur->next;
+			rcSpan* next = cur->pNext;
 			freeSpan(hf, cur);
 			if (prev)
-				prev->next = next;
+				prev->pNext = next;
 			else
-				hf.spans[idx] = next;
+				hf.pSpans[idx] = next;
 			cur = next;
 		}
 	}
@@ -144,13 +144,13 @@ static void addSpan(rcHeightfield& hf, const int x, const int y,
 	// Insert new span.
 	if (prev)
 	{
-		s->next = prev->next;
-		prev->next = s;
+		s->pNext = prev->pNext;
+		prev->pNext = s;
 	}
 	else
 	{
-		s->next = hf.spans[idx];
-		hf.spans[idx] = s;
+		s->pNext = hf.pSpans[idx];
+		hf.pSpans[idx] = s;
 	}
 }
 
@@ -205,8 +205,8 @@ static void rasterizeTri(const float* v0, const float* v1, const float* v2,
 						 const float cs, const float ics, const float ich,
 						 const int flagMergeThr)
 {
-	const int w = hf.width;
-	const int h = hf.height;
+	const int w = hf.nWidth;
+	const int h = hf.nHeight;
 	float tmin[3], tmax[3];
 	const float by = bmax[1] - bmin[1];
 	
@@ -218,11 +218,11 @@ static void rasterizeTri(const float* v0, const float* v1, const float* v2,
 	rcVmax(tmax, v1);
 	rcVmax(tmax, v2);
 	
-	// If the triangle does not touch the bbox of the heightfield, skip the triagle.
+	// If the triangle does not touch the bbox of the heightfield, skip the triangle.
 	if (!overlapBounds(bmin, bmax, tmin, tmax))
 		return;
 	
-	// Calculate the footpring of the triangle on the grid.
+	// Calculate the footprint of the triangle on the grid.
 	int x0 = (int)((tmin[0] - bmin[0])*ics);
 	int y0 = (int)((tmin[2] - bmin[2])*ics);
 	int x1 = (int)((tmax[0] - bmin[0])*ics);
@@ -296,9 +296,9 @@ void rcRasterizeTriangle(rcContext* ctx, const float* v0, const float* v1, const
 
 	ctx->startTimer(RC_TIMER_RASTERIZE_TRIANGLES);
 
-	const float ics = 1.0f/solid.cs;
-	const float ich = 1.0f/solid.ch;
-	rasterizeTri(v0, v1, v2, area, solid, solid.bmin, solid.bmax, solid.cs, ics, ich, flagMergeThr);
+	const float ics = 1.0f/solid.fCellSize;
+	const float ich = 1.0f/solid.fCellHeight;
+	rasterizeTri(v0, v1, v2, area, solid, solid.fBMin, solid.fBMax, solid.fCellSize, ics, ich, flagMergeThr);
 
 	ctx->stopTimer(RC_TIMER_RASTERIZE_TRIANGLES);
 }
@@ -316,8 +316,8 @@ void rcRasterizeTriangles(rcContext* ctx, const float* verts, const int /*nv*/,
 
 	ctx->startTimer(RC_TIMER_RASTERIZE_TRIANGLES);
 	
-	const float ics = 1.0f/solid.cs;
-	const float ich = 1.0f/solid.ch;
+	const float ics = 1.0f/solid.fCellSize;
+	const float ich = 1.0f/solid.fCellHeight;
 	// Rasterize triangles.
 	for (int i = 0; i < nt; ++i)
 	{
@@ -325,7 +325,7 @@ void rcRasterizeTriangles(rcContext* ctx, const float* verts, const int /*nv*/,
 		const float* v1 = &verts[tris[i*3+1]*3];
 		const float* v2 = &verts[tris[i*3+2]*3];
 		// Rasterize.
-		rasterizeTri(v0, v1, v2, areas[i], solid, solid.bmin, solid.bmax, solid.cs, ics, ich, flagMergeThr);
+		rasterizeTri(v0, v1, v2, areas[i], solid, solid.fBMin, solid.fBMax, solid.fCellSize, ics, ich, flagMergeThr);
 	}
 	
 	ctx->stopTimer(RC_TIMER_RASTERIZE_TRIANGLES);
@@ -344,8 +344,8 @@ void rcRasterizeTriangles(rcContext* ctx, const float* verts, const int /*nv*/,
 
 	ctx->startTimer(RC_TIMER_RASTERIZE_TRIANGLES);
 	
-	const float ics = 1.0f/solid.cs;
-	const float ich = 1.0f/solid.ch;
+	const float ics = 1.0f/solid.fCellSize;
+	const float ich = 1.0f/solid.fCellHeight;
 	// Rasterize triangles.
 	for (int i = 0; i < nt; ++i)
 	{
@@ -353,7 +353,7 @@ void rcRasterizeTriangles(rcContext* ctx, const float* verts, const int /*nv*/,
 		const float* v1 = &verts[tris[i*3+1]*3];
 		const float* v2 = &verts[tris[i*3+2]*3];
 		// Rasterize.
-		rasterizeTri(v0, v1, v2, areas[i], solid, solid.bmin, solid.bmax, solid.cs, ics, ich, flagMergeThr);
+		rasterizeTri(v0, v1, v2, areas[i], solid, solid.fBMin, solid.fBMax, solid.fCellSize, ics, ich, flagMergeThr);
 	}
 	
 	ctx->stopTimer(RC_TIMER_RASTERIZE_TRIANGLES);
@@ -371,8 +371,8 @@ void rcRasterizeTriangles(rcContext* ctx, const float* verts, const unsigned cha
 	
 	ctx->startTimer(RC_TIMER_RASTERIZE_TRIANGLES);
 	
-	const float ics = 1.0f/solid.cs;
-	const float ich = 1.0f/solid.ch;
+	const float ics = 1.0f/solid.fCellSize;
+	const float ich = 1.0f/solid.fCellHeight;
 	// Rasterize triangles.
 	for (int i = 0; i < nt; ++i)
 	{
@@ -380,7 +380,7 @@ void rcRasterizeTriangles(rcContext* ctx, const float* verts, const unsigned cha
 		const float* v1 = &verts[(i*3+1)*3];
 		const float* v2 = &verts[(i*3+2)*3];
 		// Rasterize.
-		rasterizeTri(v0, v1, v2, areas[i], solid, solid.bmin, solid.bmax, solid.cs, ics, ich, flagMergeThr);
+		rasterizeTri(v0, v1, v2, areas[i], solid, solid.fBMin, solid.fBMax, solid.fCellSize, ics, ich, flagMergeThr);
 	}
 	
 	ctx->stopTimer(RC_TIMER_RASTERIZE_TRIANGLES);
