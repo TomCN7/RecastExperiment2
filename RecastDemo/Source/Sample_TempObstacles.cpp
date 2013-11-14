@@ -1272,7 +1272,6 @@ bool Sample_TempObstacles::handleBuild()
 		return false;
 	}
 	
-
 	// Preprocess tiles.
 	
 	m_ctx->resetTimers();
@@ -1316,7 +1315,6 @@ bool Sample_TempObstacles::handleBuild()
 	
 	m_cacheBuildTimeMs = m_ctx->getAccumulatedTime(RC_TIMER_TOTAL)/1000.0f;
 	m_cacheBuildMemUsage = m_talloc->high;
-	
 
 	const dtNavMesh* nav = m_navMesh;
 	int navmeshMemUsage = 0;
