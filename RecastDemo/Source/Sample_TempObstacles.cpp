@@ -1137,7 +1137,8 @@ void Sample_TempObstacles::addTempObstacle(const float* pos)
 {
 	if (!m_pTileCache)
 		return;
-	float p[3];
+
+    float p[3];
 	dtVcopy(p, pos);
 	p[1] -= 0.5f;
 	m_pTileCache->addObstacle(p, 1.0f, 2.0f, 0);
@@ -1147,7 +1148,8 @@ void Sample_TempObstacles::removeTempObstacle(const float* sp, const float* sq)
 {
 	if (!m_pTileCache)
 		return;
-	dtObstacleRef Ref = hitTestObstacle(m_pTileCache, sp, sq);
+
+    dtObstacleRef Ref = hitTestObstacle(m_pTileCache, sp, sq);
 	m_pTileCache->removeObstacle(Ref);
 }
 
