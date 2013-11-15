@@ -46,7 +46,7 @@ static void drawPolyBoundaries(duDebugDraw* dd, const dtMeshTile* tile,
 
 	dd->begin(DU_DRAW_LINES, linew);
 
-	for (int i = 0; i < tile->header->polyCount; ++i)
+	for (int i = 0; i < tile->header->nPolyCount; ++i)
 	{
 		const dtPoly* p = &tile->polys[i];
 		
@@ -126,7 +126,7 @@ static void drawMeshTile(duDebugDraw* dd, const dtNavMesh& mesh, const dtNavMesh
 	dd->depthMask(false);
 
 	dd->begin(DU_DRAW_TRIS);
-	for (int i = 0; i < tile->header->polyCount; ++i)
+	for (int i = 0; i < tile->header->nPolyCount; ++i)
 	{
 		const dtPoly* p = &tile->polys[i];
 		if (p->getType() == DT_POLYTYPE_OFFMESH_CONNECTION)	// Skip off-mesh links.
@@ -175,7 +175,7 @@ static void drawMeshTile(duDebugDraw* dd, const dtNavMesh& mesh, const dtNavMesh
 	if (flags & DU_DRAWNAVMESH_OFFMESHCONS)
 	{
 		dd->begin(DU_DRAW_LINES, 2.0f);
-		for (int i = 0; i < tile->header->polyCount; ++i)
+		for (int i = 0; i < tile->header->nPolyCount; ++i)
 		{
 			const dtPoly* p = &tile->polys[i];
 			if (p->getType() != DT_POLYTYPE_OFFMESH_CONNECTION)	// Skip regular polys.
@@ -187,7 +187,7 @@ static void drawMeshTile(duDebugDraw* dd, const dtNavMesh& mesh, const dtNavMesh
 			else
 				col = duDarkenCol(duIntToCol(p->getArea(), 220));
 			
-			const dtOffMeshConnection* con = &tile->offMeshCons[i - tile->header->offMeshBase];
+			const dtOffMeshConnection* con = &tile->offMeshCons[i - tile->header->nOffMeshBase];
 			const float* va = &tile->verts[p->verts[0]*3];
 			const float* vb = &tile->verts[p->verts[1]*3];
 
@@ -229,7 +229,7 @@ static void drawMeshTile(duDebugDraw* dd, const dtNavMesh& mesh, const dtNavMesh
 	
 	const unsigned int vcol = duRGBA(0,0,0,196);
 	dd->begin(DU_DRAW_POINTS, 3.0f);
-	for (int i = 0; i < tile->header->vertCount; ++i)
+	for (int i = 0; i < tile->header->nVertCount; ++i)
 	{
 		const float* v = &tile->verts[i*3];
 		dd->vertex(v[0], v[1], v[2], vcol);
@@ -309,17 +309,17 @@ static void drawMeshTileBVTree(duDebugDraw* dd, const dtMeshTile* tile)
 	// Draw BV nodes.
 	const float cs = 1.0f / tile->header->bvQuantFactor;
 	dd->begin(DU_DRAW_LINES, 1.0f);
-	for (int i = 0; i < tile->header->bvNodeCount; ++i)
+	for (int i = 0; i < tile->header->nBoundingVolumeNodeCount; ++i)
 	{
 		const dtBVNode* n = &tile->bvTree[i];
 		if (n->i < 0) // Leaf indices are positive.
 			continue;
-		duAppendBoxWire(dd, tile->header->bmin[0] + n->bmin[0]*cs,
-						tile->header->bmin[1] + n->bmin[1]*cs,
-						tile->header->bmin[2] + n->bmin[2]*cs,
-						tile->header->bmin[0] + n->bmax[0]*cs,
-						tile->header->bmin[1] + n->bmax[1]*cs,
-						tile->header->bmin[2] + n->bmax[2]*cs,
+		duAppendBoxWire(dd, tile->header->fBMin[0] + n->bmin[0]*cs,
+						tile->header->fBMin[1] + n->bmin[1]*cs,
+						tile->header->fBMin[2] + n->bmin[2]*cs,
+						tile->header->fBMin[0] + n->bmax[0]*cs,
+						tile->header->fBMin[1] + n->bmax[1]*cs,
+						tile->header->fBMin[2] + n->bmax[2]*cs,
 						duRGBA(255,255,255,128));
 	}
 	dd->end();
@@ -341,7 +341,7 @@ static void drawMeshTilePortal(duDebugDraw* dd, const dtMeshTile* tile)
 {
 	// Draw portals
 	const float padx = 0.04f;
-	const float pady = tile->header->walkableClimb;
+	const float pady = tile->header->fWalkableClimb;
 
 	dd->begin(DU_DRAW_LINES, 2.0f);
 
@@ -349,7 +349,7 @@ static void drawMeshTilePortal(duDebugDraw* dd, const dtMeshTile* tile)
 	{
 		unsigned short m = DT_EXT_LINK | (unsigned short)side;
 		
-		for (int i = 0; i < tile->header->polyCount; ++i)
+		for (int i = 0; i < tile->header->nPolyCount; ++i)
 		{
 			dtPoly* poly = &tile->polys[i];
 			
@@ -432,7 +432,7 @@ void duDebugDrawNavMeshPolysWithFlags(struct duDebugDraw* dd, const dtNavMesh& m
 		if (!tile->header) continue;
 		dtPolyRef base = mesh.getPolyRefBase(tile);
 
-		for (int j = 0; j < tile->header->polyCount; ++j)
+		for (int j = 0; j < tile->header->nPolyCount; ++j)
 		{
 			const dtPoly* p = &tile->polys[j];
 			if ((p->flags & polyFlags) == 0) continue;
@@ -457,7 +457,7 @@ void duDebugDrawNavMeshPoly(duDebugDraw* dd, const dtNavMesh& mesh, dtPolyRef Re
 
 	if (poly->getType() == DT_POLYTYPE_OFFMESH_CONNECTION)
 	{
-		dtOffMeshConnection* con = &tile->offMeshCons[ip - tile->header->offMeshBase];
+		dtOffMeshConnection* con = &tile->offMeshCons[ip - tile->header->nOffMeshBase];
 
 		dd->begin(DU_DRAW_LINES, 2.0f);
 

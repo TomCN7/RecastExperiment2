@@ -437,23 +437,23 @@ bool dtCreateNavMeshData(dtNavMeshCreateParams* params, unsigned char** outData,
 	header->version = DT_NAVMESH_VERSION;
 	header->x = params->tileX;
 	header->y = params->tileY;
-	header->layer = params->tileLayer;
+	header->nLayer = params->tileLayer;
 	header->userId = params->userId;
-	header->polyCount = totPolyCount;
-	header->vertCount = totVertCount;
-	header->maxLinkCount = maxLinkCount;
-	dtVcopy(header->bmin, params->bmin);
-	dtVcopy(header->bmax, params->bmax);
-	header->detailMeshCount = params->polyCount;
-	header->detailVertCount = uniqueDetailVertCount;
-	header->detailTriCount = detailTriCount;
+	header->nPolyCount = totPolyCount;
+	header->nVertCount = totVertCount;
+	header->nMaxLinkCount = maxLinkCount;
+	dtVcopy(header->fBMin, params->bmin);
+	dtVcopy(header->fBMax, params->bmax);
+	header->nDetailMeshCount = params->polyCount;
+	header->nDetailVertCount = uniqueDetailVertCount;
+	header->nDetailTriCount = detailTriCount;
 	header->bvQuantFactor = 1.0f / params->cs;
-	header->offMeshBase = params->polyCount;
-	header->walkableHeight = params->walkableHeight;
-	header->walkableRadius = params->walkableRadius;
-	header->walkableClimb = params->walkableClimb;
-	header->offMeshConCount = storedOffMeshConCount;
-	header->bvNodeCount = params->buildBvTree ? params->polyCount*2 : 0;
+	header->nOffMeshBase = params->polyCount;
+	header->fWalkableHeight = params->walkableHeight;
+	header->fWalkableRadius = params->walkableRadius;
+	header->fWalkableClimb = params->walkableClimb;
+	header->nOffMeshConCount = storedOffMeshConCount;
+	header->nBoundingVolumeNodeCount = params->buildBvTree ? params->polyCount*2 : 0;
 	
 	const int offMeshVertsBase = params->vertCount;
 	const int offMeshPolyBase = params->polyCount;
@@ -651,26 +651,26 @@ bool dtNavMeshHeaderSwapEndian(unsigned char* data, const int /*dataSize*/)
 	dtSwapEndian(&header->version);
 	dtSwapEndian(&header->x);
 	dtSwapEndian(&header->y);
-	dtSwapEndian(&header->layer);
+	dtSwapEndian(&header->nLayer);
 	dtSwapEndian(&header->userId);
-	dtSwapEndian(&header->polyCount);
-	dtSwapEndian(&header->vertCount);
-	dtSwapEndian(&header->maxLinkCount);
-	dtSwapEndian(&header->detailMeshCount);
-	dtSwapEndian(&header->detailVertCount);
-	dtSwapEndian(&header->detailTriCount);
-	dtSwapEndian(&header->bvNodeCount);
-	dtSwapEndian(&header->offMeshConCount);
-	dtSwapEndian(&header->offMeshBase);
-	dtSwapEndian(&header->walkableHeight);
-	dtSwapEndian(&header->walkableRadius);
-	dtSwapEndian(&header->walkableClimb);
-	dtSwapEndian(&header->bmin[0]);
-	dtSwapEndian(&header->bmin[1]);
-	dtSwapEndian(&header->bmin[2]);
-	dtSwapEndian(&header->bmax[0]);
-	dtSwapEndian(&header->bmax[1]);
-	dtSwapEndian(&header->bmax[2]);
+	dtSwapEndian(&header->nPolyCount);
+	dtSwapEndian(&header->nVertCount);
+	dtSwapEndian(&header->nMaxLinkCount);
+	dtSwapEndian(&header->nDetailMeshCount);
+	dtSwapEndian(&header->nDetailVertCount);
+	dtSwapEndian(&header->nDetailTriCount);
+	dtSwapEndian(&header->nBoundingVolumeNodeCount);
+	dtSwapEndian(&header->nOffMeshConCount);
+	dtSwapEndian(&header->nOffMeshBase);
+	dtSwapEndian(&header->fWalkableHeight);
+	dtSwapEndian(&header->fWalkableRadius);
+	dtSwapEndian(&header->fWalkableClimb);
+	dtSwapEndian(&header->fBMin[0]);
+	dtSwapEndian(&header->fBMin[1]);
+	dtSwapEndian(&header->fBMin[2]);
+	dtSwapEndian(&header->fBMax[0]);
+	dtSwapEndian(&header->fBMax[1]);
+	dtSwapEndian(&header->fBMax[2]);
 	dtSwapEndian(&header->bvQuantFactor);
 
 	// Freelist index and pointers are updated when tile is added, no need to swap.
@@ -695,14 +695,14 @@ bool dtNavMeshDataSwapEndian(unsigned char* data, const int /*dataSize*/)
 	
 	// Patch header pointers.
 	const int headerSize = dtAlign4(sizeof(dtMeshHeader));
-	const int vertsSize = dtAlign4(sizeof(float)*3*header->vertCount);
-	const int polysSize = dtAlign4(sizeof(dtPoly)*header->polyCount);
-	const int linksSize = dtAlign4(sizeof(dtLink)*(header->maxLinkCount));
-	const int detailMeshesSize = dtAlign4(sizeof(dtPolyDetail)*header->detailMeshCount);
-	const int detailVertsSize = dtAlign4(sizeof(float)*3*header->detailVertCount);
-	const int detailTrisSize = dtAlign4(sizeof(unsigned char)*4*header->detailTriCount);
-	const int bvtreeSize = dtAlign4(sizeof(dtBVNode)*header->bvNodeCount);
-	const int offMeshLinksSize = dtAlign4(sizeof(dtOffMeshConnection)*header->offMeshConCount);
+	const int vertsSize = dtAlign4(sizeof(float)*3*header->nVertCount);
+	const int polysSize = dtAlign4(sizeof(dtPoly)*header->nPolyCount);
+	const int linksSize = dtAlign4(sizeof(dtLink)*(header->nMaxLinkCount));
+	const int detailMeshesSize = dtAlign4(sizeof(dtPolyDetail)*header->nDetailMeshCount);
+	const int detailVertsSize = dtAlign4(sizeof(float)*3*header->nDetailVertCount);
+	const int detailTrisSize = dtAlign4(sizeof(unsigned char)*4*header->nDetailTriCount);
+	const int bvtreeSize = dtAlign4(sizeof(dtBVNode)*header->nBoundingVolumeNodeCount);
+	const int offMeshLinksSize = dtAlign4(sizeof(dtOffMeshConnection)*header->nOffMeshConCount);
 	
 	unsigned char* d = data + headerSize;
 	float* verts = (float*)d; d += vertsSize;
@@ -715,13 +715,13 @@ bool dtNavMeshDataSwapEndian(unsigned char* data, const int /*dataSize*/)
 	dtOffMeshConnection* offMeshCons = (dtOffMeshConnection*)d; d += offMeshLinksSize;
 	
 	// Vertices
-	for (int i = 0; i < header->vertCount*3; ++i)
+	for (int i = 0; i < header->nVertCount*3; ++i)
 	{
 		dtSwapEndian(&verts[i]);
 	}
 
 	// Polys
-	for (int i = 0; i < header->polyCount; ++i)
+	for (int i = 0; i < header->nPolyCount; ++i)
 	{
 		dtPoly* p = &polys[i];
 		// poly->firstLink is update when tile is added, no need to swap.
@@ -736,7 +736,7 @@ bool dtNavMeshDataSwapEndian(unsigned char* data, const int /*dataSize*/)
 	// Links are rebuild when tile is added, no need to swap.
 
 	// Detail meshes
-	for (int i = 0; i < header->detailMeshCount; ++i)
+	for (int i = 0; i < header->nDetailMeshCount; ++i)
 	{
 		dtPolyDetail* pd = &detailMeshes[i];
 		dtSwapEndian(&pd->vertBase);
@@ -744,13 +744,13 @@ bool dtNavMeshDataSwapEndian(unsigned char* data, const int /*dataSize*/)
 	}
 	
 	// Detail verts
-	for (int i = 0; i < header->detailVertCount*3; ++i)
+	for (int i = 0; i < header->nDetailVertCount*3; ++i)
 	{
 		dtSwapEndian(&detailVerts[i]);
 	}
 
 	// BV-tree
-	for (int i = 0; i < header->bvNodeCount; ++i)
+	for (int i = 0; i < header->nBoundingVolumeNodeCount; ++i)
 	{
 		dtBVNode* node = &bvTree[i];
 		for (int j = 0; j < 3; ++j)
@@ -762,7 +762,7 @@ bool dtNavMeshDataSwapEndian(unsigned char* data, const int /*dataSize*/)
 	}
 
 	// Off-mesh Connections.
-	for (int i = 0; i < header->offMeshConCount; ++i)
+	for (int i = 0; i < header->nOffMeshConCount; ++i)
 	{
 		dtOffMeshConnection* con = &offMeshCons[i];
 		for (int j = 0; j < 6; ++j)

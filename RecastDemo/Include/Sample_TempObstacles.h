@@ -28,7 +28,7 @@
 class Sample_TempObstacles : public Sample
 {
 protected:
-	bool m_keepInterResults;
+	bool m_bKeepInterResults;
 
 	struct LinearAllocator* m_talloc;
 	struct FastLZCompressor* m_tcomp;
@@ -36,11 +36,11 @@ protected:
 
 	class dtTileCache* m_pTileCache;
 	
-	float m_cacheBuildTimeMs;
-	int m_cacheCompressedSize;
-	int m_cacheRawSize;
-	int m_cacheLayerCount;
-	int m_cacheBuildMemUsage;
+	float m_fCacheBuildTimeMs;
+	int m_nCacheCompressedSize;
+	int m_nCacheRawSize;
+	int m_nCacheLayerCount;
+	int m_nCacheBuildMemUsage;
 	
 	enum DrawMode
 	{

@@ -245,7 +245,7 @@ dtStatus dtNavMeshQuery::findRandomPoint(const dtQueryFilter* filter, float (*fr
 	const dtPolyRef base = m_nav->getPolyRefBase(tile);
 
 	float areaSum = 0.0f;
-	for (int i = 0; i < tile->header->polyCount; ++i)
+	for (int i = 0; i < tile->header->nPolyCount; ++i)
 	{
 		const dtPoly* p = &tile->polys[i];
 		// Do not return off-mesh connection polygons.
@@ -809,9 +809,9 @@ int dtNavMeshQuery::queryPolygonsInTile(const dtMeshTile* tile, const float* qmi
 	if (tile->bvTree)
 	{
 		const dtBVNode* node = &tile->bvTree[0];
-		const dtBVNode* end = &tile->bvTree[tile->header->bvNodeCount];
-		const float* tbmin = tile->header->bmin;
-		const float* tbmax = tile->header->bmax;
+		const dtBVNode* end = &tile->bvTree[tile->header->nBoundingVolumeNodeCount];
+		const float* tbmin = tile->header->fBMin;
+		const float* tbmax = tile->header->fBMax;
 		const float qfac = tile->header->bvQuantFactor;
 		
 		// Calculate quantized box
@@ -865,7 +865,7 @@ int dtNavMeshQuery::queryPolygonsInTile(const dtMeshTile* tile, const float* qmi
 		float bmin[3], bmax[3];
 		int n = 0;
 		const dtPolyRef base = m_nav->getPolyRefBase(tile);
-		for (int i = 0; i < tile->header->polyCount; ++i)
+		for (int i = 0; i < tile->header->nPolyCount; ++i)
 		{
 			const dtPoly* p = &tile->polys[i];
 			// Do not return off-mesh connection polygons.

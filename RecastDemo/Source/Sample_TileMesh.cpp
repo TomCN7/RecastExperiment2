@@ -710,11 +710,11 @@ bool Sample_TileMesh::handleBuild()
 	}
 
 	dtNavMeshParams params;
-	rcVcopy(params.orig, m_pInputGeom->getMeshBoundsMin());
-	params.tileWidth = m_tileSize*m_fCellSize;
-	params.tileHeight = m_tileSize*m_fCellSize;
-	params.maxTiles = m_maxTiles;
-	params.maxPolys = m_maxPolysPerTile;
+	rcVcopy(params.fOrigin, m_pInputGeom->getMeshBoundsMin());
+	params.fTileWidth = m_tileSize*m_fCellSize;
+	params.fTileHeight = m_tileSize*m_fCellSize;
+	params.nMaxTiles = m_maxTiles;
+	params.nMaxPolys = m_maxPolysPerTile;
 	
 	dtStatus status;
 	

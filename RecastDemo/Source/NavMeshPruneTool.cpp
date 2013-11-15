@@ -118,7 +118,7 @@ public:
 			const dtMeshTile* tile = nav->getTile(i);
 			if (!tile->header) continue;
 			TileFlags* tf = &m_tiles[i];
-			tf->nflags = tile->header->polyCount;
+			tf->nflags = tile->header->nPolyCount;
 			tf->base = nav->getPolyRefBase(tile);
 			if (tf->nflags)
 			{
@@ -206,7 +206,7 @@ static void disableUnvisitedPolys(dtNavMesh* nav, NavmeshFlags* flags)
 		const dtMeshTile* tile = ((const dtNavMesh*)nav)->getTile(i);
 		if (!tile->header) continue;
 		const dtPolyRef base = nav->getPolyRefBase(tile);
-		for (int j = 0; j < tile->header->polyCount; ++j)
+		for (int j = 0; j < tile->header->nPolyCount; ++j)
 		{
 			const dtPolyRef Ref = base | (unsigned int)j;
 			if (!flags->getFlags(Ref))
@@ -326,7 +326,7 @@ void NavMeshPruneTool::handleRender()
 			const dtMeshTile* tile = nav->getTile(i);
 			if (!tile->header) continue;
 			const dtPolyRef base = nav->getPolyRefBase(tile);
-			for (int j = 0; j < tile->header->polyCount; ++j)
+			for (int j = 0; j < tile->header->nPolyCount; ++j)
 			{
 				const dtPolyRef Ref = base | (unsigned int)j;
 				if (m_flags->getFlags(Ref))

@@ -206,25 +206,25 @@ struct dtMeshHeader
 	int version;			///< Tile data format version number.
 	int x;					///< The x-position of the tile within the dtNavMesh tile grid. (x, y, layer)
 	int y;					///< The y-position of the tile within the dtNavMesh tile grid. (x, y, layer)
-	int layer;				///< The layer of the tile within the dtNavMesh tile grid. (x, y, layer)
+	int nLayer;				///< The layer of the tile within the dtNavMesh tile grid. (x, y, layer)
 	unsigned int userId;	///< The user defined id of the tile.
-	int polyCount;			///< The number of polygons in the tile.
-	int vertCount;			///< The number of vertices in the tile.
-	int maxLinkCount;		///< The number of allocated links.
-	int detailMeshCount;	///< The number of sub-meshes in the detail mesh.
+	int nPolyCount;			///< The number of polygons in the tile.
+	int nVertCount;			///< The number of vertices in the tile.
+	int nMaxLinkCount;		///< The number of allocated links.
+	int nDetailMeshCount;	///< The number of sub-meshes in the detail mesh.
 	
 	/// The number of unique vertices in the detail mesh. (In addition to the polygon vertices.)
-	int detailVertCount;
+	int nDetailVertCount;
 	
-	int detailTriCount;			///< The number of triangles in the detail mesh.
-	int bvNodeCount;			///< The number of bounding volume nodes. (Zero if bounding volumes are disabled.)
-	int offMeshConCount;		///< The number of off-mesh connections.
-	int offMeshBase;			///< The index of the first polygon which is an off-mesh connection.
-	float walkableHeight;		///< The height of the agents using the tile.
-	float walkableRadius;		///< The radius of the agents using the tile.
-	float walkableClimb;		///< The maximum climb height of the agents using the tile.
-	float bmin[3];				///< The minimum bounds of the tile's AABB. [(x, y, z)]
-	float bmax[3];				///< The maximum bounds of the tile's AABB. [(x, y, z)]
+	int nDetailTriCount;			///< The number of triangles in the detail mesh.
+	int nBoundingVolumeNodeCount;			///< The number of bounding volume nodes. (Zero if bounding volumes are disabled.)
+	int nOffMeshConCount;		///< The number of off-mesh connections.
+	int nOffMeshBase;			///< The index of the first polygon which is an off-mesh connection.
+	float fWalkableHeight;		///< The height of the agents using the tile.
+	float fWalkableRadius;		///< The radius of the agents using the tile.
+	float fWalkableClimb;		///< The maximum climb height of the agents using the tile.
+	float fBMin[3];				///< The minimum bounds of the tile's AABB. [(x, y, z)]
+	float fBMax[3];				///< The maximum bounds of the tile's AABB. [(x, y, z)]
 	
 	/// The bounding volume quantization factor. 
 	float bvQuantFactor;
@@ -267,11 +267,11 @@ struct dtMeshTile
 /// @ingroup detour
 struct dtNavMeshParams
 {
-	float orig[3];					///< The world space origin of the navigation mesh's tile space. [(x, y, z)]
-	float tileWidth;				///< The width of each tile. (Along the x-axis.)
-	float tileHeight;				///< The height of each tile. (Along the z-axis.)
-	int maxTiles;					///< The maximum number of tiles the navigation mesh can contain.
-	int maxPolys;					///< The maximum number of polygons each tile can contain.
+	float fOrigin[3];					///< The world space origin of the navigation mesh's tile space. [(x, y, z)]
+	float fTileWidth;				///< The width of each tile. (Along the x-axis.)
+	float fTileHeight;				///< The height of each tile. (Along the z-axis.)
+	int nMaxTiles;					///< The maximum number of tiles the navigation mesh can contain.
+	int nMaxPolys;					///< The maximum number of polygons each tile can contain.
 };
 
 /// A navigation mesh based on tiles of convex polygons.

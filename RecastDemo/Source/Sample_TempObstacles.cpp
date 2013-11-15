@@ -809,18 +809,14 @@ public:
 	virtual void handleRenderOverlay(double* /*proj*/, double* /*model*/, int* /*view*/) { }
 };
 
-
-
-
-
 Sample_TempObstacles::Sample_TempObstacles() :
-	m_keepInterResults(false),
+	m_bKeepInterResults(false),
 	m_pTileCache(0),
-	m_cacheBuildTimeMs(0),
-	m_cacheCompressedSize(0),
-	m_cacheRawSize(0),
-	m_cacheLayerCount(0),
-	m_cacheBuildMemUsage(0),
+	m_fCacheBuildTimeMs(0),
+	m_nCacheCompressedSize(0),
+	m_nCacheRawSize(0),
+	m_nCacheLayerCount(0),
+	m_nCacheBuildMemUsage(0),
 	m_drawMode(DRAWMODE_NAVMESH),
 	m_nMaxTiles(0),
 	m_nMaxPolysPerTile(0),
@@ -846,8 +842,8 @@ void Sample_TempObstacles::handleSettings()
 {
 	Sample::handleCommonSettings();
 
-	if (imguiCheck("Keep Itermediate Results", m_keepInterResults))
-		m_keepInterResults = !m_keepInterResults;
+	if (imguiCheck("Keep Itermediate Results", m_bKeepInterResults))
+		m_bKeepInterResults = !m_bKeepInterResults;
 
 	imguiLabel("Tiling");
 	imguiSlider("TileSize", &m_fTileSize, 16.0f, 128.0f, 8.0f);
@@ -890,18 +886,18 @@ void Sample_TempObstacles::handleSettings()
 	imguiLabel("Tile Cache");
 	char msg[64];
 
-	const float compressionRatio = (float)m_cacheCompressedSize / (float)(m_cacheRawSize+1);
+	const float compressionRatio = (float)m_nCacheCompressedSize / (float)(m_nCacheRawSize+1);
 	
-	snprintf(msg, 64, "Layers  %d", m_cacheLayerCount);
+	snprintf(msg, 64, "Layers  %d", m_nCacheLayerCount);
 	imguiValue(msg);
-	snprintf(msg, 64, "Layers (per tile)  %.1f", (float)m_cacheLayerCount/(float)gridSize);
+	snprintf(msg, 64, "Layers (per tile)  %.1f", (float)m_nCacheLayerCount/(float)gridSize);
 	imguiValue(msg);
 	
-	snprintf(msg, 64, "Memory  %.1f kB / %.1f kB (%.1f%%)", m_cacheCompressedSize/1024.0f, m_cacheRawSize/1024.0f, compressionRatio*100.0f);
+	snprintf(msg, 64, "Memory  %.1f kB / %.1f kB (%.1f%%)", m_nCacheCompressedSize/1024.0f, m_nCacheRawSize/1024.0f, compressionRatio*100.0f);
 	imguiValue(msg);
-	snprintf(msg, 64, "Navmesh Build Time  %.1f ms", m_cacheBuildTimeMs);
+	snprintf(msg, 64, "Navmesh Build Time  %.1f ms", m_fCacheBuildTimeMs);
 	imguiValue(msg);
-	snprintf(msg, 64, "Build Peak Mem Usage  %.1f kB", m_cacheBuildMemUsage/1024.0f);
+	snprintf(msg, 64, "Build Peak Mem Usage  %.1f kB", m_nCacheBuildMemUsage/1024.0f);
 	imguiValue(msg);
 	
 	imguiSeparator();
@@ -1250,11 +1246,11 @@ bool Sample_TempObstacles::handleBuild()
 
 	dtNavMeshParams params;
 	memset(&params, 0, sizeof(params));
-	rcVcopy(params.orig, m_pInputGeom->getMeshBoundsMin());
-	params.tileWidth = m_fTileSize * m_fCellSize;
-	params.tileHeight = m_fTileSize * m_fCellSize;
-	params.maxTiles = m_nMaxTiles;
-	params.maxPolys = m_nMaxPolysPerTile;
+	rcVcopy(params.fOrigin, m_pInputGeom->getMeshBoundsMin());
+	params.fTileWidth = m_fTileSize * m_fCellSize;
+	params.fTileHeight = m_fTileSize * m_fCellSize;
+	params.nMaxTiles = m_nMaxTiles;
+	params.nMaxPolys = m_nMaxPolysPerTile;
 	
 	status = m_pNavMesh->init(&params);
 	if (dtStatusFailed(status))
@@ -1274,9 +1270,9 @@ bool Sample_TempObstacles::handleBuild()
 	
 	m_ctx->resetTimers();
 	
-	m_cacheLayerCount = 0;
-	m_cacheCompressedSize = 0;
-	m_cacheRawSize = 0;
+	m_nCacheLayerCount = 0;
+	m_nCacheCompressedSize = 0;
+	m_nCacheRawSize = 0;
 	
 	for (int y = 0; y < th; ++y)
 	{
@@ -1297,9 +1293,9 @@ bool Sample_TempObstacles::handleBuild()
 					continue;
 				}
 				
-				m_cacheLayerCount++;
-				m_cacheCompressedSize += pTile->dataSize;
-				m_cacheRawSize += calcLayerBufferSize(tcparams.nWidth, tcparams.nHeight);
+				m_nCacheLayerCount++;
+				m_nCacheCompressedSize += pTile->dataSize;
+				m_nCacheRawSize += calcLayerBufferSize(tcparams.nWidth, tcparams.nHeight);
 			}
 		}
 	}
@@ -1311,8 +1307,8 @@ bool Sample_TempObstacles::handleBuild()
 			m_pTileCache->buildNavMeshTilesAt(x, y, m_pNavMesh);
 	m_ctx->stopTimer(RC_TIMER_TOTAL);
 	
-	m_cacheBuildTimeMs = m_ctx->getAccumulatedTime(RC_TIMER_TOTAL) / 1000.0f;
-	m_cacheBuildMemUsage = m_talloc->high;
+	m_fCacheBuildTimeMs = m_ctx->getAccumulatedTime(RC_TIMER_TOTAL) / 1000.0f;
+	m_nCacheBuildMemUsage = m_talloc->high;
 
 	const dtNavMesh* pNav = m_pNavMesh;
 	int nNavMeshMemUsage = 0;
