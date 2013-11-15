@@ -1,8 +1,0 @@
-﻿  Building Custom Rule D:/ThomasLab/ReCast/DebugUtils/CMakeLists.txt
-  CMake does not need to re-run because D:\ThomasLab\ReCast\DebugUtils\CMakeFiles\generate.stamp is up-to-date.
-  DebugDraw.cpp
-  DetourDebugDraw.cpp
-  RecastDebugDraw.cpp
-  RecastDump.cpp
-  Generating Code...
-  DebugUtils.vcxproj -> D:\ThomasLab\ReCast\DebugUtils\Debug\DebugUtils.lib
