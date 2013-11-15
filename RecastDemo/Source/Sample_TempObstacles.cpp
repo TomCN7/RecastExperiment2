@@ -352,7 +352,6 @@ static int rasterizeTileLayers(BuildContext* ctx, InputGeom* geom,
 	rcFilterLedgeSpans(ctx, tcfg.nWalkableHeight, tcfg.nWalkableClimb, *rc.pSolidHeightField);
 	rcFilterWalkableLowHeightSpans(ctx, tcfg.nWalkableHeight, *rc.pSolidHeightField);
 	
-	
 	rc.pCompactHeightField = rcAllocCompactHeightfield();
 	if (!rc.pCompactHeightField)
 	{
