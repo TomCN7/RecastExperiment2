@@ -46,13 +46,13 @@ static void drawPolyBoundaries(duDebugDraw* dd, const dtMeshTile* tile,
 
 	dd->begin(DU_DRAW_LINES, linew);
 
-	for (int i = 0; i < tile->header->nPolyCount; ++i)
+	for (int i = 0; i < tile->pHeader->nPolyCount; ++i)
 	{
-		const dtPoly* p = &tile->polys[i];
+		const dtPoly* p = &tile->pPolys[i];
 		
 		if (p->getType() == DT_POLYTYPE_OFFMESH_CONNECTION) continue;
 		
-		const dtPolyDetail* pd = &tile->detailMeshes[i];
+		const dtPolyDetail* pd = &tile->pDetailMeshes[i];
 		
 		for (int j = 0, nj = (int)p->vertCount; j < nj; ++j)
 		{
@@ -63,9 +63,9 @@ static void drawPolyBoundaries(duDebugDraw* dd, const dtMeshTile* tile,
 				if (p->neis[j] & DT_EXT_LINK)
 				{
 					bool con = false;
-					for (unsigned int k = p->firstLink; k != DT_NULL_LINK; k = tile->links[k].next)
+					for (unsigned int k = p->firstLink; k != DT_NULL_LINK; k = tile->pLinks[k].next)
 					{
-						if (tile->links[k].edge == j)
+						if (tile->pLinks[k].edge == j)
 						{
 							con = true;
 							break;
@@ -84,21 +84,21 @@ static void drawPolyBoundaries(duDebugDraw* dd, const dtMeshTile* tile,
 				if (p->neis[j] != 0) continue;
 			}
 			
-			const float* v0 = &tile->verts[p->verts[j]*3];
-			const float* v1 = &tile->verts[p->verts[(j+1) % nj]*3];
+			const float* v0 = &tile->fVerts[p->verts[j]*3];
+			const float* v1 = &tile->fVerts[p->verts[(j+1) % nj]*3];
 			
 			// Draw detail mesh edges which align with the actual poly edge.
 			// This is really slow.
 			for (int k = 0; k < pd->triCount; ++k)
 			{
-				const unsigned char* t = &tile->detailTris[(pd->triBase+k)*4];
+				const unsigned char* t = &tile->pDetailTris[(pd->triBase+k)*4];
 				const float* tv[3];
 				for (int m = 0; m < 3; ++m)
 				{
 					if (t[m] < p->vertCount)
-						tv[m] = &tile->verts[p->verts[t[m]]*3];
+						tv[m] = &tile->fVerts[p->verts[t[m]]*3];
 					else
-						tv[m] = &tile->detailVerts[(pd->vertBase+(t[m]-p->vertCount))*3];
+						tv[m] = &tile->fDetailVerts[(pd->vertBase+(t[m]-p->vertCount))*3];
 				}
 				for (int m = 0, n = 2; m < 3; n=m++)
 				{
@@ -126,13 +126,13 @@ static void drawMeshTile(duDebugDraw* dd, const dtNavMesh& mesh, const dtNavMesh
 	dd->depthMask(false);
 
 	dd->begin(DU_DRAW_TRIS);
-	for (int i = 0; i < tile->header->nPolyCount; ++i)
+	for (int i = 0; i < tile->pHeader->nPolyCount; ++i)
 	{
-		const dtPoly* p = &tile->polys[i];
+		const dtPoly* p = &tile->pPolys[i];
 		if (p->getType() == DT_POLYTYPE_OFFMESH_CONNECTION)	// Skip off-mesh links.
 			continue;
 			
-		const dtPolyDetail* pd = &tile->detailMeshes[i];
+		const dtPolyDetail* pd = &tile->pDetailMeshes[i];
 
 		unsigned int col;
 		if (query && query->isInClosedList(base | (dtPolyRef)i))
@@ -154,13 +154,13 @@ static void drawMeshTile(duDebugDraw* dd, const dtNavMesh& mesh, const dtNavMesh
 		
 		for (int j = 0; j < pd->triCount; ++j)
 		{
-			const unsigned char* t = &tile->detailTris[(pd->triBase+j)*4];
+			const unsigned char* t = &tile->pDetailTris[(pd->triBase+j)*4];
 			for (int k = 0; k < 3; ++k)
 			{
 				if (t[k] < p->vertCount)
-					dd->vertex(&tile->verts[p->verts[t[k]]*3], col);
+					dd->vertex(&tile->fVerts[p->verts[t[k]]*3], col);
 				else
-					dd->vertex(&tile->detailVerts[(pd->vertBase+t[k]-p->vertCount)*3], col);
+					dd->vertex(&tile->fDetailVerts[(pd->vertBase+t[k]-p->vertCount)*3], col);
 			}
 		}
 	}
@@ -175,9 +175,9 @@ static void drawMeshTile(duDebugDraw* dd, const dtNavMesh& mesh, const dtNavMesh
 	if (flags & DU_DRAWNAVMESH_OFFMESHCONS)
 	{
 		dd->begin(DU_DRAW_LINES, 2.0f);
-		for (int i = 0; i < tile->header->nPolyCount; ++i)
+		for (int i = 0; i < tile->pHeader->nPolyCount; ++i)
 		{
-			const dtPoly* p = &tile->polys[i];
+			const dtPoly* p = &tile->pPolys[i];
 			if (p->getType() != DT_POLYTYPE_OFFMESH_CONNECTION)	// Skip regular polys.
 				continue;
 			
@@ -187,51 +187,51 @@ static void drawMeshTile(duDebugDraw* dd, const dtNavMesh& mesh, const dtNavMesh
 			else
 				col = duDarkenCol(duIntToCol(p->getArea(), 220));
 			
-			const dtOffMeshConnection* con = &tile->offMeshCons[i - tile->header->nOffMeshBase];
-			const float* va = &tile->verts[p->verts[0]*3];
-			const float* vb = &tile->verts[p->verts[1]*3];
+			const dtOffMeshConnection* con = &tile->pOffMeshCons[i - tile->pHeader->nOffMeshBase];
+			const float* va = &tile->fVerts[p->verts[0]*3];
+			const float* vb = &tile->fVerts[p->verts[1]*3];
 
 			// Check to see if start and end end-points have links.
 			bool startSet = false;
 			bool endSet = false;
-			for (unsigned int k = p->firstLink; k != DT_NULL_LINK; k = tile->links[k].next)
+			for (unsigned int k = p->firstLink; k != DT_NULL_LINK; k = tile->pLinks[k].next)
 			{
-				if (tile->links[k].edge == 0)
+				if (tile->pLinks[k].edge == 0)
 					startSet = true;
-				if (tile->links[k].edge == 1)
+				if (tile->pLinks[k].edge == 1)
 					endSet = true;
 			}
 			
 			// End points and their on-mesh locations.
 			dd->vertex(va[0],va[1],va[2], col);
-			dd->vertex(con->pos[0],con->pos[1],con->pos[2], col);
+			dd->vertex(con->fPosition[0],con->fPosition[1],con->fPosition[2], col);
 			col2 = startSet ? col : duRGBA(220,32,16,196);
-			duAppendCircle(dd, con->pos[0],con->pos[1]+0.1f,con->pos[2], con->rad, col2);
+			duAppendCircle(dd, con->fPosition[0],con->fPosition[1]+0.1f,con->fPosition[2], con->fRadius, col2);
 
 			dd->vertex(vb[0],vb[1],vb[2], col);
-			dd->vertex(con->pos[3],con->pos[4],con->pos[5], col);
+			dd->vertex(con->fPosition[3],con->fPosition[4],con->fPosition[5], col);
 			col2 = endSet ? col : duRGBA(220,32,16,196);
-			duAppendCircle(dd, con->pos[3],con->pos[4]+0.1f,con->pos[5], con->rad, col2);
+			duAppendCircle(dd, con->fPosition[3],con->fPosition[4]+0.1f,con->fPosition[5], con->fRadius, col2);
 			
 			// End point vertices.
-			dd->vertex(con->pos[0],con->pos[1],con->pos[2], duRGBA(0,48,64,196));
-			dd->vertex(con->pos[0],con->pos[1]+0.2f,con->pos[2], duRGBA(0,48,64,196));
+			dd->vertex(con->fPosition[0],con->fPosition[1],con->fPosition[2], duRGBA(0,48,64,196));
+			dd->vertex(con->fPosition[0],con->fPosition[1]+0.2f,con->fPosition[2], duRGBA(0,48,64,196));
 			
-			dd->vertex(con->pos[3],con->pos[4],con->pos[5], duRGBA(0,48,64,196));
-			dd->vertex(con->pos[3],con->pos[4]+0.2f,con->pos[5], duRGBA(0,48,64,196));
+			dd->vertex(con->fPosition[3],con->fPosition[4],con->fPosition[5], duRGBA(0,48,64,196));
+			dd->vertex(con->fPosition[3],con->fPosition[4]+0.2f,con->fPosition[5], duRGBA(0,48,64,196));
 			
 			// Connection arc.
-			duAppendArc(dd, con->pos[0],con->pos[1],con->pos[2], con->pos[3],con->pos[4],con->pos[5], 0.25f,
-						(con->flags & 1) ? 0.6f : 0, 0.6f, col);
+			duAppendArc(dd, con->fPosition[0],con->fPosition[1],con->fPosition[2], con->fPosition[3],con->fPosition[4],con->fPosition[5], 0.25f,
+						(con->uFlags & 1) ? 0.6f : 0, 0.6f, col);
 		}
 		dd->end();
 	}
 	
 	const unsigned int vcol = duRGBA(0,0,0,196);
 	dd->begin(DU_DRAW_POINTS, 3.0f);
-	for (int i = 0; i < tile->header->nVertCount; ++i)
+	for (int i = 0; i < tile->pHeader->nVertCount; ++i)
 	{
-		const float* v = &tile->verts[i*3];
+		const float* v = &tile->fVerts[i*3];
 		dd->vertex(v[0], v[1], v[2], vcol);
 	}
 	dd->end();
@@ -246,7 +246,7 @@ void duDebugDrawNavMesh(duDebugDraw* dd, const dtNavMesh& mesh, unsigned char fl
 	for (int i = 0; i < mesh.getMaxTiles(); ++i)
 	{
 		const dtMeshTile* tile = mesh.getTile(i);
-		if (!tile->header) continue;
+		if (!tile->pHeader) continue;
 		drawMeshTile(dd, mesh, 0, tile, flags);
 	}
 }
@@ -260,7 +260,7 @@ void duDebugDrawNavMeshWithClosedList(struct duDebugDraw* dd, const dtNavMesh& m
 	for (int i = 0; i < mesh.getMaxTiles(); ++i)
 	{
 		const dtMeshTile* tile = mesh.getTile(i);
-		if (!tile->header) continue;
+		if (!tile->pHeader) continue;
 		drawMeshTile(dd, mesh, q, tile, flags);
 	}
 }
@@ -307,19 +307,19 @@ void duDebugDrawNavMeshNodes(struct duDebugDraw* dd, const dtNavMeshQuery& query
 static void drawMeshTileBVTree(duDebugDraw* dd, const dtMeshTile* tile)
 {
 	// Draw BV nodes.
-	const float cs = 1.0f / tile->header->bvQuantFactor;
+	const float cs = 1.0f / tile->pHeader->fBoundingVolumeQuantFactor;
 	dd->begin(DU_DRAW_LINES, 1.0f);
-	for (int i = 0; i < tile->header->nBoundingVolumeNodeCount; ++i)
+	for (int i = 0; i < tile->pHeader->nBoundingVolumeNodeCount; ++i)
 	{
-		const dtBVNode* n = &tile->bvTree[i];
+		const dtBVNode* n = &tile->pBoundingVolumeTree[i];
 		if (n->i < 0) // Leaf indices are positive.
 			continue;
-		duAppendBoxWire(dd, tile->header->fBMin[0] + n->bmin[0]*cs,
-						tile->header->fBMin[1] + n->bmin[1]*cs,
-						tile->header->fBMin[2] + n->bmin[2]*cs,
-						tile->header->fBMin[0] + n->bmax[0]*cs,
-						tile->header->fBMin[1] + n->bmax[1]*cs,
-						tile->header->fBMin[2] + n->bmax[2]*cs,
+		duAppendBoxWire(dd, tile->pHeader->fBMin[0] + n->bmin[0]*cs,
+						tile->pHeader->fBMin[1] + n->bmin[1]*cs,
+						tile->pHeader->fBMin[2] + n->bmin[2]*cs,
+						tile->pHeader->fBMin[0] + n->bmax[0]*cs,
+						tile->pHeader->fBMin[1] + n->bmax[1]*cs,
+						tile->pHeader->fBMin[2] + n->bmax[2]*cs,
 						duRGBA(255,255,255,128));
 	}
 	dd->end();
@@ -332,7 +332,7 @@ void duDebugDrawNavMeshBVTree(duDebugDraw* dd, const dtNavMesh& mesh)
 	for (int i = 0; i < mesh.getMaxTiles(); ++i)
 	{
 		const dtMeshTile* tile = mesh.getTile(i);
-		if (!tile->header) continue;
+		if (!tile->pHeader) continue;
 		drawMeshTileBVTree(dd, tile);
 	}
 }
@@ -341,7 +341,7 @@ static void drawMeshTilePortal(duDebugDraw* dd, const dtMeshTile* tile)
 {
 	// Draw portals
 	const float padx = 0.04f;
-	const float pady = tile->header->fWalkableClimb;
+	const float pady = tile->pHeader->fWalkableClimb;
 
 	dd->begin(DU_DRAW_LINES, 2.0f);
 
@@ -349,9 +349,9 @@ static void drawMeshTilePortal(duDebugDraw* dd, const dtMeshTile* tile)
 	{
 		unsigned short m = DT_EXT_LINK | (unsigned short)side;
 		
-		for (int i = 0; i < tile->header->nPolyCount; ++i)
+		for (int i = 0; i < tile->pHeader->nPolyCount; ++i)
 		{
-			dtPoly* poly = &tile->polys[i];
+			dtPoly* poly = &tile->pPolys[i];
 			
 			// Create new links.
 			const int nv = poly->vertCount;
@@ -362,8 +362,8 @@ static void drawMeshTilePortal(duDebugDraw* dd, const dtMeshTile* tile)
 					continue;
 				
 				// Create new links
-				const float* va = &tile->verts[poly->verts[j]*3];
-				const float* vb = &tile->verts[poly->verts[(j+1) % nv]*3];
+				const float* va = &tile->fVerts[poly->verts[j]*3];
+				const float* vb = &tile->fVerts[poly->verts[(j+1) % nv]*3];
 				
 				if (side == 0 || side == 4)
 				{
@@ -416,7 +416,7 @@ void duDebugDrawNavMeshPortals(duDebugDraw* dd, const dtNavMesh& mesh)
 	for (int i = 0; i < mesh.getMaxTiles(); ++i)
 	{
 		const dtMeshTile* tile = mesh.getTile(i);
-		if (!tile->header) continue;
+		if (!tile->pHeader) continue;
 		drawMeshTilePortal(dd, tile);
 	}
 }
@@ -429,12 +429,12 @@ void duDebugDrawNavMeshPolysWithFlags(struct duDebugDraw* dd, const dtNavMesh& m
 	for (int i = 0; i < mesh.getMaxTiles(); ++i)
 	{
 		const dtMeshTile* tile = mesh.getTile(i);
-		if (!tile->header) continue;
+		if (!tile->pHeader) continue;
 		dtPolyRef base = mesh.getPolyRefBase(tile);
 
-		for (int j = 0; j < tile->header->nPolyCount; ++j)
+		for (int j = 0; j < tile->pHeader->nPolyCount; ++j)
 		{
-			const dtPoly* p = &tile->polys[j];
+			const dtPoly* p = &tile->pPolys[j];
 			if ((p->flags & polyFlags) == 0) continue;
 			duDebugDrawNavMeshPoly(dd, mesh, base|(dtPolyRef)j, col);
 		}
@@ -453,34 +453,34 @@ void duDebugDrawNavMeshPoly(duDebugDraw* dd, const dtNavMesh& mesh, dtPolyRef Re
 	dd->depthMask(false);
 	
 	const unsigned int c = (col & 0x00ffffff) | (64 << 24);
-	const unsigned int ip = (unsigned int)(poly - tile->polys);
+	const unsigned int ip = (unsigned int)(poly - tile->pPolys);
 
 	if (poly->getType() == DT_POLYTYPE_OFFMESH_CONNECTION)
 	{
-		dtOffMeshConnection* con = &tile->offMeshCons[ip - tile->header->nOffMeshBase];
+		dtOffMeshConnection* con = &tile->pOffMeshCons[ip - tile->pHeader->nOffMeshBase];
 
 		dd->begin(DU_DRAW_LINES, 2.0f);
 
 		// Connection arc.
-		duAppendArc(dd, con->pos[0],con->pos[1],con->pos[2], con->pos[3],con->pos[4],con->pos[5], 0.25f,
-					(con->flags & 1) ? 0.6f : 0, 0.6f, c);
+		duAppendArc(dd, con->fPosition[0],con->fPosition[1],con->fPosition[2], con->fPosition[3],con->fPosition[4],con->fPosition[5], 0.25f,
+					(con->uFlags & 1) ? 0.6f : 0, 0.6f, c);
 		
 		dd->end();
 	}
 	else
 	{
-		const dtPolyDetail* pd = &tile->detailMeshes[ip];
+		const dtPolyDetail* pd = &tile->pDetailMeshes[ip];
 
 		dd->begin(DU_DRAW_TRIS);
 		for (int i = 0; i < pd->triCount; ++i)
 		{
-			const unsigned char* t = &tile->detailTris[(pd->triBase+i)*4];
+			const unsigned char* t = &tile->pDetailTris[(pd->triBase+i)*4];
 			for (int j = 0; j < 3; ++j)
 			{
 				if (t[j] < poly->vertCount)
-					dd->vertex(&tile->verts[poly->verts[t[j]]*3], c);
+					dd->vertex(&tile->fVerts[poly->verts[t[j]]*3], c);
 				else
-					dd->vertex(&tile->detailVerts[(pd->vertBase+t[j]-poly->vertCount)*3], c);
+					dd->vertex(&tile->fDetailVerts[(pd->vertBase+t[j]-poly->vertCount)*3], c);
 			}
 		}
 		dd->end();

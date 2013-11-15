@@ -960,7 +960,7 @@ static void getPolyCenter(dtNavMesh* navMesh, dtPolyRef Ref, float* center)
 		
 	for (int i = 0; i < (int)poly->vertCount; ++i)
 	{
-		const float* v = &tile->verts[poly->verts[i]*3];
+		const float* v = &tile->fVerts[poly->verts[i]*3];
 		center[0] += v[0];
 		center[1] += v[1];
 		center[2] += v[2];

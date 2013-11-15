@@ -433,10 +433,10 @@ bool dtCreateNavMeshData(dtNavMeshCreateParams* params, unsigned char** outData,
 	
 	
 	// Store header
-	header->magic = DT_NAVMESH_MAGIC;
-	header->version = DT_NAVMESH_VERSION;
-	header->x = params->tileX;
-	header->y = params->tileY;
+	header->nMagic = DT_NAVMESH_MAGIC;
+	header->nVersion = DT_NAVMESH_VERSION;
+	header->nTileX = params->tileX;
+	header->nTileY = params->tileY;
 	header->nLayer = params->tileLayer;
 	header->userId = params->userId;
 	header->nPolyCount = totPolyCount;
@@ -447,7 +447,7 @@ bool dtCreateNavMeshData(dtNavMeshCreateParams* params, unsigned char** outData,
 	header->nDetailMeshCount = params->polyCount;
 	header->nDetailVertCount = uniqueDetailVertCount;
 	header->nDetailTriCount = detailTriCount;
-	header->bvQuantFactor = 1.0f / params->cs;
+	header->fBoundingVolumeQuantFactor = 1.0f / params->cs;
 	header->nOffMeshBase = params->polyCount;
 	header->fWalkableHeight = params->walkableHeight;
 	header->fWalkableRadius = params->walkableRadius;
@@ -610,16 +610,16 @@ bool dtCreateNavMeshData(dtNavMeshCreateParams* params, unsigned char** outData,
 		if (offMeshConClass[i*2+0] == 0xff)
 		{
 			dtOffMeshConnection* con = &offMeshCons[n];
-			con->poly = (unsigned short)(offMeshPolyBase + n);
+			con->uPolyRef = (unsigned short)(offMeshPolyBase + n);
 			// Copy connection end-points.
 			const float* endPts = &params->offMeshConVerts[i*2*3];
-			dtVcopy(&con->pos[0], &endPts[0]);
-			dtVcopy(&con->pos[3], &endPts[3]);
-			con->rad = params->offMeshConRad[i];
-			con->flags = params->offMeshConDir[i] ? DT_OFFMESH_CON_BIDIR : 0;
-			con->side = offMeshConClass[i*2+1];
+			dtVcopy(&con->fPosition[0], &endPts[0]);
+			dtVcopy(&con->fPosition[3], &endPts[3]);
+			con->fRadius = params->offMeshConRad[i];
+			con->uFlags = params->offMeshConDir[i] ? DT_OFFMESH_CON_BIDIR : 0;
+			con->uSide = offMeshConClass[i*2+1];
 			if (params->offMeshConUserID)
-				con->userId = params->offMeshConUserID[i];
+				con->uUserID = params->offMeshConUserID[i];
 			n++;
 		}
 	}
@@ -641,16 +641,16 @@ bool dtNavMeshHeaderSwapEndian(unsigned char* data, const int /*dataSize*/)
 	dtSwapEndian(&swappedMagic);
 	dtSwapEndian(&swappedVersion);
 	
-	if ((header->magic != DT_NAVMESH_MAGIC || header->version != DT_NAVMESH_VERSION) &&
-		(header->magic != swappedMagic || header->version != swappedVersion))
+	if ((header->nMagic != DT_NAVMESH_MAGIC || header->nVersion != DT_NAVMESH_VERSION) &&
+		(header->nMagic != swappedMagic || header->nVersion != swappedVersion))
 	{
 		return false;
 	}
 		
-	dtSwapEndian(&header->magic);
-	dtSwapEndian(&header->version);
-	dtSwapEndian(&header->x);
-	dtSwapEndian(&header->y);
+	dtSwapEndian(&header->nMagic);
+	dtSwapEndian(&header->nVersion);
+	dtSwapEndian(&header->nTileX);
+	dtSwapEndian(&header->nTileY);
 	dtSwapEndian(&header->nLayer);
 	dtSwapEndian(&header->userId);
 	dtSwapEndian(&header->nPolyCount);
@@ -671,7 +671,7 @@ bool dtNavMeshHeaderSwapEndian(unsigned char* data, const int /*dataSize*/)
 	dtSwapEndian(&header->fBMax[0]);
 	dtSwapEndian(&header->fBMax[1]);
 	dtSwapEndian(&header->fBMax[2]);
-	dtSwapEndian(&header->bvQuantFactor);
+	dtSwapEndian(&header->fBoundingVolumeQuantFactor);
 
 	// Freelist index and pointers are updated when tile is added, no need to swap.
 
@@ -688,9 +688,9 @@ bool dtNavMeshDataSwapEndian(unsigned char* data, const int /*dataSize*/)
 {
 	// Make sure the data is in right format.
 	dtMeshHeader* header = (dtMeshHeader*)data;
-	if (header->magic != DT_NAVMESH_MAGIC)
+	if (header->nMagic != DT_NAVMESH_MAGIC)
 		return false;
-	if (header->version != DT_NAVMESH_VERSION)
+	if (header->nVersion != DT_NAVMESH_VERSION)
 		return false;
 	
 	// Patch header pointers.
@@ -766,9 +766,9 @@ bool dtNavMeshDataSwapEndian(unsigned char* data, const int /*dataSize*/)
 	{
 		dtOffMeshConnection* con = &offMeshCons[i];
 		for (int j = 0; j < 6; ++j)
-			dtSwapEndian(&con->pos[j]);
-		dtSwapEndian(&con->rad);
-		dtSwapEndian(&con->poly);
+			dtSwapEndian(&con->fPosition[j]);
+		dtSwapEndian(&con->fRadius);
+		dtSwapEndian(&con->uPolyRef);
 	}
 	
 	return true;

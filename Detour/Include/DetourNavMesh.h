@@ -178,34 +178,34 @@ struct dtBVNode
 struct dtOffMeshConnection
 {
 	/// The endpoints of the connection. [(ax, ay, az, bx, by, bz)]
-	float pos[6];
+	float fPosition[6];
 
 	/// The radius of the endpoints. [Limit: >= 0]
-	float rad;		
+	float fRadius;		
 
 	/// The polygon reference of the connection within the tile.
-	unsigned short poly;
+	unsigned short uPolyRef;
 
 	/// Link flags. 
 	/// @note These are not the connection's user defined flags. Those are assigned via the 
 	/// connection's dtPoly definition. These are link flags used for internal purposes.
-	unsigned char flags;
+	unsigned char uFlags;
 
 	/// End point side.
-	unsigned char side;
+	unsigned char uSide;
 
 	/// The id of the offmesh connection. (User assigned when the navigation mesh is built.)
-	unsigned int userId;
+	unsigned int uUserID;
 };
 
 /// Provides high level information related to a dtMeshTile object.
 /// @ingroup detour
 struct dtMeshHeader
 {
-	int magic;				///< Tile magic number. (Used to identify the data format.)
-	int version;			///< Tile data format version number.
-	int x;					///< The x-position of the tile within the dtNavMesh tile grid. (x, y, layer)
-	int y;					///< The y-position of the tile within the dtNavMesh tile grid. (x, y, layer)
+	int nMagic;				///< Tile magic number. (Used to identify the data format.)
+	int nVersion;			///< Tile data format version number.
+	int nTileX;					///< The x-position of the tile within the dtNavMesh tile grid. (x, y, layer)
+	int nTileY;					///< The y-position of the tile within the dtNavMesh tile grid. (x, y, layer)
 	int nLayer;				///< The layer of the tile within the dtNavMesh tile grid. (x, y, layer)
 	unsigned int userId;	///< The user defined id of the tile.
 	int nPolyCount;			///< The number of polygons in the tile.
@@ -227,38 +227,38 @@ struct dtMeshHeader
 	float fBMax[3];				///< The maximum bounds of the tile's AABB. [(x, y, z)]
 	
 	/// The bounding volume quantization factor. 
-	float bvQuantFactor;
+	float fBoundingVolumeQuantFactor;
 };
 
 /// Defines a navigation mesh tile.
 /// @ingroup detour
 struct dtMeshTile
 {
-	unsigned int salt;					///< Counter describing modifications to the tile.
+	unsigned int uSalt;					///< Counter describing modifications to the tile.
 
-	unsigned int linksFreeList;			///< Index to the next free link.
-	dtMeshHeader* header;				///< The tile header.
-	dtPoly* polys;						///< The tile polygons. [Size: dtMeshHeader::polyCount]
-	float* verts;						///< The tile vertices. [Size: dtMeshHeader::vertCount]
-	dtLink* links;						///< The tile links. [Size: dtMeshHeader::maxLinkCount]
-	dtPolyDetail* detailMeshes;			///< The tile's detail sub-meshes. [Size: dtMeshHeader::detailMeshCount]
+	unsigned int uLinksFreeList;			///< Index to the next free link.
+	dtMeshHeader* pHeader;				///< The tile header.
+	dtPoly* pPolys;						///< The tile polygons. [Size: dtMeshHeader::polyCount]
+	float* fVerts;						///< The tile vertices. [Size: dtMeshHeader::vertCount]
+	dtLink* pLinks;						///< The tile links. [Size: dtMeshHeader::maxLinkCount]
+	dtPolyDetail* pDetailMeshes;			///< The tile's detail sub-meshes. [Size: dtMeshHeader::detailMeshCount]
 	
 	/// The detail mesh's unique vertices. [(x, y, z) * dtMeshHeader::detailVertCount]
-	float* detailVerts;	
+	float* fDetailVerts;	
 
 	/// The detail mesh's triangles. [(vertA, vertB, vertC) * dtMeshHeader::detailTriCount]
-	unsigned char* detailTris;	
+	unsigned char* pDetailTris;	
 
 	/// The tile bounding volume nodes. [Size: dtMeshHeader::bvNodeCount]
 	/// (Will be null if bounding volumes are disabled.)
-	dtBVNode* bvTree;
+	dtBVNode* pBoundingVolumeTree;
 
-	dtOffMeshConnection* offMeshCons;		///< The tile off-mesh connections. [Size: dtMeshHeader::offMeshConCount]
+	dtOffMeshConnection* pOffMeshCons;		///< The tile off-mesh connections. [Size: dtMeshHeader::offMeshConCount]
 		
-	unsigned char* data;					///< The tile data. (Not directly accessed under normal situations.)
-	int dataSize;							///< Size of the tile data.
-	int flags;								///< Tile flags. (See: #dtTileFlags)
-	dtMeshTile* next;						///< The next free tile, or the next tile in the spatial grid.
+	unsigned char* pData;					///< The tile data. (Not directly accessed under normal situations.)
+	int nDataSize;							///< Size of the tile data.
+	int nFlags;								///< Tile flags. (See: #dtTileFlags)
+	dtMeshTile* pNext;						///< The next free tile, or the next tile in the spatial grid.
 };
 
 /// Configuration parameters used to define multi-tile navigation meshes.

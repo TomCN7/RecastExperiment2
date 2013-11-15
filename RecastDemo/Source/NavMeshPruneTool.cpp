@@ -116,9 +116,9 @@ public:
 		for (int i = 0; i < nav->getMaxTiles(); ++i)
 		{
 			const dtMeshTile* tile = nav->getTile(i);
-			if (!tile->header) continue;
+			if (!tile->pHeader) continue;
 			TileFlags* tf = &m_tiles[i];
-			tf->nflags = tile->header->nPolyCount;
+			tf->nflags = tile->pHeader->nPolyCount;
 			tf->base = nav->getPolyRefBase(tile);
 			if (tf->nflags)
 			{
@@ -185,9 +185,9 @@ static void floodNavmesh(dtNavMesh* nav, NavmeshFlags* flags, dtPolyRef start, u
 		nav->getTileAndPolyByRefUnsafe(Ref, &tile, &poly);
 
 		// Visit linked polygons.
-		for (unsigned int i = poly->firstLink; i != DT_NULL_LINK; i = tile->links[i].next)
+		for (unsigned int i = poly->firstLink; i != DT_NULL_LINK; i = tile->pLinks[i].next)
 		{
-			const dtPolyRef neiRef = tile->links[i].ref;
+			const dtPolyRef neiRef = tile->pLinks[i].ref;
 			// Skip invalid and already visited.
 			if (!neiRef || flags->getFlags(neiRef))
 				continue;
@@ -204,9 +204,9 @@ static void disableUnvisitedPolys(dtNavMesh* nav, NavmeshFlags* flags)
 	for (int i = 0; i < nav->getMaxTiles(); ++i)
 	{
 		const dtMeshTile* tile = ((const dtNavMesh*)nav)->getTile(i);
-		if (!tile->header) continue;
+		if (!tile->pHeader) continue;
 		const dtPolyRef base = nav->getPolyRefBase(tile);
-		for (int j = 0; j < tile->header->nPolyCount; ++j)
+		for (int j = 0; j < tile->pHeader->nPolyCount; ++j)
 		{
 			const dtPolyRef Ref = base | (unsigned int)j;
 			if (!flags->getFlags(Ref))
@@ -324,9 +324,9 @@ void NavMeshPruneTool::handleRender()
 		for (int i = 0; i < nav->getMaxTiles(); ++i)
 		{
 			const dtMeshTile* tile = nav->getTile(i);
-			if (!tile->header) continue;
+			if (!tile->pHeader) continue;
 			const dtPolyRef base = nav->getPolyRefBase(tile);
-			for (int j = 0; j < tile->header->nPolyCount; ++j)
+			for (int j = 0; j < tile->pHeader->nPolyCount; ++j)
 			{
 				const dtPolyRef Ref = base | (unsigned int)j;
 				if (m_flags->getFlags(Ref))

@@ -1315,8 +1315,8 @@ bool Sample_TempObstacles::handleBuild()
 	for (int i = 0; i < pNav->getMaxTiles(); ++i)
 	{
 		const dtMeshTile* pTile = pNav->getTile(i);
-		if (pTile->header)
-			nNavMeshMemUsage += pTile->dataSize;
+		if (pTile->pHeader)
+			nNavMeshMemUsage += pTile->nDataSize;
 	}
 	printf("navmeshMemUsage = %.1f kB", nNavMeshMemUsage / 1024.0f);
 		

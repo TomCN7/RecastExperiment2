@@ -255,7 +255,7 @@ void Sample_TileMesh::saveAll(const char* path, const dtNavMesh* mesh)
 	for (int i = 0; i < mesh->getMaxTiles(); ++i)
 	{
 		const dtMeshTile* tile = mesh->getTile(i);
-		if (!tile || !tile->header || !tile->dataSize) continue;
+		if (!tile || !tile->pHeader || !tile->nDataSize) continue;
 		header.numTiles++;
 	}
 	memcpy(&header.params, mesh->getParams(), sizeof(dtNavMeshParams));
@@ -265,14 +265,14 @@ void Sample_TileMesh::saveAll(const char* path, const dtNavMesh* mesh)
 	for (int i = 0; i < mesh->getMaxTiles(); ++i)
 	{
 		const dtMeshTile* tile = mesh->getTile(i);
-		if (!tile || !tile->header || !tile->dataSize) continue;
+		if (!tile || !tile->pHeader || !tile->nDataSize) continue;
 
 		NavMeshTileHeader tileHeader;
 		tileHeader.tileRef = mesh->getTileRef(tile);
-		tileHeader.dataSize = tile->dataSize;
+		tileHeader.dataSize = tile->nDataSize;
 		fwrite(&tileHeader, sizeof(tileHeader), 1, fp);
 
-		fwrite(tile->data, tile->dataSize, 1, fp);
+		fwrite(tile->pData, tile->nDataSize, 1, fp);
 	}
 
 	fclose(fp);
