@@ -315,7 +315,7 @@ public:
 	///  @param[out]	data		Data associated with deleted tile.
 	///  @param[out]	dataSize	Size of the data associated with deleted tile.
 	/// @return The status flags for the operation.
-	dtStatus removeTile(dtTileRef ref, unsigned char** data, int* dataSize);
+	dtStatus removeTile(dtTileRef Ref, unsigned char** data, int* dataSize);
 
 	/// @}
 
@@ -360,7 +360,7 @@ public:
 	///  @param[in]	ref		The tile reference of the tile to retrieve.
 	/// @return The tile for the specified reference, or null if the 
 	///		reference is invalid.
-	const dtMeshTile* getTileByRef(dtTileRef ref) const;
+	const dtMeshTile* getTileByRef(dtTileRef Ref) const;
 	
 	/// The maximum number of tiles supported by the navigation mesh.
 	/// @return The maximum number of tiles supported by the navigation mesh.
@@ -376,18 +376,18 @@ public:
 	///  @param[out]	tile	The tile containing the polygon.
 	///  @param[out]	poly	The polygon.
 	/// @return The status flags for the operation.
-	dtStatus getTileAndPolyByRef(const dtPolyRef ref, const dtMeshTile** tile, const dtPoly** poly) const;
+	dtStatus getTileAndPolyByRef(const dtPolyRef Ref, const dtMeshTile** tile, const dtPoly** poly) const;
 	
 	/// Returns the tile and polygon for the specified polygon reference.
 	///  @param[in]		ref		A known valid reference for a polygon.
 	///  @param[out]	tile	The tile containing the polygon.
 	///  @param[out]	poly	The polygon.
-	void getTileAndPolyByRefUnsafe(const dtPolyRef ref, const dtMeshTile** tile, const dtPoly** poly) const;
+	void getTileAndPolyByRefUnsafe(const dtPolyRef Ref, const dtMeshTile** tile, const dtPoly** poly) const;
 
 	/// Checks the validity of a polygon reference.
 	///  @param[in]	ref		The polygon reference to check.
 	/// @return True if polygon reference is valid for the navigation mesh.
-	bool isValidPolyRef(dtPolyRef ref) const;
+	bool isValidPolyRef(dtPolyRef Ref) const;
 	
 	/// Gets the polygon reference for the tile's base polygon.
 	///  @param[in]	tile		The tile.
@@ -405,7 +405,7 @@ public:
 	/// Gets the specified off-mesh connection.
 	///  @param[in]	ref		The polygon reference of the off-mesh connection.
 	/// @return The specified off-mesh connection, or null if the polygon reference is not valid.
-	const dtOffMeshConnection* getOffMeshConnectionByRef(dtPolyRef ref) const;
+	const dtOffMeshConnection* getOffMeshConnectionByRef(dtPolyRef Ref) const;
 	
 	/// @}
 
@@ -417,25 +417,25 @@ public:
 	///  @param[in]	ref		The polygon reference.
 	///  @param[in]	flags	The new flags for the polygon.
 	/// @return The status flags for the operation.
-	dtStatus setPolyFlags(dtPolyRef ref, unsigned short flags);
+	dtStatus setPolyFlags(dtPolyRef Ref, unsigned short flags);
 
 	/// Gets the user defined flags for the specified polygon.
 	///  @param[in]		ref				The polygon reference.
 	///  @param[out]	resultFlags		The polygon flags.
 	/// @return The status flags for the operation.
-	dtStatus getPolyFlags(dtPolyRef ref, unsigned short* resultFlags) const;
+	dtStatus getPolyFlags(dtPolyRef Ref, unsigned short* resultFlags) const;
 
 	/// Sets the user defined area for the specified polygon.
 	///  @param[in]	ref		The polygon reference.
 	///  @param[in]	area	The new area id for the polygon. [Limit: < #DT_MAX_AREAS]
 	/// @return The status flags for the operation.
-	dtStatus setPolyArea(dtPolyRef ref, unsigned char area);
+	dtStatus setPolyArea(dtPolyRef Ref, unsigned char area);
 
 	/// Gets the user defined area for the specified polygon.
 	///  @param[in]		ref			The polygon reference.
 	///  @param[out]	resultArea	The area id for the polygon.
 	/// @return The status flags for the operation.
-	dtStatus getPolyArea(dtPolyRef ref, unsigned char* resultArea) const;
+	dtStatus getPolyArea(dtPolyRef Ref, unsigned char* resultArea) const;
 
 	/// Gets the size of the buffer required by #storeTileState to store the specified tile's state.
 	///  @param[in]	tile	The tile.
@@ -479,44 +479,44 @@ public:
 	///  @param[out]	it		The index of the tile.
 	///  @param[out]	ip		The index of the polygon within the tile.
 	///  @see #encodePolyId
-	inline void decodePolyId(dtPolyRef ref, unsigned int& salt, unsigned int& it, unsigned int& ip) const
+	inline void decodePolyId(dtPolyRef Ref, unsigned int& salt, unsigned int& it, unsigned int& ip) const
 	{
 		const dtPolyRef saltMask = ((dtPolyRef)1<<m_saltBits)-1;
 		const dtPolyRef tileMask = ((dtPolyRef)1<<m_tileBits)-1;
 		const dtPolyRef polyMask = ((dtPolyRef)1<<m_polyBits)-1;
-		salt = (unsigned int)((ref >> (m_polyBits+m_tileBits)) & saltMask);
-		it = (unsigned int)((ref >> m_polyBits) & tileMask);
-		ip = (unsigned int)(ref & polyMask);
+		salt = (unsigned int)((Ref >> (m_polyBits+m_tileBits)) & saltMask);
+		it = (unsigned int)((Ref >> m_polyBits) & tileMask);
+		ip = (unsigned int)(Ref & polyMask);
 	}
 
 	/// Extracts a tile's salt value from the specified polygon reference.
 	///  @note This function is generally meant for internal use only.
 	///  @param[in]	ref		The polygon reference.
 	///  @see #encodePolyId
-	inline unsigned int decodePolyIdSalt(dtPolyRef ref) const
+	inline unsigned int decodePolyIdSalt(dtPolyRef Ref) const
 	{
 		const dtPolyRef saltMask = ((dtPolyRef)1<<m_saltBits)-1;
-		return (unsigned int)((ref >> (m_polyBits+m_tileBits)) & saltMask);
+		return (unsigned int)((Ref >> (m_polyBits+m_tileBits)) & saltMask);
 	}
 	
 	/// Extracts the tile's index from the specified polygon reference.
 	///  @note This function is generally meant for internal use only.
 	///  @param[in]	ref		The polygon reference.
 	///  @see #encodePolyId
-	inline unsigned int decodePolyIdTile(dtPolyRef ref) const
+	inline unsigned int decodePolyIdTile(dtPolyRef Ref) const
 	{
 		const dtPolyRef tileMask = ((dtPolyRef)1<<m_tileBits)-1;
-		return (unsigned int)((ref >> m_polyBits) & tileMask);
+		return (unsigned int)((Ref >> m_polyBits) & tileMask);
 	}
 	
 	/// Extracts the polygon's index (within its tile) from the specified polygon reference.
 	///  @note This function is generally meant for internal use only.
 	///  @param[in]	ref		The polygon reference.
 	///  @see #encodePolyId
-	inline unsigned int decodePolyIdPoly(dtPolyRef ref) const
+	inline unsigned int decodePolyIdPoly(dtPolyRef Ref) const
 	{
 		const dtPolyRef polyMask = ((dtPolyRef)1<<m_polyBits)-1;
-		return (unsigned int)(ref & polyMask);
+		return (unsigned int)(Ref & polyMask);
 	}
 
 	/// @}

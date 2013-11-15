@@ -31,48 +31,48 @@ static const unsigned short DT_TILECACHE_NULL_IDX = 0xffff;
 
 struct dtTileCacheLayerHeader
 {
-	int magic;								///< Data magic
-	int version;							///< Data version
-	int tx,ty,tlayer;
-	float bmin[3], bmax[3];
-	unsigned short hmin, hmax;				///< Height min/max range
-	unsigned char width, height;			///< Dimension of the layer.
-	unsigned char minx, maxx, miny, maxy;	///< Usable sub-region.
+	int nMagic;								///< Data magic
+	int nVersion;							///< Data version
+	int nTileX, nTileY, nTileLayer;
+	float fBMin[3], fBMax[3];
+	unsigned short uHeightMin, uHeightMax;				///< Height min/max range
+	unsigned char cWidth, cHeight;			///< Dimension of the layer.
+	unsigned char cMinX, cMaxX, cMinY, cMaxY;	///< Usable sub-region.
 };
 
 struct dtTileCacheLayer
 {
-	dtTileCacheLayerHeader* header;
-	unsigned char regCount;					///< Region count.
-	unsigned char* heights;
-	unsigned char* areas;
-	unsigned char* cons;
-	unsigned char* regs;
+	dtTileCacheLayerHeader* pHeader;
+	unsigned char cRegionCount;					///< Region count.
+	unsigned char* pHeights;
+	unsigned char* pAreas;
+	unsigned char* pConnections;
+	unsigned char* pRegions;
 };
 
 struct dtTileCacheContour
 {
-	int nverts;
-	unsigned char* verts;
-	unsigned char reg;
-	unsigned char area;
+	int nVerts;
+	unsigned char* pVerts;
+	unsigned char cRegion;
+	unsigned char cArea;
 };
 
 struct dtTileCacheContourSet
 {
-	int nconts;
-	dtTileCacheContour* conts;
+	int nContours;
+	dtTileCacheContour* pContours;
 };
 
 struct dtTileCachePolyMesh
 {
-	int nvp;
-	int nverts;				///< Number of vertices.
+	int nMaxVertNumPerPoly;
+	int nVerts;				///< Number of vertices.
 	int npolys;				///< Number of polygons.
-	unsigned short* verts;	///< Vertices of the mesh, 3 elements per vertex.
-	unsigned short* polys;	///< Polygons of the mesh, nvp*2 elements per polygon.
-	unsigned short* flags;	///< Per polygon flags.
-	unsigned char* areas;	///< Area ID of polygons.
+	unsigned short* pVerts;	///< Vertices of the mesh, 3 elements per vertex.
+	unsigned short* pPolys;	///< Polygons of the mesh, nvp*2 elements per polygon.
+	unsigned short* pFlags;	///< Per polygon flags.
+	unsigned char* pAreaIDs;	///< Area ID of polygons.
 };
 
 

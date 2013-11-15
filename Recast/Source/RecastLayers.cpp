@@ -452,7 +452,7 @@ bool rcBuildHeightfieldLayers(rcContext* ctx, rcCompactHeightfield& chf,
 	}
 	
 	// Create layers.
-	rcAssert(lset.layers == 0);
+	rcAssert(lset.pHeightFieldLayers == 0);
 	
 	const int lw = w - borderSize*2;
 	const int lh = h - borderSize*2;
@@ -466,24 +466,24 @@ bool rcBuildHeightfieldLayers(rcContext* ctx, rcCompactHeightfield& chf,
 	bmax[0] -= borderSize*chf.fCellSize;
 	bmax[2] -= borderSize*chf.fCellSize;
 	
-	lset.nlayers = (int)layerId;
+	lset.nLayers = (int)layerId;
 	
-	lset.layers = (rcHeightfieldLayer*)rcAlloc(sizeof(rcHeightfieldLayer)*lset.nlayers, RC_ALLOC_PERM);
-	if (!lset.layers)
+	lset.pHeightFieldLayers = (rcHeightfieldLayer*)rcAlloc(sizeof(rcHeightfieldLayer)*lset.nLayers, RC_ALLOC_PERM);
+	if (!lset.pHeightFieldLayers)
 	{
-		ctx->log(RC_LOG_ERROR, "rcBuildHeightfieldLayers: Out of memory 'layers' (%d).", lset.nlayers);
+		ctx->log(RC_LOG_ERROR, "rcBuildHeightfieldLayers: Out of memory 'layers' (%d).", lset.nLayers);
 		return false;
 	}
-	memset(lset.layers, 0, sizeof(rcHeightfieldLayer)*lset.nlayers);
+	memset(lset.pHeightFieldLayers, 0, sizeof(rcHeightfieldLayer)*lset.nLayers);
 
 	
 	// Store layers.
-	for (int i = 0; i < lset.nlayers; ++i)
+	for (int i = 0; i < lset.nLayers; ++i)
 	{
 		unsigned char curId = (unsigned char)i;
 		
 		// Allocate memory for the current layer.
-		rcHeightfieldLayer* layer = &lset.layers[i];
+		rcHeightfieldLayer* layer = &lset.pHeightFieldLayers[i];
 		memset(layer, 0, sizeof(rcHeightfieldLayer));
 
 		const int gridSize = sizeof(unsigned char)*lw*lh;
@@ -504,13 +504,13 @@ bool rcBuildHeightfieldLayers(rcContext* ctx, rcCompactHeightfield& chf,
 		}
 		memset(layer->pAreas, 0, gridSize);
 
-		layer->pConnects = (unsigned char*)rcAlloc(gridSize, RC_ALLOC_PERM);
-		if (!layer->pConnects)
+		layer->pConnections = (unsigned char*)rcAlloc(gridSize, RC_ALLOC_PERM);
+		if (!layer->pConnections)
 		{
 			ctx->log(RC_LOG_ERROR, "rcBuildHeightfieldLayers: Out of memory 'cons' (%d).", gridSize);
 			return false;
 		}
-		memset(layer->pConnects, 0, gridSize);
+		memset(layer->pConnections, 0, gridSize);
 		
 		// Find layer height bounds.
 		int hmin = 0, hmax = 0;
@@ -603,7 +603,7 @@ bool rcBuildHeightfieldLayers(rcContext* ctx, rcCompactHeightfield& chf,
 						}
 					}
 					
-					layer->pConnects[idx] = (portal << 4) | con;
+					layer->pConnections[idx] = (portal << 4) | con;
 				}
 			}
 		}

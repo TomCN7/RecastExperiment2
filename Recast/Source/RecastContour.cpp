@@ -548,7 +548,7 @@ static void getClosestIndices(const int* vertsa, const int nvertsa,
 
 static bool mergeContours(rcContour& ca, rcContour& cb, int ia, int ib)
 {
-	const int maxVerts = ca.nverts + cb.nverts + 2;
+	const int maxVerts = ca.nVerts + cb.nVerts + 2;
 	int* verts = (int*)rcAlloc(sizeof(int)*maxVerts*4, RC_ALLOC_PERM);
 	if (!verts)
 		return false;
@@ -556,10 +556,10 @@ static bool mergeContours(rcContour& ca, rcContour& cb, int ia, int ib)
 	int nv = 0;
 
 	// Copy contour A.
-	for (int i = 0; i <= ca.nverts; ++i)
+	for (int i = 0; i <= ca.nVerts; ++i)
 	{
 		int* dst = &verts[nv*4];
-		const int* src = &ca.verts[((ia+i)%ca.nverts)*4];
+		const int* src = &ca.pVerts[((ia+i)%ca.nVerts)*4];
 		dst[0] = src[0];
 		dst[1] = src[1];
 		dst[2] = src[2];
@@ -568,10 +568,10 @@ static bool mergeContours(rcContour& ca, rcContour& cb, int ia, int ib)
 	}
 
 	// Copy contour B
-	for (int i = 0; i <= cb.nverts; ++i)
+	for (int i = 0; i <= cb.nVerts; ++i)
 	{
 		int* dst = &verts[nv*4];
-		const int* src = &cb.verts[((ib+i)%cb.nverts)*4];
+		const int* src = &cb.pVerts[((ib+i)%cb.nVerts)*4];
 		dst[0] = src[0];
 		dst[1] = src[1];
 		dst[2] = src[2];
@@ -579,13 +579,13 @@ static bool mergeContours(rcContour& ca, rcContour& cb, int ia, int ib)
 		nv++;
 	}
 	
-	rcFree(ca.verts);
-	ca.verts = verts;
-	ca.nverts = nv;
+	rcFree(ca.pVerts);
+	ca.pVerts = verts;
+	ca.nVerts = nv;
 
-	rcFree(cb.verts);
-	cb.verts = 0;
-	cb.nverts = 0;
+	rcFree(cb.pVerts);
+	cb.pVerts = 0;
+	cb.nVerts = 0;
 	
 	return true;
 }
@@ -730,8 +730,8 @@ bool rcBuildContours(rcContext* ctx, rcCompactHeightfield& chf,
 						{
 							newConts[j] = cset.pContours[j];
 							// Reset source pointers to prevent data deletion.
-							cset.pContours[j].verts = 0;
-							cset.pContours[j].rverts = 0;
+							cset.pContours[j].pVerts = 0;
+							cset.pContours[j].pRawVerts = 0;
 						}
 						rcFree(cset.pContours);
 						cset.pContours = newConts;
@@ -741,39 +741,39 @@ bool rcBuildContours(rcContext* ctx, rcCompactHeightfield& chf,
 						
 					rcContour* cont = &cset.pContours[cset.nContours++];
 					
-					cont->nverts = simplified.size() / 4;
-					cont->verts = (int*)rcAlloc(sizeof(int) * cont->nverts * 4, RC_ALLOC_PERM);
-					if (!cont->verts)
+					cont->nVerts = simplified.size() / 4;
+					cont->pVerts = (int*)rcAlloc(sizeof(int) * cont->nVerts * 4, RC_ALLOC_PERM);
+					if (!cont->pVerts)
 					{
-						ctx->log(RC_LOG_ERROR, "rcBuildContours: Out of memory 'verts' (%d).", cont->nverts);
+						ctx->log(RC_LOG_ERROR, "rcBuildContours: Out of memory 'verts' (%d).", cont->nVerts);
 						return false;
 					}
-					memcpy(cont->verts, &simplified[0], sizeof(int) * cont->nverts * 4);
+					memcpy(cont->pVerts, &simplified[0], sizeof(int) * cont->nVerts * 4);
 					if (borderSize > 0)
 					{
 						// If the heightfield was build with bordersize, remove the offset.
-						for (int j = 0; j < cont->nverts; ++j)
+						for (int j = 0; j < cont->nVerts; ++j)
 						{
-							int* v = &cont->verts[j * 4];
+							int* v = &cont->pVerts[j * 4];
 							v[0] -= borderSize;
 							v[2] -= borderSize;
 						}
 					}
 					
-					cont->nrverts = verts.size() / 4;
-					cont->rverts = (int*)rcAlloc(sizeof(int) * cont->nrverts * 4, RC_ALLOC_PERM);
-					if (!cont->rverts)
+					cont->nRawVerts = verts.size() / 4;
+					cont->pRawVerts = (int*)rcAlloc(sizeof(int) * cont->nRawVerts * 4, RC_ALLOC_PERM);
+					if (!cont->pRawVerts)
 					{
-						ctx->log(RC_LOG_ERROR, "rcBuildContours: Out of memory 'rverts' (%d).", cont->nrverts);
+						ctx->log(RC_LOG_ERROR, "rcBuildContours: Out of memory 'rverts' (%d).", cont->nRawVerts);
 						return false;
 					}
-					memcpy(cont->rverts, &verts[0], sizeof(int) * cont->nrverts * 4);
+					memcpy(cont->pRawVerts, &verts[0], sizeof(int) * cont->nRawVerts * 4);
 					if (borderSize > 0)
 					{
 						// If the heightfield was build with bordersize, remove the offset.
-						for (int j = 0; j < cont->nrverts; ++j)
+						for (int j = 0; j < cont->nRawVerts; ++j)
 						{
-							int* v = &cont->rverts[j * 4];
+							int* v = &cont->pRawVerts[j * 4];
 							v[0] -= borderSize;
 							v[2] -= borderSize;
 						}
@@ -790,8 +790,8 @@ bool rcBuildContours(rcContext* ctx, rcCompactHeightfield& chf,
 					cont->cy /= cont->nverts;
 					cont->cz /= cont->nverts;*/
 					
-					cont->reg = reg;
-					cont->area = area;
+					cont->uRegionID = reg;
+					cont->uAreaID = area;
 				}
 			}
 		}
@@ -804,17 +804,17 @@ bool rcBuildContours(rcContext* ctx, rcCompactHeightfield& chf,
 	{
 		rcContour& cont = cset.pContours[i];
 		// Check if the contour is would backwards.
-		if (calcAreaOfPolygon2D(cont.verts, cont.nverts) < 0)
+		if (calcAreaOfPolygon2D(cont.pVerts, cont.nVerts) < 0)
 		{
 			// Find another contour which has the same region ID.
 			int mergeIdx = -1;
 			for (int j = 0; j < cset.nContours; ++j)
 			{
 				if (i == j) continue;
-				if (cset.pContours[j].nverts && cset.pContours[j].reg == cont.reg)
+				if (cset.pContours[j].nVerts && cset.pContours[j].uRegionID == cont.uRegionID)
 				{
 					// Make sure the polygon is correctly oriented.
-					if (calcAreaOfPolygon2D(cset.pContours[j].verts, cset.pContours[j].nverts))
+					if (calcAreaOfPolygon2D(cset.pContours[j].pVerts, cset.pContours[j].nVerts))
 					{
 						mergeIdx = j;
 						break;
@@ -830,7 +830,7 @@ bool rcBuildContours(rcContext* ctx, rcCompactHeightfield& chf,
 				rcContour& mcont = cset.pContours[mergeIdx];
 				// Merge by closest points.
 				int ia = 0, ib = 0;
-				getClosestIndices(mcont.verts, mcont.nverts, cont.verts, cont.nverts, ia, ib);
+				getClosestIndices(mcont.pVerts, mcont.nVerts, cont.pVerts, cont.nVerts, ia, ib);
 				if (ia == -1 || ib == -1)
 				{
 					ctx->log(RC_LOG_WARNING, "rcBuildContours: Failed to find merge points for %d and %d.", i, mergeIdx);

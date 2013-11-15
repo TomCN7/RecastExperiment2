@@ -144,23 +144,23 @@ public:
 		}
 	}
 	
-	inline unsigned char getFlags(dtPolyRef ref)
+	inline unsigned char getFlags(dtPolyRef Ref)
 	{
 		dtAssert(m_nav);
 		dtAssert(m_ntiles);
 		// Assume the ref is valid, no bounds checks.
 		unsigned int salt, it, ip;
-		m_nav->decodePolyId(ref, salt, it, ip);
+		m_nav->decodePolyId(Ref, salt, it, ip);
 		return m_tiles[it].flags[ip];
 	}
 
-	inline void setFlags(dtPolyRef ref, unsigned char flags)
+	inline void setFlags(dtPolyRef Ref, unsigned char flags)
 	{
 		dtAssert(m_nav);
 		dtAssert(m_ntiles);
 		// Assume the ref is valid, no bounds checks.
 		unsigned int salt, it, ip;
-		m_nav->decodePolyId(ref, salt, it, ip);
+		m_nav->decodePolyId(Ref, salt, it, ip);
 		m_tiles[it].flags[ip] = flags;
 	}
 	
@@ -177,12 +177,12 @@ static void floodNavmesh(dtNavMesh* nav, NavmeshFlags* flags, dtPolyRef start, u
 
 	while (openList.size())
 	{
-		const dtPolyRef ref = openList.pop();
+		const dtPolyRef Ref = openList.pop();
 		// Get current poly and tile.
 		// The API input has been cheked already, skip checking internal data.
 		const dtMeshTile* tile = 0;
 		const dtPoly* poly = 0;
-		nav->getTileAndPolyByRefUnsafe(ref, &tile, &poly);
+		nav->getTileAndPolyByRefUnsafe(Ref, &tile, &poly);
 
 		// Visit linked polygons.
 		for (unsigned int i = poly->firstLink; i != DT_NULL_LINK; i = tile->links[i].next)
@@ -208,12 +208,12 @@ static void disableUnvisitedPolys(dtNavMesh* nav, NavmeshFlags* flags)
 		const dtPolyRef base = nav->getPolyRefBase(tile);
 		for (int j = 0; j < tile->header->polyCount; ++j)
 		{
-			const dtPolyRef ref = base | (unsigned int)j;
-			if (!flags->getFlags(ref))
+			const dtPolyRef Ref = base | (unsigned int)j;
+			if (!flags->getFlags(Ref))
 			{
 				unsigned short f = 0;
-				nav->getPolyFlags(ref, &f);
-				nav->setPolyFlags(ref, f | SAMPLE_POLYFLAGS_DISABLED);
+				nav->getPolyFlags(Ref, &f);
+				nav->setPolyFlags(Ref, f | SAMPLE_POLYFLAGS_DISABLED);
 			}
 		}
 	}
@@ -282,10 +282,10 @@ void NavMeshPruneTool::handleClick(const float* /*s*/, const float* p, bool shif
 	
 	const float ext[3] = {2,4,2};
 	dtQueryFilter filter;
-	dtPolyRef ref = 0;
-	query->findNearestPoly(p, ext, &filter, &ref, 0);
+	dtPolyRef Ref = 0;
+	query->findNearestPoly(p, ext, &filter, &Ref, 0);
 
-	floodNavmesh(nav, m_flags, ref, 1);
+	floodNavmesh(nav, m_flags, Ref, 1);
 }
 
 void NavMeshPruneTool::handleToggle()
@@ -328,10 +328,10 @@ void NavMeshPruneTool::handleRender()
 			const dtPolyRef base = nav->getPolyRefBase(tile);
 			for (int j = 0; j < tile->header->polyCount; ++j)
 			{
-				const dtPolyRef ref = base | (unsigned int)j;
-				if (m_flags->getFlags(ref))
+				const dtPolyRef Ref = base | (unsigned int)j;
+				if (m_flags->getFlags(Ref))
 				{
-					duDebugDrawNavMeshPoly(&dd, *nav, ref, duRGBA(255,255,255,128));
+					duDebugDrawNavMeshPoly(&dd, *nav, Ref, duRGBA(255,255,255,128));
 				}
 			}
 		}

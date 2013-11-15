@@ -120,13 +120,13 @@ rcHeightfieldLayerSet* rcAllocHeightfieldLayerSet()
 void rcFreeHeightfieldLayerSet(rcHeightfieldLayerSet* lset)
 {
 	if (!lset) return;
-	for (int i = 0; i < lset->nlayers; ++i)
+	for (int i = 0; i < lset->nLayers; ++i)
 	{
-		rcFree(lset->layers[i].pHeights);
-		rcFree(lset->layers[i].pAreas);
-		rcFree(lset->layers[i].pConnects);
+		rcFree(lset->pHeightFieldLayers[i].pHeights);
+		rcFree(lset->pHeightFieldLayers[i].pAreas);
+		rcFree(lset->pHeightFieldLayers[i].pConnections);
 	}
-	rcFree(lset->layers);
+	rcFree(lset->pHeightFieldLayers);
 	rcFree(lset);
 }
 
@@ -143,8 +143,8 @@ void rcFreeContourSet(rcContourSet* cset)
 	if (!cset) return;
 	for (int i = 0; i < cset->nContours; ++i)
 	{
-		rcFree(cset->pContours[i].verts);
-		rcFree(cset->pContours[i].rverts);
+		rcFree(cset->pContours[i].pVerts);
+		rcFree(cset->pContours[i].pRawVerts);
 	}
 	rcFree(cset->pContours);
 	rcFree(cset);
@@ -160,11 +160,11 @@ rcPolyMesh* rcAllocPolyMesh()
 void rcFreePolyMesh(rcPolyMesh* pmesh)
 {
 	if (!pmesh) return;
-	rcFree(pmesh->verts);
-	rcFree(pmesh->polys);
-	rcFree(pmesh->regs);
-	rcFree(pmesh->flags);
-	rcFree(pmesh->areas);
+	rcFree(pmesh->pVerts);
+	rcFree(pmesh->pPolys);
+	rcFree(pmesh->pRegions);
+	rcFree(pmesh->pFlags);
+	rcFree(pmesh->pAreas);
 	rcFree(pmesh);
 }
 
@@ -178,9 +178,9 @@ rcPolyMeshDetail* rcAllocPolyMeshDetail()
 void rcFreePolyMeshDetail(rcPolyMeshDetail* dmesh)
 {
 	if (!dmesh) return;
-	rcFree(dmesh->meshes);
-	rcFree(dmesh->verts);
-	rcFree(dmesh->tris);
+	rcFree(dmesh->pMeshes);
+	rcFree(dmesh->fVerts);
+	rcFree(dmesh->pTris);
 	rcFree(dmesh);
 }
 

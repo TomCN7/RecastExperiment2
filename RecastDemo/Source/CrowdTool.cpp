@@ -1034,15 +1034,15 @@ void CrowdTool::handleClick(const float* s, const float* p, bool shift)
 			dtQueryFilter filter;
 			const float* ext = crowd->getQueryExtents();
 			float tgt[3];
-			dtPolyRef ref;
-			navquery->findNearestPoly(p, ext, &filter, &ref, tgt);
-			if (ref)
+			dtPolyRef Ref;
+			navquery->findNearestPoly(p, ext, &filter, &Ref, tgt);
+			if (Ref)
 			{
 				unsigned short flags = 0;
-				if (dtStatusSucceed(nav->getPolyFlags(ref, &flags)))
+				if (dtStatusSucceed(nav->getPolyFlags(Ref, &flags)))
 				{
 					flags ^= SAMPLE_POLYFLAGS_DISABLED;
-					nav->setPolyFlags(ref, flags);
+					nav->setPolyFlags(Ref, flags);
 				}
 			}
 		}

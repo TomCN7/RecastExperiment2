@@ -81,12 +81,12 @@ void dtLocalBoundary::addSegment(const float dist, const float* s)
 		m_nsegs++;
 }
 
-void dtLocalBoundary::update(dtPolyRef ref, const float* pos, const float collisionQueryRange,
+void dtLocalBoundary::update(dtPolyRef Ref, const float* pos, const float collisionQueryRange,
 							 dtNavMeshQuery* navquery, const dtQueryFilter* filter)
 {
 	static const int MAX_SEGS_PER_POLY = DT_VERTS_PER_POLYGON*3;
 	
-	if (!ref)
+	if (!Ref)
 	{
 		dtVset(m_center, FLT_MAX,FLT_MAX,FLT_MAX);
 		m_nsegs = 0;
@@ -97,7 +97,7 @@ void dtLocalBoundary::update(dtPolyRef ref, const float* pos, const float collis
 	dtVcopy(m_center, pos);
 	
 	// First query non-overlapping polygons.
-	navquery->findLocalNeighbourhood(ref, pos, collisionQueryRange,
+	navquery->findLocalNeighbourhood(Ref, pos, collisionQueryRange,
 									 filter, m_polys, 0, &m_npolys, MAX_LOCAL_POLYS);
 	
 	// Secondly, store all polygon edges.

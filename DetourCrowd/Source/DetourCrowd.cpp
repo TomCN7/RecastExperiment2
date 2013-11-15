@@ -516,10 +516,10 @@ int dtCrowd::addAgent(const float* pos, const dtCrowdAgentParams* params)
 
 	// Find nearest position on navmesh and place the agent there.
 	float nearest[3];
-	dtPolyRef ref;
-	m_navquery->findNearestPoly(pos, m_ext, &m_filter, &ref, nearest);
+	dtPolyRef Ref;
+	m_navquery->findNearestPoly(pos, m_ext, &m_filter, &Ref, nearest);
 	
-	ag->corridor.reset(ref, nearest);
+	ag->corridor.reset(Ref, nearest);
 	ag->boundary.reset();
 
 	updateAgentParameters(idx, params);
@@ -535,7 +535,7 @@ int dtCrowd::addAgent(const float* pos, const dtCrowdAgentParams* params)
 	
 	ag->desiredSpeed = 0;
 
-	if (ref)
+	if (Ref)
 		ag->state = DT_CROWDAGENT_STATE_WALKING;
 	else
 		ag->state = DT_CROWDAGENT_STATE_INVALID;
@@ -559,7 +559,7 @@ void dtCrowd::removeAgent(const int idx)
 	}
 }
 
-bool dtCrowd::requestMoveTargetReplan(const int idx, dtPolyRef ref, const float* pos)
+bool dtCrowd::requestMoveTargetReplan(const int idx, dtPolyRef Ref, const float* pos)
 {
 	if (idx < 0 || idx > m_maxAgents)
 		return false;
@@ -567,7 +567,7 @@ bool dtCrowd::requestMoveTargetReplan(const int idx, dtPolyRef ref, const float*
 	dtCrowdAgent* ag = &m_agents[idx];
 	
 	// Initialize request.
-	ag->targetRef = ref;
+	ag->targetRef = Ref;
 	dtVcopy(ag->targetPos, pos);
 	ag->targetPathqRef = DT_PATHQ_INVALID;
 	ag->targetReplan = true;
@@ -586,17 +586,17 @@ bool dtCrowd::requestMoveTargetReplan(const int idx, dtPolyRef ref, const float*
 /// The position will be constrained to the surface of the navigation mesh.
 ///
 /// The request will be processed during the next #update().
-bool dtCrowd::requestMoveTarget(const int idx, dtPolyRef ref, const float* pos)
+bool dtCrowd::requestMoveTarget(const int idx, dtPolyRef Ref, const float* pos)
 {
 	if (idx < 0 || idx > m_maxAgents)
 		return false;
-	if (!ref)
+	if (!Ref)
 		return false;
 
 	dtCrowdAgent* ag = &m_agents[idx];
 	
 	// Initialize request.
-	ag->targetRef = ref;
+	ag->targetRef = Ref;
 	dtVcopy(ag->targetPos, pos);
 	ag->targetPathqRef = DT_PATHQ_INVALID;
 	ag->targetReplan = false;

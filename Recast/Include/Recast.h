@@ -340,7 +340,7 @@ struct rcHeightfieldLayer
 	int nMaxHeight;					///< The maximum height bounds of usable data. (Along the y-axis.)
 	unsigned char* pHeights;		///< The heightfield. [Size: (width - borderSize*2) * (h - borderSize*2)]
 	unsigned char* pAreas;		///< Area ids. [Size: Same as #heights]
-	unsigned char* pConnects;		///< Packed neighbor connection information. [Size: Same as #heights]
+	unsigned char* pConnections;		///< Packed neighbor connection information. [Size: Same as #heights]
 };
 
 /// Represents a set of heightfield layers.
@@ -348,19 +348,19 @@ struct rcHeightfieldLayer
 /// @see rcAllocHeightfieldLayerSet, rcFreeHeightfieldLayerSet 
 struct rcHeightfieldLayerSet
 {
-	rcHeightfieldLayer* layers;			///< The layers in the set. [Size: #nlayers]
-	int nlayers;						///< The number of layers in the set.
+	rcHeightfieldLayer* pHeightFieldLayers;			///< The layers in the set. [Size: #nlayers]
+	int nLayers;						///< The number of layers in the set.
 };
 
 /// Represents a simple, non-overlapping contour in field space.
 struct rcContour
 {
-	int* verts;			///< Simplified contour vertex and connection data. [Size: 4 * #nverts]
-	int nverts;			///< The number of vertices in the simplified contour. 
-	int* rverts;		///< Raw contour vertex and connection data. [Size: 4 * #nrverts]
-	int nrverts;		///< The number of vertices in the raw contour. 
-	unsigned short reg;	///< The region id of the contour.
-	unsigned char area;	///< The area id of the contour.
+	int* pVerts;			///< Simplified contour vertex and connection data. [Size: 4 * #nverts]
+	int nVerts;			///< The number of vertices in the simplified contour. 
+	int* pRawVerts;		///< Raw contour vertex and connection data. [Size: 4 * #nrverts]
+	int nRawVerts;		///< The number of vertices in the raw contour. 
+	unsigned short uRegionID;	///< The region id of the contour.
+	unsigned char uAreaID;	///< The area id of the contour.
 };
 
 /// Represents a group of related contours.
@@ -382,20 +382,20 @@ struct rcContourSet
 /// @ingroup recast
 struct rcPolyMesh
 {
-	unsigned short* verts;	///< The mesh vertices. [Form: (x, y, z) * #nverts]
-	unsigned short* polys;	///< Polygon and neighbor data. [Length: #maxpolys * 2 * #nvp]
-	unsigned short* regs;	///< The region id assigned to each polygon. [Length: #maxpolys]
-	unsigned short* flags;	///< The user defined flags for each polygon. [Length: #maxpolys]
-	unsigned char* areas;	///< The area id assigned to each polygon. [Length: #maxpolys]
-	int nverts;				///< The number of vertices.
-	int npolys;				///< The number of polygons.
-	int maxpolys;			///< The number of allocated polygons.
-	int nvp;				///< The maximum number of vertices per polygon.
-	float bmin[3];			///< The minimum bounds in world space. [(x, y, z)]
-	float bmax[3];			///< The maximum bounds in world space. [(x, y, z)]
-	float cs;				///< The size of each cell. (On the xz-plane.)
-	float ch;				///< The height of each cell. (The minimum increment along the y-axis.)
-	int borderSize;			///< The AABB border size used to generate the source data from which the mesh was derived.
+	unsigned short* pVerts;	///< The mesh vertices. [Form: (x, y, z) * #nverts]
+	unsigned short* pPolys;	///< Polygon and neighbor data. [Length: #maxpolys * 2 * #nvp]
+	unsigned short* pRegions;	///< The region id assigned to each polygon. [Length: #maxpolys]
+	unsigned short* pFlags;	///< The user defined flags for each polygon. [Length: #maxpolys]
+	unsigned char* pAreas;	///< The area id assigned to each polygon. [Length: #maxpolys]
+	int nVerts;				///< The number of vertices.
+	int nPolys;				///< The number of polygons.
+	int nMaxPolys;			///< The number of allocated polygons.
+	int nVertexNumPerPoly;				///< The maximum number of vertices per polygon.
+	float fBMin[3];			///< The minimum bounds in world space. [(x, y, z)]
+	float fBMax[3];			///< The maximum bounds in world space. [(x, y, z)]
+	float fCellSize;				///< The size of each cell. (On the xz-plane.)
+	float fCellHeight;				///< The height of each cell. (The minimum increment along the y-axis.)
+	int nBorderSize;			///< The AABB border size used to generate the source data from which the mesh was derived.
 };
 
 /// Contains triangle meshes that represent detailed height data associated 
@@ -403,12 +403,12 @@ struct rcPolyMesh
 /// @ingroup recast
 struct rcPolyMeshDetail
 {
-	unsigned int* meshes;	///< The sub-mesh data. [Size: 4*#nmeshes] 
-	float* verts;			///< The mesh vertices. [Size: 3*#nverts] 
-	unsigned char* tris;	///< The mesh triangles. [Size: 4*#ntris] 
-	int nmeshes;			///< The number of sub-meshes defined by #meshes.
-	int nverts;				///< The number of vertices in #verts.
-	int ntris;				///< The number of triangles in #tris.
+	unsigned int* pMeshes;	///< The sub-mesh data. [Size: 4*#nmeshes] 
+	float* fVerts;			///< The mesh vertices. [Size: 3*#nverts] 
+	unsigned char* pTris;	///< The mesh triangles. [Size: 4*#ntris] 
+	int nMeshes;			///< The number of sub-meshes defined by #meshes.
+	int nVerts;				///< The number of vertices in #verts.
+	int nTris;				///< The number of triangles in #tris.
 };
 
 /// @name Allocation Functions

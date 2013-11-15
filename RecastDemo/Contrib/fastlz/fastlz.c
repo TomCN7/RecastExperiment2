@@ -205,7 +205,7 @@ static FASTLZ_INLINE int FASTLZ_COMPRESSOR(const void* input, int length, void* 
   /* main loop */
   while(FASTLZ_EXPECT_CONDITIONAL(ip < ip_limit))
   {
-    const flzuint8* ref;
+    const flzuint8* Ref;
     flzuint32 distance;
 
     /* minimum match length */
@@ -220,7 +220,7 @@ static FASTLZ_INLINE int FASTLZ_COMPRESSOR(const void* input, int length, void* 
     {
       distance = 1;
       ip += 3;
-      ref = anchor - 1 + 3;
+      Ref = anchor - 1 + 3;
       goto match;
     }
 #endif
@@ -228,10 +228,10 @@ static FASTLZ_INLINE int FASTLZ_COMPRESSOR(const void* input, int length, void* 
     /* find potential match */
     HASH_FUNCTION(hval,ip);
     hslot = htab + hval;
-    ref = htab[hval];
+    Ref = htab[hval];
 
     /* calculate distance to the match */
-    distance = anchor - ref;
+    distance = anchor - Ref;
 
     /* update hash table */
     *hslot = anchor;
@@ -243,14 +243,14 @@ static FASTLZ_INLINE int FASTLZ_COMPRESSOR(const void* input, int length, void* 
 #else
     (distance >= MAX_FARDISTANCE) ||
 #endif
-    *ref++ != *ip++ || *ref++!=*ip++ || *ref++!=*ip++)
+    *Ref++ != *ip++ || *Ref++!=*ip++ || *Ref++!=*ip++)
       goto literal;
 
 #if FASTLZ_LEVEL==2
     /* far, needs at least 5-byte match */
     if(distance >= MAX_DISTANCE)
     {
-      if(*ip++ != *ref++ || *ip++!= *ref++) 
+      if(*ip++ != *Ref++ || *ip++!= *Ref++) 
         goto literal;
       len += 2;
     }
@@ -269,22 +269,22 @@ static FASTLZ_INLINE int FASTLZ_COMPRESSOR(const void* input, int length, void* 
       /* zero distance means a run */
       flzuint8 x = ip[-1];
       while(ip < ip_bound)
-        if(*ref++ != x) break; else ip++;
+        if(*Ref++ != x) break; else ip++;
     }
     else
     for(;;)
     {
       /* safe because the outer check against ip limit */
-      if(*ref++ != *ip++) break;
-      if(*ref++ != *ip++) break;
-      if(*ref++ != *ip++) break;
-      if(*ref++ != *ip++) break;
-      if(*ref++ != *ip++) break;
-      if(*ref++ != *ip++) break;
-      if(*ref++ != *ip++) break;
-      if(*ref++ != *ip++) break;
+      if(*Ref++ != *ip++) break;
+      if(*Ref++ != *ip++) break;
+      if(*Ref++ != *ip++) break;
+      if(*Ref++ != *ip++) break;
+      if(*Ref++ != *ip++) break;
+      if(*Ref++ != *ip++) break;
+      if(*Ref++ != *ip++) break;
+      if(*Ref++ != *ip++) break;
       while(ip < ip_bound)
-        if(*ref++ != *ip++) break;
+        if(*Ref++ != *ip++) break;
       break;
     }
 
@@ -428,7 +428,7 @@ static FASTLZ_INLINE int FASTLZ_DECOMPRESSOR(const void* input, int length, void
 
   do
   {
-    const flzuint8* ref = op;
+    const flzuint8* Ref = op;
     flzuint32 len = ctrl >> 5;
     flzuint32 ofs = (ctrl & 31) << 8;
 
@@ -438,11 +438,11 @@ static FASTLZ_INLINE int FASTLZ_DECOMPRESSOR(const void* input, int length, void
       flzuint8 code;
 #endif
       len--;
-      ref -= ofs;
+      Ref -= ofs;
       if (len == 7-1)
 #if FASTLZ_LEVEL==1
         len += *ip++;
-      ref -= *ip++;
+      Ref -= *ip++;
 #else
         do
         {
@@ -450,7 +450,7 @@ static FASTLZ_INLINE int FASTLZ_DECOMPRESSOR(const void* input, int length, void
           len += code;
         } while (code==255);
       code = *ip++;
-      ref -= code;
+      Ref -= code;
 
       /* match from 16-bit distance */
       if(FASTLZ_UNEXPECT_CONDITIONAL(code==255))
@@ -458,7 +458,7 @@ static FASTLZ_INLINE int FASTLZ_DECOMPRESSOR(const void* input, int length, void
       {
         ofs = (*ip++) << 8;
         ofs += *ip++;
-        ref = op - ofs - MAX_DISTANCE;
+        Ref = op - ofs - MAX_DISTANCE;
       }
 #endif
       
@@ -466,7 +466,7 @@ static FASTLZ_INLINE int FASTLZ_DECOMPRESSOR(const void* input, int length, void
       if (FASTLZ_UNEXPECT_CONDITIONAL(op + len + 3 > op_limit))
         return 0;
 
-      if (FASTLZ_UNEXPECT_CONDITIONAL(ref-1 < (flzuint8 *)output))
+      if (FASTLZ_UNEXPECT_CONDITIONAL(Ref-1 < (flzuint8 *)output))
         return 0;
 #endif
 
@@ -475,10 +475,10 @@ static FASTLZ_INLINE int FASTLZ_DECOMPRESSOR(const void* input, int length, void
       else
         loop = 0;
 
-      if(ref == op)
+      if(Ref == op)
       {
         /* optimize copy for a run */
-        flzuint8 b = ref[-1];
+        flzuint8 b = Ref[-1];
         *op++ = b;
         *op++ = b;
         *op++ = b;
@@ -492,23 +492,23 @@ static FASTLZ_INLINE int FASTLZ_DECOMPRESSOR(const void* input, int length, void
         flzuint16* q;
 #endif
         /* copy from reference */
-        ref--;
-        *op++ = *ref++;
-        *op++ = *ref++;
-        *op++ = *ref++;
+        Ref--;
+        *op++ = *Ref++;
+        *op++ = *Ref++;
+        *op++ = *Ref++;
 
 #if !defined(FASTLZ_STRICT_ALIGN)
         /* copy a byte, so that now it's word aligned */
         if(len & 1)
         {
-          *op++ = *ref++;
+          *op++ = *Ref++;
           len--;
         }
 
         /* copy 16-bit at once */
         q = (flzuint16*) op;
         op += len;
-        p = (const flzuint16*) ref;
+        p = (const flzuint16*) Ref;
         for(len>>=1; len > 4; len-=4)
         {
           *q++ = *p++;
@@ -520,7 +520,7 @@ static FASTLZ_INLINE int FASTLZ_DECOMPRESSOR(const void* input, int length, void
           *q++ = *p++;
 #else
         for(; len; --len)
-          *op++ = *ref++;
+          *op++ = *Ref++;
 #endif
       }
     }

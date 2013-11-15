@@ -199,11 +199,11 @@ void Sample_Debug::handleRender()
 //		duDebugDrawCompactHeightfieldSolid(&dd, *m_chf);
 	}
 		
-	if (m_navMesh)
-		duDebugDrawNavMesh(&dd, *m_navMesh, DU_DRAWNAVMESH_OFFMESHCONS);
+	if (m_pNavMesh)
+		duDebugDrawNavMesh(&dd, *m_pNavMesh, DU_DRAWNAVMESH_OFFMESHCONS);
 
-	if (m_ref && m_navMesh)
-		duDebugDrawNavMeshPoly(&dd, *m_navMesh, m_ref, duRGBA(255,0,0,128));
+	if (m_ref && m_pNavMesh)
+		duDebugDrawNavMeshPoly(&dd, *m_pNavMesh, m_ref, duRGBA(255,0,0,128));
 
 /*	float bmin[3], bmax[3];
 	rcVsub(bmin, m_center, m_ext);
@@ -326,7 +326,7 @@ void Sample_Debug::handleRenderOverlay(double* /*proj*/, double* /*model*/, int*
 
 void Sample_Debug::handleMeshChanged(InputGeom* geom)
 {
-	m_geom = geom;
+	m_pInputGeom = geom;
 }
 
 const float* Sample_Debug::getBoundsMin()
@@ -335,7 +335,7 @@ const float* Sample_Debug::getBoundsMin()
 		return m_cset->fBMin;
 	if (m_chf)
 		return m_chf->fBMin;
-	if (m_navMesh)
+	if (m_pNavMesh)
 		return m_bmin;
 	return 0;
 }
@@ -346,7 +346,7 @@ const float* Sample_Debug::getBoundsMax()
 		return m_cset->fBMax;
 	if (m_chf)
 		return m_chf->fBMax;
-	if (m_navMesh)
+	if (m_pNavMesh)
 		return m_bmax;
 	return 0;
 }

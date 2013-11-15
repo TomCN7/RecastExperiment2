@@ -34,7 +34,7 @@ protected:
 	struct FastLZCompressor* m_tcomp;
 	struct MeshProcess* m_tmproc;
 
-	class dtTileCache* m_tileCache;
+	class dtTileCache* m_pTileCache;
 	
 	float m_cacheBuildTimeMs;
 	int m_cacheCompressedSize;
@@ -57,9 +57,9 @@ protected:
 	
 	DrawMode m_drawMode;
 	
-	int m_maxTiles;
-	int m_maxPolysPerTile;
-	float m_tileSize;
+	int m_nMaxTiles;
+	int m_nMaxPolysPerTile;
+	float m_fTileSize;
 	
 public:
 	Sample_TempObstacles();

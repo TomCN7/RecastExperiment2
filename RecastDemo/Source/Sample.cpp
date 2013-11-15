@@ -36,17 +36,17 @@
 #endif
 
 Sample::Sample() :
-	m_geom(0),
-	m_navMesh(0),
-	m_navQuery(0),
-	m_crowd(0),
-	m_navMeshDrawFlags(DU_DRAWNAVMESH_OFFMESHCONS|DU_DRAWNAVMESH_CLOSEDLIST),
+	m_pInputGeom(0),
+	m_pNavMesh(0),
+	m_pNavQuery(0),
+	m_pCrowd(0),
+	m_cNavMeshDrawFlags(DU_DRAWNAVMESH_OFFMESHCONS|DU_DRAWNAVMESH_CLOSEDLIST),
 	m_tool(0),
 	m_ctx(0)
 {
 	resetCommonSettings();
-	m_navQuery = dtAllocNavMeshQuery();
-	m_crowd = dtAllocCrowd();
+	m_pNavQuery = dtAllocNavMeshQuery();
+	m_pCrowd = dtAllocCrowd();
 
 	for (int i = 0; i < MAX_TOOLS; i++)
 		m_toolStates[i] = 0;
@@ -54,9 +54,9 @@ Sample::Sample() :
 
 Sample::~Sample()
 {
-	dtFreeNavMeshQuery(m_navQuery);
-	dtFreeNavMesh(m_navMesh);
-	dtFreeCrowd(m_crowd);
+	dtFreeNavMeshQuery(m_pNavQuery);
+	dtFreeNavMesh(m_pNavMesh);
+	dtFreeCrowd(m_pCrowd);
 	delete m_tool;
 	for (int i = 0; i < MAX_TOOLS; i++)
 		delete m_toolStates[i];
@@ -84,17 +84,17 @@ void Sample::handleDebugMode()
 
 void Sample::handleRender()
 {
-	if (!m_geom)
+	if (!m_pInputGeom)
 		return;
 	
 	DebugDrawGL dd;
 		
 	// Draw mesh
-	duDebugDrawTriMesh(&dd, m_geom->getMesh()->getVerts(), m_geom->getMesh()->getVertCount(),
-					   m_geom->getMesh()->getTris(), m_geom->getMesh()->getNormals(), m_geom->getMesh()->getTriCount(), 0, 1.0f);
+	duDebugDrawTriMesh(&dd, m_pInputGeom->getMesh()->getVerts(), m_pInputGeom->getMesh()->getVertCount(),
+					   m_pInputGeom->getMesh()->getTris(), m_pInputGeom->getMesh()->getNormals(), m_pInputGeom->getMesh()->getTriCount(), 0, 1.0f);
 	// Draw bounds
-	const float* bmin = m_geom->getMeshBoundsMin();
-	const float* bmax = m_geom->getMeshBoundsMax();
+	const float* bmin = m_pInputGeom->getMeshBoundsMin();
+	const float* bmax = m_pInputGeom->getMeshBoundsMax();
 	duDebugDrawBoxWire(&dd, bmin[0],bmin[1],bmin[2], bmax[0],bmax[1],bmax[2], duRGBA(255,255,255,128), 1.0f);
 }
 
@@ -104,51 +104,51 @@ void Sample::handleRenderOverlay(double* /*proj*/, double* /*model*/, int* /*vie
 
 void Sample::handleMeshChanged(InputGeom* geom)
 {
-	m_geom = geom;
+	m_pInputGeom = geom;
 }
 
 const float* Sample::getBoundsMin()
 {
-	if (!m_geom) return 0;
-	return m_geom->getMeshBoundsMin();
+	if (!m_pInputGeom) return 0;
+	return m_pInputGeom->getMeshBoundsMin();
 }
 
 const float* Sample::getBoundsMax()
 {
-	if (!m_geom) return 0;
-	return m_geom->getMeshBoundsMax();
+	if (!m_pInputGeom) return 0;
+	return m_pInputGeom->getMeshBoundsMax();
 }
 
 void Sample::resetCommonSettings()
 {
-	m_cellSize = 0.3f;
-	m_cellHeight = 0.2f;
-	m_agentHeight = 2.0f;
-	m_agentRadius = 0.6f;
-	m_agentMaxClimb = 0.9f;
-	m_agentMaxSlope = 45.0f;
-	m_regionMinSize = 8;
-	m_regionMergeSize = 20;
-	m_monotonePartitioning = false;
-	m_edgeMaxLen = 12.0f;
-	m_edgeMaxError = 1.3f;
-	m_vertsPerPoly = 6.0f;
-	m_detailSampleDist = 6.0f;
-	m_detailSampleMaxError = 1.0f;
+	m_fCellSize = 0.3f;
+	m_fCellHeight = 0.2f;
+	m_fAgentHeight = 2.0f;
+	m_fAgentRadius = 0.6f;
+	m_fAgentMaxClimb = 0.9f;
+	m_fAgentMaxSlope = 45.0f;
+	m_fRegionMinSize = 8;
+	m_fRegionMergeSize = 20;
+	m_bMonotonePartitioning = false;
+	m_fEdgeMaxLen = 12.0f;
+	m_fEdgeMaxError = 1.3f;
+	m_fVertsPerPoly = 6.0f;
+	m_fDetailSampleDist = 6.0f;
+	m_fDetailSampleMaxError = 1.0f;
 }
 
 void Sample::handleCommonSettings()
 {
 	imguiLabel("Rasterization");
-	imguiSlider("Cell Size", &m_cellSize, 0.1f, 1.0f, 0.01f);
-	imguiSlider("Cell Height", &m_cellHeight, 0.1f, 1.0f, 0.01f);
+	imguiSlider("Cell Size", &m_fCellSize, 0.1f, 1.0f, 0.01f);
+	imguiSlider("Cell Height", &m_fCellHeight, 0.1f, 1.0f, 0.01f);
 	
-	if (m_geom)
+	if (m_pInputGeom)
 	{
-		const float* bmin = m_geom->getMeshBoundsMin();
-		const float* bmax = m_geom->getMeshBoundsMax();
+		const float* bmin = m_pInputGeom->getMeshBoundsMin();
+		const float* bmax = m_pInputGeom->getMeshBoundsMax();
 		int gw = 0, gh = 0;
-		rcCalcGridSize(bmin, bmax, m_cellSize, &gw, &gh);
+		rcCalcGridSize(bmin, bmax, m_fCellSize, &gw, &gh);
 		char text[64];
 		snprintf(text, 64, "Voxels  %d x %d", gw, gh);
 		imguiValue(text);
@@ -156,28 +156,28 @@ void Sample::handleCommonSettings()
 	
 	imguiSeparator();
 	imguiLabel("Agent");
-	imguiSlider("Height", &m_agentHeight, 0.1f, 5.0f, 0.1f);
-	imguiSlider("Radius", &m_agentRadius, 0.0f, 5.0f, 0.1f);
-	imguiSlider("Max Climb", &m_agentMaxClimb, 0.1f, 5.0f, 0.1f);
-	imguiSlider("Max Slope", &m_agentMaxSlope, 0.0f, 90.0f, 1.0f);
+	imguiSlider("Height", &m_fAgentHeight, 0.1f, 5.0f, 0.1f);
+	imguiSlider("Radius", &m_fAgentRadius, 0.0f, 5.0f, 0.1f);
+	imguiSlider("Max Climb", &m_fAgentMaxClimb, 0.1f, 5.0f, 0.1f);
+	imguiSlider("Max Slope", &m_fAgentMaxSlope, 0.0f, 90.0f, 1.0f);
 	
 	imguiSeparator();
 	imguiLabel("Region");
-	imguiSlider("Min Region Size", &m_regionMinSize, 0.0f, 150.0f, 1.0f);
-	imguiSlider("Merged Region Size", &m_regionMergeSize, 0.0f, 150.0f, 1.0f);
-	if (imguiCheck("Monotore Partitioning", m_monotonePartitioning))
-		m_monotonePartitioning = !m_monotonePartitioning;
+	imguiSlider("Min Region Size", &m_fRegionMinSize, 0.0f, 150.0f, 1.0f);
+	imguiSlider("Merged Region Size", &m_fRegionMergeSize, 0.0f, 150.0f, 1.0f);
+	if (imguiCheck("Monotore Partitioning", m_bMonotonePartitioning))
+		m_bMonotonePartitioning = !m_bMonotonePartitioning;
 	
 	imguiSeparator();
 	imguiLabel("Polygonization");
-	imguiSlider("Max Edge Length", &m_edgeMaxLen, 0.0f, 50.0f, 1.0f);
-	imguiSlider("Max Edge Error", &m_edgeMaxError, 0.1f, 3.0f, 0.1f);
-	imguiSlider("Verts Per Poly", &m_vertsPerPoly, 3.0f, 12.0f, 1.0f);		
+	imguiSlider("Max Edge Length", &m_fEdgeMaxLen, 0.0f, 50.0f, 1.0f);
+	imguiSlider("Max Edge Error", &m_fEdgeMaxError, 0.1f, 3.0f, 0.1f);
+	imguiSlider("Verts Per Poly", &m_fVertsPerPoly, 3.0f, 12.0f, 1.0f);		
 
 	imguiSeparator();
 	imguiLabel("Detail Mesh");
-	imguiSlider("Sample Distance", &m_detailSampleDist, 0.0f, 16.0f, 1.0f);
-	imguiSlider("Max Sample Error", &m_detailSampleMaxError, 0.0f, 16.0f, 1.0f);
+	imguiSlider("Sample Distance", &m_fDetailSampleDist, 0.0f, 16.0f, 1.0f);
+	imguiSlider("Max Sample Error", &m_fDetailSampleMaxError, 0.0f, 16.0f, 1.0f);
 	
 	imguiSeparator();
 }

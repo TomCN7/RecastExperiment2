@@ -44,7 +44,7 @@ public:
 	/// Resets the path corridor to the specified position.
 	///  @param[in]		ref		The polygon reference containing the position.
 	///  @param[in]		pos		The new position in the corridor. [(x, y, z)]
-	void reset(dtPolyRef ref, const float* pos);
+	void reset(dtPolyRef Ref, const float* pos);
 	
 	/// Finds the corners in the corridor from the position toward the target. (The straightened path.)
 	///  @param[out]	cornerVerts		The corner vertices. [(x, y, z) * cornerCount] [Size: <= maxCorners]

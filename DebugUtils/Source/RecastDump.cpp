@@ -55,19 +55,19 @@ bool duDumpPolyMeshToObj(rcPolyMesh& pmesh, duFileIO* io)
 		return false;
 	}
 	
-	const int nvp = pmesh.nvp;
-	const float cs = pmesh.cs;
-	const float ch = pmesh.ch;
-	const float* orig = pmesh.bmin;
+	const int nvp = pmesh.nVertexNumPerPoly;
+	const float cs = pmesh.fCellSize;
+	const float ch = pmesh.fCellHeight;
+	const float* orig = pmesh.fBMin;
 	
 	ioprintf(io, "# Recast Navmesh\n");
 	ioprintf(io, "o NavMesh\n");
 
 	ioprintf(io, "\n");
 	
-	for (int i = 0; i < pmesh.nverts; ++i)
+	for (int i = 0; i < pmesh.nVerts; ++i)
 	{
-		const unsigned short* v = &pmesh.verts[i*3];
+		const unsigned short* v = &pmesh.pVerts[i*3];
 		const float x = orig[0] + v[0]*cs;
 		const float y = orig[1] + (v[1]+1)*ch + 0.1f;
 		const float z = orig[2] + v[2]*cs;
@@ -76,9 +76,9 @@ bool duDumpPolyMeshToObj(rcPolyMesh& pmesh, duFileIO* io)
 
 	ioprintf(io, "\n");
 
-	for (int i = 0; i < pmesh.npolys; ++i)
+	for (int i = 0; i < pmesh.nPolys; ++i)
 	{
-		const unsigned short* p = &pmesh.polys[i*nvp*2];
+		const unsigned short* p = &pmesh.pPolys[i*nvp*2];
 		for (int j = 2; j < nvp; ++j)
 		{
 			if (p[j] == RC_MESH_NULL_IDX) break;
@@ -107,21 +107,21 @@ bool duDumpPolyMeshDetailToObj(rcPolyMeshDetail& dmesh, duFileIO* io)
 	
 	ioprintf(io, "\n");
 
-	for (int i = 0; i < dmesh.nverts; ++i)
+	for (int i = 0; i < dmesh.nVerts; ++i)
 	{
-		const float* v = &dmesh.verts[i*3];
+		const float* v = &dmesh.fVerts[i*3];
 		ioprintf(io, "v %f %f %f\n", v[0],v[1],v[2]);
 	}
 	
 	ioprintf(io, "\n");
 	
-	for (int i = 0; i < dmesh.nmeshes; ++i)
+	for (int i = 0; i < dmesh.nMeshes; ++i)
 	{
-		const unsigned int* m = &dmesh.meshes[i*4];
+		const unsigned int* m = &dmesh.pMeshes[i*4];
 		const unsigned int bverts = m[0];
 		const unsigned int btris = m[2];
 		const unsigned int ntris = m[3];
-		const unsigned char* tris = &dmesh.tris[btris*4];
+		const unsigned char* tris = &dmesh.pTris[btris*4];
 		for (unsigned int j = 0; j < ntris; ++j)
 		{
 			ioprintf(io, "f %d %d %d\n",
@@ -168,12 +168,12 @@ bool duDumpContourSet(struct rcContourSet& cset, duFileIO* io)
 	for (int i = 0; i < cset.nContours; ++i)
 	{
 		const rcContour& cont = cset.pContours[i];
-		io->write(&cont.nverts, sizeof(cont.nverts));
-		io->write(&cont.nrverts, sizeof(cont.nrverts));
-		io->write(&cont.reg, sizeof(cont.reg));
-		io->write(&cont.area, sizeof(cont.area));
-		io->write(cont.verts, sizeof(int)*4*cont.nverts);
-		io->write(cont.rverts, sizeof(int)*4*cont.nrverts);
+		io->write(&cont.nVerts, sizeof(cont.nVerts));
+		io->write(&cont.nRawVerts, sizeof(cont.nRawVerts));
+		io->write(&cont.uRegionID, sizeof(cont.uRegionID));
+		io->write(&cont.uAreaID, sizeof(cont.uAreaID));
+		io->write(cont.pVerts, sizeof(int)*4*cont.nVerts);
+		io->write(cont.pRawVerts, sizeof(int)*4*cont.nRawVerts);
 	}
 
 	return true;
@@ -232,26 +232,26 @@ bool duReadContourSet(struct rcContourSet& cset, duFileIO* io)
 	for (int i = 0; i < cset.nContours; ++i)
 	{
 		rcContour& cont = cset.pContours[i];
-		io->read(&cont.nverts, sizeof(cont.nverts));
-		io->read(&cont.nrverts, sizeof(cont.nrverts));
-		io->read(&cont.reg, sizeof(cont.reg));
-		io->read(&cont.area, sizeof(cont.area));
+		io->read(&cont.nVerts, sizeof(cont.nVerts));
+		io->read(&cont.nRawVerts, sizeof(cont.nRawVerts));
+		io->read(&cont.uRegionID, sizeof(cont.uRegionID));
+		io->read(&cont.uAreaID, sizeof(cont.uAreaID));
 
-		cont.verts = (int*)rcAlloc(sizeof(int)*4*cont.nverts, RC_ALLOC_PERM);
-		if (!cont.verts)
+		cont.pVerts = (int*)rcAlloc(sizeof(int)*4*cont.nVerts, RC_ALLOC_PERM);
+		if (!cont.pVerts)
 		{
-			printf("duReadContourSet: Could not alloc contour verts (%d)\n", cont.nverts);
+			printf("duReadContourSet: Could not alloc contour verts (%d)\n", cont.nVerts);
 			return false;
 		}
-		cont.rverts = (int*)rcAlloc(sizeof(int)*4*cont.nrverts, RC_ALLOC_PERM);
-		if (!cont.rverts)
+		cont.pRawVerts = (int*)rcAlloc(sizeof(int)*4*cont.nRawVerts, RC_ALLOC_PERM);
+		if (!cont.pRawVerts)
 		{
-			printf("duReadContourSet: Could not alloc contour rverts (%d)\n", cont.nrverts);
+			printf("duReadContourSet: Could not alloc contour rverts (%d)\n", cont.nRawVerts);
 			return false;
 		}
 		
-		io->read(cont.verts, sizeof(int)*4*cont.nverts);
-		io->read(cont.rverts, sizeof(int)*4*cont.nrverts);
+		io->read(cont.pVerts, sizeof(int)*4*cont.nVerts);
+		io->read(cont.pRawVerts, sizeof(int)*4*cont.nRawVerts);
 	}
 	
 	return true;

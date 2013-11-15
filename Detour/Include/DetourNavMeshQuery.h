@@ -46,11 +46,11 @@ public:
 	///  @param[in]		tile	The tile containing the polygon.
 	///  @param[in]		poly  The polygon to test.
 #ifdef DT_VIRTUAL_QUERYFILTER
-	virtual bool passFilter(const dtPolyRef ref,
+	virtual bool passFilter(const dtPolyRef Ref,
 							const dtMeshTile* tile,
 							const dtPoly* poly) const;
 #else
-	bool passFilter(const dtPolyRef ref,
+	bool passFilter(const dtPolyRef Ref,
 					const dtMeshTile* tile,
 					const dtPoly* poly) const;
 #endif
@@ -346,7 +346,7 @@ public:
 	///  @param[out]	segmentCount	The number of segments returned.
 	///  @param[in]		maxSegments		The maximum number of segments the result arrays can hold.
 	/// @returns The status flags for the query.
-	dtStatus getPolyWallSegments(dtPolyRef ref, const dtQueryFilter* filter,
+	dtStatus getPolyWallSegments(dtPolyRef Ref, const dtQueryFilter* filter,
 								 float* segmentVerts, dtPolyRef* segmentRefs, int* segmentCount,
 								 const int maxSegments) const;
 
@@ -379,7 +379,7 @@ public:
 	///  @param[in]		pos			The position to check. [(x, y, z)]
 	///  @param[out]	closest		The closest point on the polygon. [(x, y, z)]
 	/// @returns The status flags for the query.
-	dtStatus closestPointOnPoly(dtPolyRef ref, const float* pos, float* closest) const;
+	dtStatus closestPointOnPoly(dtPolyRef Ref, const float* pos, float* closest) const;
 	
 	/// Returns a point on the boundary closest to the source point if the source point is outside the 
 	/// polygon's xz-bounds.
@@ -387,14 +387,14 @@ public:
 	///  @param[in]		pos			The position to check. [(x, y, z)]
 	///  @param[out]	closest		The closest point. [(x, y, z)]
 	/// @returns The status flags for the query.
-	dtStatus closestPointOnPolyBoundary(dtPolyRef ref, const float* pos, float* closest) const;
+	dtStatus closestPointOnPolyBoundary(dtPolyRef Ref, const float* pos, float* closest) const;
 	
 	/// Gets the height of the polygon at the provided position using the height detail. (Most accurate.)
 	///  @param[in]		ref			The reference id of the polygon.
 	///  @param[in]		pos			A position within the xz-bounds of the polygon. [(x, y, z)]
 	///  @param[out]	height		The height at the surface of the polygon.
 	/// @returns The status flags for the query.
-	dtStatus getPolyHeight(dtPolyRef ref, const float* pos, float* height) const;
+	dtStatus getPolyHeight(dtPolyRef Ref, const float* pos, float* height) const;
 
 	/// @}
 	/// @name Miscellaneous Functions
@@ -403,12 +403,12 @@ public:
 	/// Returns true if the polygon reference is valid and passes the filter restrictions.
 	///  @param[in]		ref			The polygon reference to check.
 	///  @param[in]		filter		The filter to apply.
-	bool isValidPolyRef(dtPolyRef ref, const dtQueryFilter* filter) const;
+	bool isValidPolyRef(dtPolyRef Ref, const dtQueryFilter* filter) const;
 
 	/// Returns true if the polygon reference is in the closed list. 
 	///  @param[in]		ref		The reference id of the polygon to check.
 	/// @returns True if the polygon is in closed list.
-	bool isInClosedList(dtPolyRef ref) const;
+	bool isInClosedList(dtPolyRef Ref) const;
 	
 	/// Gets the node pool.
 	/// @returns The node pool.
@@ -448,7 +448,7 @@ private:
 							 float* mid) const;
 	
 	// Appends vertex to a straight path
-	dtStatus appendVertex(const float* pos, const unsigned char flags, const dtPolyRef ref,
+	dtStatus appendVertex(const float* pos, const unsigned char flags, const dtPolyRef Ref,
 						  float* straightPath, unsigned char* straightPathFlags, dtPolyRef* straightPathRefs,
 						  int* straightPathCount, const int maxStraightPath) const;
 

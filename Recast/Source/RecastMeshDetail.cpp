@@ -954,14 +954,14 @@ bool rcBuildPolyMeshDetail(rcContext* ctx, const rcPolyMesh& mesh, const rcCompa
 	
 	ctx->startTimer(RC_TIMER_BUILD_POLYMESHDETAIL);
 
-	if (mesh.nverts == 0 || mesh.npolys == 0)
+	if (mesh.nVerts == 0 || mesh.nPolys == 0)
 		return true;
 	
-	const int nvp = mesh.nvp;
-	const float cs = mesh.cs;
-	const float ch = mesh.ch;
-	const float* orig = mesh.bmin;
-	const int borderSize = mesh.borderSize;
+	const int nvp = mesh.nVertexNumPerPoly;
+	const float cs = mesh.fCellSize;
+	const float ch = mesh.fCellHeight;
+	const float* orig = mesh.fBMin;
+	const int borderSize = mesh.nBorderSize;
 	
 	rcIntArray edges(64);
 	rcIntArray tris(512);
@@ -972,10 +972,10 @@ bool rcBuildPolyMeshDetail(rcContext* ctx, const rcPolyMesh& mesh, const rcCompa
 	int nPolyVerts = 0;
 	int maxhw = 0, maxhh = 0;
 	
-	rcScopedDelete<int> bounds = (int*)rcAlloc(sizeof(int)*mesh.npolys*4, RC_ALLOC_TEMP);
+	rcScopedDelete<int> bounds = (int*)rcAlloc(sizeof(int)*mesh.nPolys*4, RC_ALLOC_TEMP);
 	if (!bounds)
 	{
-		ctx->log(RC_LOG_ERROR, "rcBuildPolyMeshDetail: Out of memory 'bounds' (%d).", mesh.npolys*4);
+		ctx->log(RC_LOG_ERROR, "rcBuildPolyMeshDetail: Out of memory 'bounds' (%d).", mesh.nPolys*4);
 		return false;
 	}
 	rcScopedDelete<float> poly = (float*)rcAlloc(sizeof(float)*nvp*3, RC_ALLOC_TEMP);
@@ -986,9 +986,9 @@ bool rcBuildPolyMeshDetail(rcContext* ctx, const rcPolyMesh& mesh, const rcCompa
 	}
 	
 	// Find max size for a polygon area.
-	for (int i = 0; i < mesh.npolys; ++i)
+	for (int i = 0; i < mesh.nPolys; ++i)
 	{
-		const unsigned short* p = &mesh.polys[i*nvp*2];
+		const unsigned short* p = &mesh.pPolys[i*nvp*2];
 		int& xmin = bounds[i*4+0];
 		int& xmax = bounds[i*4+1];
 		int& ymin = bounds[i*4+2];
@@ -1000,7 +1000,7 @@ bool rcBuildPolyMeshDetail(rcContext* ctx, const rcPolyMesh& mesh, const rcCompa
 		for (int j = 0; j < nvp; ++j)
 		{
 			if(p[j] == RC_MESH_NULL_IDX) break;
-			const unsigned short* v = &mesh.verts[p[j]*3];
+			const unsigned short* v = &mesh.pVerts[p[j]*3];
 			xmin = rcMin(xmin, (int)v[0]);
 			xmax = rcMax(xmax, (int)v[0]);
 			ymin = rcMin(ymin, (int)v[2]);
@@ -1023,44 +1023,44 @@ bool rcBuildPolyMeshDetail(rcContext* ctx, const rcPolyMesh& mesh, const rcCompa
 		return false;
 	}
 	
-	dmesh.nmeshes = mesh.npolys;
-	dmesh.nverts = 0;
-	dmesh.ntris = 0;
-	dmesh.meshes = (unsigned int*)rcAlloc(sizeof(unsigned int)*dmesh.nmeshes*4, RC_ALLOC_PERM);
-	if (!dmesh.meshes)
+	dmesh.nMeshes = mesh.nPolys;
+	dmesh.nVerts = 0;
+	dmesh.nTris = 0;
+	dmesh.pMeshes = (unsigned int*)rcAlloc(sizeof(unsigned int)*dmesh.nMeshes*4, RC_ALLOC_PERM);
+	if (!dmesh.pMeshes)
 	{
-		ctx->log(RC_LOG_ERROR, "rcBuildPolyMeshDetail: Out of memory 'dmesh.meshes' (%d).", dmesh.nmeshes*4);
+		ctx->log(RC_LOG_ERROR, "rcBuildPolyMeshDetail: Out of memory 'dmesh.meshes' (%d).", dmesh.nMeshes*4);
 		return false;
 	}
 
 	int vcap = nPolyVerts+nPolyVerts/2;
 	int tcap = vcap*2;
 
-	dmesh.nverts = 0;
-	dmesh.verts = (float*)rcAlloc(sizeof(float)*vcap*3, RC_ALLOC_PERM);
-	if (!dmesh.verts)
+	dmesh.nVerts = 0;
+	dmesh.fVerts = (float*)rcAlloc(sizeof(float)*vcap*3, RC_ALLOC_PERM);
+	if (!dmesh.fVerts)
 	{
 		ctx->log(RC_LOG_ERROR, "rcBuildPolyMeshDetail: Out of memory 'dmesh.verts' (%d).", vcap*3);
 		return false;
 	}
-	dmesh.ntris = 0;
-	dmesh.tris = (unsigned char*)rcAlloc(sizeof(unsigned char*)*tcap*4, RC_ALLOC_PERM);
-	if (!dmesh.tris)
+	dmesh.nTris = 0;
+	dmesh.pTris = (unsigned char*)rcAlloc(sizeof(unsigned char*)*tcap*4, RC_ALLOC_PERM);
+	if (!dmesh.pTris)
 	{
 		ctx->log(RC_LOG_ERROR, "rcBuildPolyMeshDetail: Out of memory 'dmesh.tris' (%d).", tcap*4);
 		return false;
 	}
 	
-	for (int i = 0; i < mesh.npolys; ++i)
+	for (int i = 0; i < mesh.nPolys; ++i)
 	{
-		const unsigned short* p = &mesh.polys[i*nvp*2];
+		const unsigned short* p = &mesh.pPolys[i*nvp*2];
 		
 		// Store polygon vertices for processing.
 		int npoly = 0;
 		for (int j = 0; j < nvp; ++j)
 		{
 			if(p[j] == RC_MESH_NULL_IDX) break;
-			const unsigned short* v = &mesh.verts[p[j]*3];
+			const unsigned short* v = &mesh.pVerts[p[j]*3];
 			poly[j*3+0] = v[0]*cs;
 			poly[j*3+1] = v[1]*ch;
 			poly[j*3+2] = v[2]*cs;
@@ -1072,7 +1072,7 @@ bool rcBuildPolyMeshDetail(rcContext* ctx, const rcPolyMesh& mesh, const rcCompa
 		hp.ymin = bounds[i*4+2];
 		hp.width = bounds[i*4+1]-bounds[i*4+0];
 		hp.height = bounds[i*4+3]-bounds[i*4+2];
-		getHeightData(chf, p, npoly, mesh.verts, borderSize, hp, stack);
+		getHeightData(chf, p, npoly, mesh.pVerts, borderSize, hp, stack);
 		
 		// Build detail mesh.
 		int nverts = 0;
@@ -1102,15 +1102,15 @@ bool rcBuildPolyMeshDetail(rcContext* ctx, const rcPolyMesh& mesh, const rcCompa
 		// Store detail submesh.
 		const int ntris = tris.size()/4;
 
-		dmesh.meshes[i*4+0] = (unsigned int)dmesh.nverts;
-		dmesh.meshes[i*4+1] = (unsigned int)nverts;
-		dmesh.meshes[i*4+2] = (unsigned int)dmesh.ntris;
-		dmesh.meshes[i*4+3] = (unsigned int)ntris;		
+		dmesh.pMeshes[i*4+0] = (unsigned int)dmesh.nVerts;
+		dmesh.pMeshes[i*4+1] = (unsigned int)nverts;
+		dmesh.pMeshes[i*4+2] = (unsigned int)dmesh.nTris;
+		dmesh.pMeshes[i*4+3] = (unsigned int)ntris;		
 		
 		// Store vertices, allocate more memory if necessary.
-		if (dmesh.nverts+nverts > vcap)
+		if (dmesh.nVerts+nverts > vcap)
 		{
-			while (dmesh.nverts+nverts > vcap)
+			while (dmesh.nVerts+nverts > vcap)
 				vcap += 256;
 				
 			float* newv = (float*)rcAlloc(sizeof(float)*vcap*3, RC_ALLOC_PERM);
@@ -1119,23 +1119,23 @@ bool rcBuildPolyMeshDetail(rcContext* ctx, const rcPolyMesh& mesh, const rcCompa
 				ctx->log(RC_LOG_ERROR, "rcBuildPolyMeshDetail: Out of memory 'newv' (%d).", vcap*3);
 				return false;
 			}
-			if (dmesh.nverts)
-				memcpy(newv, dmesh.verts, sizeof(float)*3*dmesh.nverts);
-			rcFree(dmesh.verts);
-			dmesh.verts = newv;
+			if (dmesh.nVerts)
+				memcpy(newv, dmesh.fVerts, sizeof(float)*3*dmesh.nVerts);
+			rcFree(dmesh.fVerts);
+			dmesh.fVerts = newv;
 		}
 		for (int j = 0; j < nverts; ++j)
 		{
-			dmesh.verts[dmesh.nverts*3+0] = verts[j*3+0];
-			dmesh.verts[dmesh.nverts*3+1] = verts[j*3+1];
-			dmesh.verts[dmesh.nverts*3+2] = verts[j*3+2];
-			dmesh.nverts++;
+			dmesh.fVerts[dmesh.nVerts*3+0] = verts[j*3+0];
+			dmesh.fVerts[dmesh.nVerts*3+1] = verts[j*3+1];
+			dmesh.fVerts[dmesh.nVerts*3+2] = verts[j*3+2];
+			dmesh.nVerts++;
 		}
 		
 		// Store triangles, allocate more memory if necessary.
-		if (dmesh.ntris+ntris > tcap)
+		if (dmesh.nTris+ntris > tcap)
 		{
-			while (dmesh.ntris+ntris > tcap)
+			while (dmesh.nTris+ntris > tcap)
 				tcap += 256;
 			unsigned char* newt = (unsigned char*)rcAlloc(sizeof(unsigned char)*tcap*4, RC_ALLOC_PERM);
 			if (!newt)
@@ -1143,19 +1143,19 @@ bool rcBuildPolyMeshDetail(rcContext* ctx, const rcPolyMesh& mesh, const rcCompa
 				ctx->log(RC_LOG_ERROR, "rcBuildPolyMeshDetail: Out of memory 'newt' (%d).", tcap*4);
 				return false;
 			}
-			if (dmesh.ntris)
-				memcpy(newt, dmesh.tris, sizeof(unsigned char)*4*dmesh.ntris);
-			rcFree(dmesh.tris);
-			dmesh.tris = newt;
+			if (dmesh.nTris)
+				memcpy(newt, dmesh.pTris, sizeof(unsigned char)*4*dmesh.nTris);
+			rcFree(dmesh.pTris);
+			dmesh.pTris = newt;
 		}
 		for (int j = 0; j < ntris; ++j)
 		{
 			const int* t = &tris[j*4];
-			dmesh.tris[dmesh.ntris*4+0] = (unsigned char)t[0];
-			dmesh.tris[dmesh.ntris*4+1] = (unsigned char)t[1];
-			dmesh.tris[dmesh.ntris*4+2] = (unsigned char)t[2];
-			dmesh.tris[dmesh.ntris*4+3] = getTriFlags(&verts[t[0]*3], &verts[t[1]*3], &verts[t[2]*3], poly, npoly);
-			dmesh.ntris++;
+			dmesh.pTris[dmesh.nTris*4+0] = (unsigned char)t[0];
+			dmesh.pTris[dmesh.nTris*4+1] = (unsigned char)t[1];
+			dmesh.pTris[dmesh.nTris*4+2] = (unsigned char)t[2];
+			dmesh.pTris[dmesh.nTris*4+3] = getTriFlags(&verts[t[0]*3], &verts[t[1]*3], &verts[t[2]*3], poly, npoly);
+			dmesh.nTris++;
 		}
 	}
 		
@@ -1178,30 +1178,30 @@ bool rcMergePolyMeshDetails(rcContext* ctx, rcPolyMeshDetail** meshes, const int
 	for (int i = 0; i < nmeshes; ++i)
 	{
 		if (!meshes[i]) continue;
-		maxVerts += meshes[i]->nverts;
-		maxTris += meshes[i]->ntris;
-		maxMeshes += meshes[i]->nmeshes;
+		maxVerts += meshes[i]->nVerts;
+		maxTris += meshes[i]->nTris;
+		maxMeshes += meshes[i]->nMeshes;
 	}
 
-	mesh.nmeshes = 0;
-	mesh.meshes = (unsigned int*)rcAlloc(sizeof(unsigned int)*maxMeshes*4, RC_ALLOC_PERM);
-	if (!mesh.meshes)
+	mesh.nMeshes = 0;
+	mesh.pMeshes = (unsigned int*)rcAlloc(sizeof(unsigned int)*maxMeshes*4, RC_ALLOC_PERM);
+	if (!mesh.pMeshes)
 	{
 		ctx->log(RC_LOG_ERROR, "rcBuildPolyMeshDetail: Out of memory 'pmdtl.meshes' (%d).", maxMeshes*4);
 		return false;
 	}
 
-	mesh.ntris = 0;
-	mesh.tris = (unsigned char*)rcAlloc(sizeof(unsigned char)*maxTris*4, RC_ALLOC_PERM);
-	if (!mesh.tris)
+	mesh.nTris = 0;
+	mesh.pTris = (unsigned char*)rcAlloc(sizeof(unsigned char)*maxTris*4, RC_ALLOC_PERM);
+	if (!mesh.pTris)
 	{
 		ctx->log(RC_LOG_ERROR, "rcBuildPolyMeshDetail: Out of memory 'dmesh.tris' (%d).", maxTris*4);
 		return false;
 	}
 
-	mesh.nverts = 0;
-	mesh.verts = (float*)rcAlloc(sizeof(float)*maxVerts*3, RC_ALLOC_PERM);
-	if (!mesh.verts)
+	mesh.nVerts = 0;
+	mesh.fVerts = (float*)rcAlloc(sizeof(float)*maxVerts*3, RC_ALLOC_PERM);
+	if (!mesh.fVerts)
 	{
 		ctx->log(RC_LOG_ERROR, "rcBuildPolyMeshDetail: Out of memory 'dmesh.verts' (%d).", maxVerts*3);
 		return false;
@@ -1212,29 +1212,29 @@ bool rcMergePolyMeshDetails(rcContext* ctx, rcPolyMeshDetail** meshes, const int
 	{
 		rcPolyMeshDetail* dm = meshes[i];
 		if (!dm) continue;
-		for (int j = 0; j < dm->nmeshes; ++j)
+		for (int j = 0; j < dm->nMeshes; ++j)
 		{
-			unsigned int* dst = &mesh.meshes[mesh.nmeshes*4];
-			unsigned int* src = &dm->meshes[j*4];
-			dst[0] = (unsigned int)mesh.nverts+src[0];
+			unsigned int* dst = &mesh.pMeshes[mesh.nMeshes*4];
+			unsigned int* src = &dm->pMeshes[j*4];
+			dst[0] = (unsigned int)mesh.nVerts+src[0];
 			dst[1] = src[1];
-			dst[2] = (unsigned int)mesh.ntris+src[2];
+			dst[2] = (unsigned int)mesh.nTris+src[2];
 			dst[3] = src[3];
-			mesh.nmeshes++;
+			mesh.nMeshes++;
 		}
 			
-		for (int k = 0; k < dm->nverts; ++k)
+		for (int k = 0; k < dm->nVerts; ++k)
 		{
-			rcVcopy(&mesh.verts[mesh.nverts*3], &dm->verts[k*3]);
-			mesh.nverts++;
+			rcVcopy(&mesh.fVerts[mesh.nVerts*3], &dm->fVerts[k*3]);
+			mesh.nVerts++;
 		}
-		for (int k = 0; k < dm->ntris; ++k)
+		for (int k = 0; k < dm->nTris; ++k)
 		{
-			mesh.tris[mesh.ntris*4+0] = dm->tris[k*4+0];
-			mesh.tris[mesh.ntris*4+1] = dm->tris[k*4+1];
-			mesh.tris[mesh.ntris*4+2] = dm->tris[k*4+2];
-			mesh.tris[mesh.ntris*4+3] = dm->tris[k*4+3];
-			mesh.ntris++;
+			mesh.pTris[mesh.nTris*4+0] = dm->pTris[k*4+0];
+			mesh.pTris[mesh.nTris*4+1] = dm->pTris[k*4+1];
+			mesh.pTris[mesh.nTris*4+2] = dm->pTris[k*4+2];
+			mesh.pTris[mesh.nTris*4+3] = dm->pTris[k*4+3];
+			mesh.nTris++;
 		}
 	}
 

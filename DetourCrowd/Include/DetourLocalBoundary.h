@@ -48,7 +48,7 @@ public:
 	
 	void reset();
 	
-	void update(dtPolyRef ref, const float* pos, const float collisionQueryRange,
+	void update(dtPolyRef Ref, const float* pos, const float collisionQueryRange,
 				dtNavMeshQuery* navquery, const dtQueryFilter* filter);
 	
 	bool isValid(dtNavMeshQuery* navquery, const dtQueryFilter* filter);

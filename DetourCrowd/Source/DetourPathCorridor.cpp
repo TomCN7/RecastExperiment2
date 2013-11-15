@@ -227,12 +227,12 @@ bool dtPathCorridor::init(const int maxPath)
 ///
 /// Essentially, the corridor is set of one polygon in size with the target
 /// equal to the position.
-void dtPathCorridor::reset(dtPolyRef ref, const float* pos)
+void dtPathCorridor::reset(dtPolyRef Ref, const float* pos)
 {
 	dtAssert(m_path);
 	dtVcopy(m_pos, pos);
 	dtVcopy(m_target, pos);
-	m_path[0] = ref;
+	m_path[0] = Ref;
 	m_npath = 1;
 }
 

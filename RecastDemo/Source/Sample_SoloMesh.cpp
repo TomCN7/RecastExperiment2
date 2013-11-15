@@ -76,8 +76,8 @@ void Sample_SoloMesh::cleanup()
 	m_pmesh = 0;
 	rcFreePolyMeshDetail(m_dmesh);
 	m_dmesh = 0;
-	dtFreeNavMesh(m_navMesh);
-	m_navMesh = 0;
+	dtFreeNavMesh(m_pNavMesh);
+	m_pNavMesh = 0;
 }
 			
 void Sample_SoloMesh::handleSettings()
@@ -139,13 +139,13 @@ void Sample_SoloMesh::handleDebugMode()
 	for (int i = 0; i < MAX_DRAWMODE; ++i)
 		valid[i] = false;
 
-	if (m_geom)
+	if (m_pInputGeom)
 	{
-		valid[DRAWMODE_NAVMESH] = m_navMesh != 0;
-		valid[DRAWMODE_NAVMESH_TRANS] = m_navMesh != 0;
-		valid[DRAWMODE_NAVMESH_BVTREE] = m_navMesh != 0;
-		valid[DRAWMODE_NAVMESH_NODES] = m_navQuery != 0;
-		valid[DRAWMODE_NAVMESH_INVIS] = m_navMesh != 0;
+		valid[DRAWMODE_NAVMESH] = m_pNavMesh != 0;
+		valid[DRAWMODE_NAVMESH_TRANS] = m_pNavMesh != 0;
+		valid[DRAWMODE_NAVMESH_BVTREE] = m_pNavMesh != 0;
+		valid[DRAWMODE_NAVMESH_NODES] = m_pNavQuery != 0;
+		valid[DRAWMODE_NAVMESH_INVIS] = m_pNavMesh != 0;
 		valid[DRAWMODE_MESH] = true;
 		valid[DRAWMODE_VOXELS] = m_solid != 0;
 		valid[DRAWMODE_VOXELS_WALKABLE] = m_solid != 0;
@@ -212,7 +212,7 @@ void Sample_SoloMesh::handleDebugMode()
 
 void Sample_SoloMesh::handleRender()
 {
-	if (!m_geom || !m_geom->getMesh())
+	if (!m_pInputGeom || !m_pInputGeom->getMesh())
 		return;
 	
 	DebugDrawGL dd;
@@ -220,29 +220,29 @@ void Sample_SoloMesh::handleRender()
 	glEnable(GL_FOG);
 	glDepthMask(GL_TRUE);
 
-	const float texScale = 1.0f / (m_cellSize * 10.0f);
+	const float texScale = 1.0f / (m_fCellSize * 10.0f);
 	
 	if (m_drawMode != DRAWMODE_NAVMESH_TRANS)
 	{
 		// Draw mesh
-		duDebugDrawTriMeshSlope(&dd, m_geom->getMesh()->getVerts(), m_geom->getMesh()->getVertCount(),
-								m_geom->getMesh()->getTris(), m_geom->getMesh()->getNormals(), m_geom->getMesh()->getTriCount(),
-								m_agentMaxSlope, texScale);
-		m_geom->drawOffMeshConnections(&dd);
+		duDebugDrawTriMeshSlope(&dd, m_pInputGeom->getMesh()->getVerts(), m_pInputGeom->getMesh()->getVertCount(),
+								m_pInputGeom->getMesh()->getTris(), m_pInputGeom->getMesh()->getNormals(), m_pInputGeom->getMesh()->getTriCount(),
+								m_fAgentMaxSlope, texScale);
+		m_pInputGeom->drawOffMeshConnections(&dd);
 	}
 	
 	glDisable(GL_FOG);
 	glDepthMask(GL_FALSE);
 
 	// Draw bounds
-	const float* bmin = m_geom->getMeshBoundsMin();
-	const float* bmax = m_geom->getMeshBoundsMax();
+	const float* bmin = m_pInputGeom->getMeshBoundsMin();
+	const float* bmax = m_pInputGeom->getMeshBoundsMax();
 	duDebugDrawBoxWire(&dd, bmin[0],bmin[1],bmin[2], bmax[0],bmax[1],bmax[2], duRGBA(255,255,255,128), 1.0f);
 	dd.begin(DU_DRAW_POINTS, 5.0f);
 	dd.vertex(bmin[0],bmin[1],bmin[2],duRGBA(255,255,255,128));
 	dd.end();
 	
-	if (m_navMesh && m_navQuery &&
+	if (m_pNavMesh && m_pNavQuery &&
 		(m_drawMode == DRAWMODE_NAVMESH ||
 		m_drawMode == DRAWMODE_NAVMESH_TRANS ||
 		m_drawMode == DRAWMODE_NAVMESH_BVTREE ||
@@ -250,12 +250,12 @@ void Sample_SoloMesh::handleRender()
 		m_drawMode == DRAWMODE_NAVMESH_INVIS))
 	{
 		if (m_drawMode != DRAWMODE_NAVMESH_INVIS)
-			duDebugDrawNavMeshWithClosedList(&dd, *m_navMesh, *m_navQuery, m_navMeshDrawFlags);
+			duDebugDrawNavMeshWithClosedList(&dd, *m_pNavMesh, *m_pNavQuery, m_cNavMeshDrawFlags);
 		if (m_drawMode == DRAWMODE_NAVMESH_BVTREE)
-			duDebugDrawNavMeshBVTree(&dd, *m_navMesh);
+			duDebugDrawNavMeshBVTree(&dd, *m_pNavMesh);
 		if (m_drawMode == DRAWMODE_NAVMESH_NODES)
-			duDebugDrawNavMeshNodes(&dd, *m_navQuery);
-		duDebugDrawNavMeshPolysWithFlags(&dd, *m_navMesh, SAMPLE_POLYFLAGS_DISABLED, duRGBA(0,0,0,128));
+			duDebugDrawNavMeshNodes(&dd, *m_pNavQuery);
+		duDebugDrawNavMeshPolysWithFlags(&dd, *m_pNavMesh, SAMPLE_POLYFLAGS_DISABLED, duRGBA(0,0,0,128));
 	}
 		
 	glDepthMask(GL_TRUE);
@@ -319,7 +319,7 @@ void Sample_SoloMesh::handleRender()
 		glDepthMask(GL_TRUE);
 	}
 	
-	m_geom->drawConvexVolumes(&dd);
+	m_pInputGeom->drawConvexVolumes(&dd);
 
 	if (m_tool)
 		m_tool->handleRender();
@@ -339,8 +339,8 @@ void Sample_SoloMesh::handleMeshChanged(class InputGeom* geom)
 {
 	Sample::handleMeshChanged(geom);
 
-	dtFreeNavMesh(m_navMesh);
-	m_navMesh = 0;
+	dtFreeNavMesh(m_pNavMesh);
+	m_pNavMesh = 0;
 
 	if (m_tool)
 	{
@@ -354,7 +354,7 @@ void Sample_SoloMesh::handleMeshChanged(class InputGeom* geom)
 
 bool Sample_SoloMesh::handleBuild()
 {
-	if (!m_geom || !m_geom->getMesh())
+	if (!m_pInputGeom || !m_pInputGeom->getMesh())
 	{
 		m_ctx->log(RC_LOG_ERROR, "buildNavigation: Input mesh is not specified.");
 		return false;
@@ -362,12 +362,12 @@ bool Sample_SoloMesh::handleBuild()
 	
 	cleanup();
 	
-	const float* bmin = m_geom->getMeshBoundsMin();
-	const float* bmax = m_geom->getMeshBoundsMax();
-	const float* verts = m_geom->getMesh()->getVerts();
-	const int nverts = m_geom->getMesh()->getVertCount();
-	const int* tris = m_geom->getMesh()->getTris();
-	const int ntris = m_geom->getMesh()->getTriCount();
+	const float* bmin = m_pInputGeom->getMeshBoundsMin();
+	const float* bmax = m_pInputGeom->getMeshBoundsMax();
+	const float* verts = m_pInputGeom->getMesh()->getVerts();
+	const int nverts = m_pInputGeom->getMesh()->getVertCount();
+	const int* tris = m_pInputGeom->getMesh()->getTris();
+	const int ntris = m_pInputGeom->getMesh()->getTriCount();
 	
 	//
 	// Step 1. Initialize build config.
@@ -375,19 +375,19 @@ bool Sample_SoloMesh::handleBuild()
 	
 	// Init build configuration from GUI
 	memset(&m_cfg, 0, sizeof(m_cfg));
-	m_cfg.fCellSize = m_cellSize;
-	m_cfg.fCellHeight = m_cellHeight;
-	m_cfg.fWalkableSlopeAngle = m_agentMaxSlope;
-	m_cfg.nWalkableHeight = (int)ceilf(m_agentHeight / m_cfg.fCellHeight);
-	m_cfg.nWalkableClimb = (int)floorf(m_agentMaxClimb / m_cfg.fCellHeight);
-	m_cfg.nWalkableRadius = (int)ceilf(m_agentRadius / m_cfg.fCellSize);
-	m_cfg.nMaxEdgeLen = (int)(m_edgeMaxLen / m_cellSize);
-	m_cfg.fMaxSimplificationError = m_edgeMaxError;
-	m_cfg.nMinRegionArea = (int)rcSqr(m_regionMinSize);		// Note: area = size*size
-	m_cfg.nMergeRegionArea = (int)rcSqr(m_regionMergeSize);	// Note: area = size*size
-	m_cfg.nMaxVertsPerPoly = (int)m_vertsPerPoly;
-	m_cfg.fDetailSampleDist = m_detailSampleDist < 0.9f ? 0 : m_cellSize * m_detailSampleDist;
-	m_cfg.fDetailSampleMaxError = m_cellHeight * m_detailSampleMaxError;
+	m_cfg.fCellSize = m_fCellSize;
+	m_cfg.fCellHeight = m_fCellHeight;
+	m_cfg.fWalkableSlopeAngle = m_fAgentMaxSlope;
+	m_cfg.nWalkableHeight = (int)ceilf(m_fAgentHeight / m_cfg.fCellHeight);
+	m_cfg.nWalkableClimb = (int)floorf(m_fAgentMaxClimb / m_cfg.fCellHeight);
+	m_cfg.nWalkableRadius = (int)ceilf(m_fAgentRadius / m_cfg.fCellSize);
+	m_cfg.nMaxEdgeLen = (int)(m_fEdgeMaxLen / m_fCellSize);
+	m_cfg.fMaxSimplificationError = m_fEdgeMaxError;
+	m_cfg.nMinRegionArea = (int)rcSqr(m_fRegionMinSize);		// Note: area = size*size
+	m_cfg.nMergeRegionArea = (int)rcSqr(m_fRegionMergeSize);	// Note: area = size*size
+	m_cfg.nMaxVertsPerPoly = (int)m_fVertsPerPoly;
+	m_cfg.fDetailSampleDist = m_fDetailSampleDist < 0.9f ? 0 : m_fCellSize * m_fDetailSampleDist;
+	m_cfg.fDetailSampleMaxError = m_fCellHeight * m_fDetailSampleMaxError;
 	
 	// Set the area where the navigation will be build.
 	// Here the bounds of the input mesh are used, but the
@@ -491,11 +491,11 @@ bool Sample_SoloMesh::handleBuild()
 	}
 
 	// (Optional) Mark areas.
-	const ConvexVolume* vols = m_geom->getConvexVolumes();
-	for (int i  = 0; i < m_geom->getConvexVolumeCount(); ++i)
+	const ConvexVolume* vols = m_pInputGeom->getConvexVolumes();
+	for (int i  = 0; i < m_pInputGeom->getConvexVolumeCount(); ++i)
 		rcMarkConvexPolyArea(m_ctx, vols[i].verts, vols[i].nverts, vols[i].hmin, vols[i].hmax, (unsigned char)vols[i].area, *m_chf);
 	
-	if (m_monotonePartitioning)
+	if (m_bMonotonePartitioning)
 	{
 		// Partition the walkable surface into simple regions without holes.
 		// Monotone partitioning does not need distancefield.
@@ -596,54 +596,54 @@ bool Sample_SoloMesh::handleBuild()
 		int navDataSize = 0;
 
 		// Update poly flags from areas.
-		for (int i = 0; i < m_pmesh->npolys; ++i)
+		for (int i = 0; i < m_pmesh->nPolys; ++i)
 		{
-			if (m_pmesh->areas[i] == RC_WALKABLE_AREA)
-				m_pmesh->areas[i] = SAMPLE_POLYAREA_GROUND;
+			if (m_pmesh->pAreas[i] == RC_WALKABLE_AREA)
+				m_pmesh->pAreas[i] = SAMPLE_POLYAREA_GROUND;
 				
-			if (m_pmesh->areas[i] == SAMPLE_POLYAREA_GROUND ||
-				m_pmesh->areas[i] == SAMPLE_POLYAREA_GRASS ||
-				m_pmesh->areas[i] == SAMPLE_POLYAREA_ROAD)
+			if (m_pmesh->pAreas[i] == SAMPLE_POLYAREA_GROUND ||
+				m_pmesh->pAreas[i] == SAMPLE_POLYAREA_GRASS ||
+				m_pmesh->pAreas[i] == SAMPLE_POLYAREA_ROAD)
 			{
-				m_pmesh->flags[i] = SAMPLE_POLYFLAGS_WALK;
+				m_pmesh->pFlags[i] = SAMPLE_POLYFLAGS_WALK;
 			}
-			else if (m_pmesh->areas[i] == SAMPLE_POLYAREA_WATER)
+			else if (m_pmesh->pAreas[i] == SAMPLE_POLYAREA_WATER)
 			{
-				m_pmesh->flags[i] = SAMPLE_POLYFLAGS_SWIM;
+				m_pmesh->pFlags[i] = SAMPLE_POLYFLAGS_SWIM;
 			}
-			else if (m_pmesh->areas[i] == SAMPLE_POLYAREA_DOOR)
+			else if (m_pmesh->pAreas[i] == SAMPLE_POLYAREA_DOOR)
 			{
-				m_pmesh->flags[i] = SAMPLE_POLYFLAGS_WALK | SAMPLE_POLYFLAGS_DOOR;
+				m_pmesh->pFlags[i] = SAMPLE_POLYFLAGS_WALK | SAMPLE_POLYFLAGS_DOOR;
 			}
 		}
 
 
 		dtNavMeshCreateParams params;
 		memset(&params, 0, sizeof(params));
-		params.verts = m_pmesh->verts;
-		params.vertCount = m_pmesh->nverts;
-		params.polys = m_pmesh->polys;
-		params.polyAreas = m_pmesh->areas;
-		params.polyFlags = m_pmesh->flags;
-		params.polyCount = m_pmesh->npolys;
-		params.nvp = m_pmesh->nvp;
-		params.detailMeshes = m_dmesh->meshes;
-		params.detailVerts = m_dmesh->verts;
-		params.detailVertsCount = m_dmesh->nverts;
-		params.detailTris = m_dmesh->tris;
-		params.detailTriCount = m_dmesh->ntris;
-		params.offMeshConVerts = m_geom->getOffMeshConnectionVerts();
-		params.offMeshConRad = m_geom->getOffMeshConnectionRads();
-		params.offMeshConDir = m_geom->getOffMeshConnectionDirs();
-		params.offMeshConAreas = m_geom->getOffMeshConnectionAreas();
-		params.offMeshConFlags = m_geom->getOffMeshConnectionFlags();
-		params.offMeshConUserID = m_geom->getOffMeshConnectionId();
-		params.offMeshConCount = m_geom->getOffMeshConnectionCount();
-		params.walkableHeight = m_agentHeight;
-		params.walkableRadius = m_agentRadius;
-		params.walkableClimb = m_agentMaxClimb;
-		rcVcopy(params.bmin, m_pmesh->bmin);
-		rcVcopy(params.bmax, m_pmesh->bmax);
+		params.verts = m_pmesh->pVerts;
+		params.vertCount = m_pmesh->nVerts;
+		params.polys = m_pmesh->pPolys;
+		params.polyAreas = m_pmesh->pAreas;
+		params.polyFlags = m_pmesh->pFlags;
+		params.polyCount = m_pmesh->nPolys;
+		params.nvp = m_pmesh->nVertexNumPerPoly;
+		params.detailMeshes = m_dmesh->pMeshes;
+		params.detailVerts = m_dmesh->fVerts;
+		params.detailVertsCount = m_dmesh->nVerts;
+		params.detailTris = m_dmesh->pTris;
+		params.detailTriCount = m_dmesh->nTris;
+		params.offMeshConVerts = m_pInputGeom->getOffMeshConnectionVerts();
+		params.offMeshConRad = m_pInputGeom->getOffMeshConnectionRads();
+		params.offMeshConDir = m_pInputGeom->getOffMeshConnectionDirs();
+		params.offMeshConAreas = m_pInputGeom->getOffMeshConnectionAreas();
+		params.offMeshConFlags = m_pInputGeom->getOffMeshConnectionFlags();
+		params.offMeshConUserID = m_pInputGeom->getOffMeshConnectionId();
+		params.offMeshConCount = m_pInputGeom->getOffMeshConnectionCount();
+		params.walkableHeight = m_fAgentHeight;
+		params.walkableRadius = m_fAgentRadius;
+		params.walkableClimb = m_fAgentMaxClimb;
+		rcVcopy(params.bmin, m_pmesh->fBMin);
+		rcVcopy(params.bmax, m_pmesh->fBMax);
 		params.cs = m_cfg.fCellSize;
 		params.ch = m_cfg.fCellHeight;
 		params.buildBvTree = true;
@@ -654,8 +654,8 @@ bool Sample_SoloMesh::handleBuild()
 			return false;
 		}
 		
-		m_navMesh = dtAllocNavMesh();
-		if (!m_navMesh)
+		m_pNavMesh = dtAllocNavMesh();
+		if (!m_pNavMesh)
 		{
 			dtFree(navData);
 			m_ctx->log(RC_LOG_ERROR, "Could not create Detour navmesh");
@@ -664,7 +664,7 @@ bool Sample_SoloMesh::handleBuild()
 		
 		dtStatus status;
 		
-		status = m_navMesh->init(navData, navDataSize, DT_TILE_FREE_DATA);
+		status = m_pNavMesh->init(navData, navDataSize, DT_TILE_FREE_DATA);
 		if (dtStatusFailed(status))
 		{
 			dtFree(navData);
@@ -672,7 +672,7 @@ bool Sample_SoloMesh::handleBuild()
 			return false;
 		}
 		
-		status = m_navQuery->init(m_navMesh, 2048);
+		status = m_pNavQuery->init(m_pNavMesh, 2048);
 		if (dtStatusFailed(status))
 		{
 			m_ctx->log(RC_LOG_ERROR, "Could not init Detour navmesh query");
@@ -684,7 +684,7 @@ bool Sample_SoloMesh::handleBuild()
 
 	// Show performance stats.
 	duLogBuildTimes(*m_ctx, m_ctx->getAccumulatedTime(RC_TIMER_TOTAL));
-	m_ctx->log(RC_LOG_PROGRESS, ">> Polymesh: %d vertices  %d polygons", m_pmesh->nverts, m_pmesh->npolys);
+	m_ctx->log(RC_LOG_PROGRESS, ">> Polymesh: %d vertices  %d polygons", m_pmesh->nVerts, m_pmesh->nPolys);
 	
 	m_totalBuildTimeMs = m_ctx->getAccumulatedTime(RC_TIMER_TOTAL)/1000.0f;
 	

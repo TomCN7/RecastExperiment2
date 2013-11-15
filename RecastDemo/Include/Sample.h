@@ -86,27 +86,27 @@ struct SampleToolState {
 class Sample
 {
 protected:
-	class InputGeom* m_geom;
-	class dtNavMesh* m_navMesh;
-	class dtNavMeshQuery* m_navQuery;
-	class dtCrowd* m_crowd;
+	class InputGeom* m_pInputGeom;
+	class dtNavMesh* m_pNavMesh;
+	class dtNavMeshQuery* m_pNavQuery;
+	class dtCrowd* m_pCrowd;
 
-	unsigned char m_navMeshDrawFlags;
+	unsigned char m_cNavMeshDrawFlags;
 
-	float m_cellSize;
-	float m_cellHeight;
-	float m_agentHeight;
-	float m_agentRadius;
-	float m_agentMaxClimb;
-	float m_agentMaxSlope;
-	float m_regionMinSize;
-	float m_regionMergeSize;
-	bool m_monotonePartitioning;
-	float m_edgeMaxLen;
-	float m_edgeMaxError;
-	float m_vertsPerPoly;
-	float m_detailSampleDist;
-	float m_detailSampleMaxError;
+	float m_fCellSize;
+	float m_fCellHeight;
+	float m_fAgentHeight;
+	float m_fAgentRadius;
+	float m_fAgentMaxClimb;
+	float m_fAgentMaxSlope;
+	float m_fRegionMinSize;
+	float m_fRegionMergeSize;
+	bool m_bMonotonePartitioning;
+	float m_fEdgeMaxLen;
+	float m_fEdgeMaxError;
+	float m_fVertsPerPoly;
+	float m_fDetailSampleDist;
+	float m_fDetailSampleMaxError;
 	
 	SampleTool* m_tool;
 	SampleToolState* m_toolStates[MAX_TOOLS];
@@ -135,18 +135,18 @@ public:
 	virtual bool handleBuild();
 	virtual void handleUpdate(const float dt);
 
-	virtual class InputGeom* getInputGeom() { return m_geom; }
-	virtual class dtNavMesh* getNavMesh() { return m_navMesh; }
-	virtual class dtNavMeshQuery* getNavMeshQuery() { return m_navQuery; }
-	virtual class dtCrowd* getCrowd() { return m_crowd; }
-	virtual float getAgentRadius() { return m_agentRadius; }
-	virtual float getAgentHeight() { return m_agentHeight; }
-	virtual float getAgentClimb() { return m_agentMaxClimb; }
+	virtual class InputGeom* getInputGeom() { return m_pInputGeom; }
+	virtual class dtNavMesh* getNavMesh() { return m_pNavMesh; }
+	virtual class dtNavMeshQuery* getNavMeshQuery() { return m_pNavQuery; }
+	virtual class dtCrowd* getCrowd() { return m_pCrowd; }
+	virtual float getAgentRadius() { return m_fAgentRadius; }
+	virtual float getAgentHeight() { return m_fAgentHeight; }
+	virtual float getAgentClimb() { return m_fAgentMaxClimb; }
 	virtual const float* getBoundsMin();
 	virtual const float* getBoundsMax();
 	
-	inline unsigned char getNavMeshDrawFlags() const { return m_navMeshDrawFlags; }
-	inline void setNavMeshDrawFlags(unsigned char flags) { m_navMeshDrawFlags = flags; }
+	inline unsigned char getNavMeshDrawFlags() const { return m_cNavMeshDrawFlags; }
+	inline void setNavMeshDrawFlags(unsigned char flags) { m_cNavMeshDrawFlags = flags; }
 
 	void updateToolStates(const float dt);
 	void initToolStates(Sample* sample);

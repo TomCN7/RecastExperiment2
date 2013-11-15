@@ -317,8 +317,8 @@ void NavMeshTesterTool::handleMenu()
 		for (int i = 0; i < MAX_RAND_POINTS; i++)
 		{
 			float pt[3];
-			dtPolyRef ref;
-			dtStatus status = m_navQuery->findRandomPoint(&m_filter, frand, &ref, pt);
+			dtPolyRef Ref;
+			dtStatus status = m_navQuery->findRandomPoint(&m_filter, frand, &Ref, pt);
 			if (dtStatusSucceed(status))
 			{
 				dtVcopy(&m_randPoints[m_nrandPoints*3], pt);
@@ -335,8 +335,8 @@ void NavMeshTesterTool::handleMenu()
 			for (int i = 0; i < MAX_RAND_POINTS; i++)
 			{
 				float pt[3];
-				dtPolyRef ref;
-				dtStatus status = m_navQuery->findRandomPointAroundCircle(m_startRef, m_spos, m_randomRadius, &m_filter, frand, &ref, pt);
+				dtPolyRef Ref;
+				dtStatus status = m_navQuery->findRandomPointAroundCircle(m_startRef, m_spos, m_randomRadius, &m_filter, frand, &Ref, pt);
 				if (dtStatusSucceed(status))
 				{
 					dtVcopy(&m_randPoints[m_nrandPoints*3], pt);
@@ -946,7 +946,7 @@ void NavMeshTesterTool::recalc()
 	}
 }
 
-static void getPolyCenter(dtNavMesh* navMesh, dtPolyRef ref, float* center)
+static void getPolyCenter(dtNavMesh* navMesh, dtPolyRef Ref, float* center)
 {
 	center[0] = 0;
 	center[1] = 0;
@@ -954,7 +954,7 @@ static void getPolyCenter(dtNavMesh* navMesh, dtPolyRef ref, float* center)
 	
 	const dtMeshTile* tile = 0;
 	const dtPoly* poly = 0;
-	dtStatus status = navMesh->getTileAndPolyByRef(ref, &tile, &poly);
+	dtStatus status = navMesh->getTileAndPolyByRef(Ref, &tile, &poly);
 	if (dtStatusFailed(status))
 		return;
 		
