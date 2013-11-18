@@ -41,15 +41,15 @@ Sample::Sample() :
 	m_pNavQuery(0),
 	m_pCrowd(0),
 	m_cNavMeshDrawFlags(DU_DRAWNAVMESH_OFFMESHCONS|DU_DRAWNAVMESH_CLOSEDLIST),
-	m_tool(0),
-	m_ctx(0)
+	m_pTool(0),
+	m_pCtx(0)
 {
 	resetCommonSettings();
 	m_pNavQuery = dtAllocNavMeshQuery();
 	m_pCrowd = dtAllocCrowd();
 
 	for (int i = 0; i < MAX_TOOLS; i++)
-		m_toolStates[i] = 0;
+		m_pToolStates[i] = 0;
 }
 
 Sample::~Sample()
@@ -57,17 +57,17 @@ Sample::~Sample()
 	dtFreeNavMeshQuery(m_pNavQuery);
 	dtFreeNavMesh(m_pNavMesh);
 	dtFreeCrowd(m_pCrowd);
-	delete m_tool;
+	delete m_pTool;
 	for (int i = 0; i < MAX_TOOLS; i++)
-		delete m_toolStates[i];
+		delete m_pToolStates[i];
 }
 
 void Sample::setTool(SampleTool* tool)
 {
-	delete m_tool;
-	m_tool = tool;
+	delete m_pTool;
+	m_pTool = tool;
 	if (tool)
-		m_tool->init(this);
+		m_pTool->init(this);
 }
 
 void Sample::handleSettings()
@@ -184,20 +184,20 @@ void Sample::handleCommonSettings()
 
 void Sample::handleClick(const float* s, const float* p, bool shift)
 {
-	if (m_tool)
-		m_tool->handleClick(s, p, shift);
+	if (m_pTool)
+		m_pTool->handleClick(s, p, shift);
 }
 
 void Sample::handleToggle()
 {
-	if (m_tool)
-		m_tool->handleToggle();
+	if (m_pTool)
+		m_pTool->handleToggle();
 }
 
 void Sample::handleStep()
 {
-	if (m_tool)
-		m_tool->handleStep();
+	if (m_pTool)
+		m_pTool->handleStep();
 }
 
 bool Sample::handleBuild()
@@ -207,8 +207,8 @@ bool Sample::handleBuild()
 
 void Sample::handleUpdate(const float dt)
 {
-	if (m_tool)
-		m_tool->handleUpdate(dt);
+	if (m_pTool)
+		m_pTool->handleUpdate(dt);
 	updateToolStates(dt);
 }
 
@@ -217,8 +217,8 @@ void Sample::updateToolStates(const float dt)
 {
 	for (int i = 0; i < MAX_TOOLS; i++)
 	{
-		if (m_toolStates[i])
-			m_toolStates[i]->handleUpdate(dt);
+		if (m_pToolStates[i])
+			m_pToolStates[i]->handleUpdate(dt);
 	}
 }
 
@@ -226,8 +226,8 @@ void Sample::initToolStates(Sample* sample)
 {
 	for (int i = 0; i < MAX_TOOLS; i++)
 	{
-		if (m_toolStates[i])
-			m_toolStates[i]->init(sample);
+		if (m_pToolStates[i])
+			m_pToolStates[i]->init(sample);
 	}
 }
 
@@ -235,8 +235,8 @@ void Sample::resetToolStates()
 {
 	for (int i = 0; i < MAX_TOOLS; i++)
 	{
-		if (m_toolStates[i])
-			m_toolStates[i]->reset();
+		if (m_pToolStates[i])
+			m_pToolStates[i]->reset();
 	}
 }
 
@@ -244,8 +244,8 @@ void Sample::renderToolStates()
 {
 	for (int i = 0; i < MAX_TOOLS; i++)
 	{
-		if (m_toolStates[i])
-			m_toolStates[i]->handleRender();
+		if (m_pToolStates[i])
+			m_pToolStates[i]->handleRender();
 	}
 }
 
@@ -253,8 +253,8 @@ void Sample::renderOverlayToolStates(double* proj, double* model, int* view)
 {
 	for (int i = 0; i < MAX_TOOLS; i++)
 	{
-		if (m_toolStates[i])
-			m_toolStates[i]->handleRenderOverlay(proj, model, view);
+		if (m_pToolStates[i])
+			m_pToolStates[i]->handleRenderOverlay(proj, model, view);
 	}
 }
 

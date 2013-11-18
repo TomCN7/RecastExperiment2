@@ -353,14 +353,14 @@ const float* Sample_Debug::getBoundsMax()
 
 void Sample_Debug::handleClick(const float* s, const float* p, bool shift)
 {
-	if (m_tool)
-		m_tool->handleClick(s, p, shift);
+	if (m_pTool)
+		m_pTool->handleClick(s, p, shift);
 }
 
 void Sample_Debug::handleToggle()
 {
-	if (m_tool)
-		m_tool->handleToggle();
+	if (m_pTool)
+		m_pTool->handleToggle();
 }
 
 bool Sample_Debug::handleBuild()
@@ -375,12 +375,12 @@ bool Sample_Debug::handleBuild()
 		m_cset = rcAllocContourSet();
 		if (!m_cset)
 		{
-			m_ctx->log(RC_LOG_ERROR, "buildNavigation: Out of memory 'cset'.");
+			m_pCtx->log(RC_LOG_ERROR, "buildNavigation: Out of memory 'cset'.");
 			return false;
 		}
-		if (!rcBuildContours(m_ctx, *m_chf, /*m_cfg.maxSimplificationError*/1.3f, /*m_cfg.maxEdgeLen*/12, *m_cset))
+		if (!rcBuildContours(m_pCtx, *m_chf, /*m_cfg.maxSimplificationError*/1.3f, /*m_cfg.maxEdgeLen*/12, *m_cset))
 		{
-			m_ctx->log(RC_LOG_ERROR, "buildNavigation: Could not create contours.");
+			m_pCtx->log(RC_LOG_ERROR, "buildNavigation: Could not create contours.");
 			return false;
 		}
 	}

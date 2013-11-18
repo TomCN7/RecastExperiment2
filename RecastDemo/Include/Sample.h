@@ -101,27 +101,27 @@ protected:
 	float m_fAgentMaxSlope;
 	float m_fRegionMinSize;
 	float m_fRegionMergeSize;
-	bool m_bMonotonePartitioning;
+	bool  m_bMonotonePartitioning;
 	float m_fEdgeMaxLen;
 	float m_fEdgeMaxError;
 	float m_fVertsPerPoly;
 	float m_fDetailSampleDist;
 	float m_fDetailSampleMaxError;
 	
-	SampleTool* m_tool;
-	SampleToolState* m_toolStates[MAX_TOOLS];
+	SampleTool* m_pTool;
+	SampleToolState* m_pToolStates[MAX_TOOLS];
 	
-	BuildContext* m_ctx;
+	BuildContext* m_pCtx;
 	
 public:
 	Sample();
 	virtual ~Sample();
 	
-	void setContext(BuildContext* ctx) { m_ctx = ctx; }
+	void setContext(BuildContext* ctx) { m_pCtx = ctx; }
 	
 	void setTool(SampleTool* tool);
-	SampleToolState* getToolState(int type) { return m_toolStates[type]; }
-	void setToolState(int type, SampleToolState* s) { m_toolStates[type] = s; }
+	SampleToolState* getToolState(int type) { return m_pToolStates[type]; }
+	void setToolState(int type, SampleToolState* s) { m_pToolStates[type] = s; }
 	
 	virtual void handleSettings();
 	virtual void handleTools();

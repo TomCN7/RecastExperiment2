@@ -26,16 +26,16 @@
 class Sample_SoloMesh : public Sample
 {
 protected:
-	bool m_keepInterResults;
-	float m_totalBuildTimeMs;
+	bool m_bKeepInterResults;
+	float m_fTotalBuildTimeMs;
 
-	unsigned char* m_triareas;
-	rcHeightfield* m_solid;
-	rcCompactHeightfield* m_chf;
-	rcContourSet* m_cset;
-	rcPolyMesh* m_pmesh;
-	rcConfig m_cfg;	
-	rcPolyMeshDetail* m_dmesh;
+	unsigned char* m_pTriAreas;
+	rcHeightfield* m_pSolid;
+	rcCompactHeightfield* m_pCHF;
+	rcContourSet* m_pContourSet;
+	rcPolyMesh* m_pMesh;
+	rcConfig m_Cfg;	
+	rcPolyMeshDetail* m_pDetailMesh;
 	
 	enum DrawMode
 	{
@@ -59,7 +59,7 @@ protected:
 		MAX_DRAWMODE
 	};
 	
-	DrawMode m_drawMode;
+	DrawMode m_eDrawMode;
 	
 	void cleanup();
 		

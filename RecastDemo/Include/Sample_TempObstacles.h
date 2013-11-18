@@ -24,7 +24,6 @@
 #include "Recast.h"
 #include "ChunkyTriMesh.h"
 
-
 class Sample_TempObstacles : public Sample
 {
 protected:
@@ -55,7 +54,7 @@ protected:
 		MAX_DRAWMODE
 	};
 	
-	DrawMode m_drawMode;
+	DrawMode m_eDrawMode;
 	
 	int m_nMaxTiles;
 	int m_nMaxPolysPerTile;

@@ -27,17 +27,17 @@
 class Sample_TileMesh : public Sample
 {
 protected:
-	bool m_keepInterResults;
-	bool m_buildAll;
-	float m_totalBuildTimeMs;
+	bool m_bKeepInterResults;
+	bool m_bBuildAll;
+	float m_fTotalBuildTimeMs;
 
-	unsigned char* m_triareas;
-	rcHeightfield* m_solid;
-	rcCompactHeightfield* m_chf;
-	rcContourSet* m_cset;
-	rcPolyMesh* m_pmesh;
-	rcPolyMeshDetail* m_dmesh;
-	rcConfig m_cfg;	
+	unsigned char* m_pTriAreas;
+	rcHeightfield* m_pSolid;
+	rcCompactHeightfield* m_pCHF;
+	rcContourSet* m_pContourSet;
+	rcPolyMesh* m_pMesh;
+	rcPolyMeshDetail* m_pDetailMesh;
+	rcConfig m_Cfg;
 	
 	enum DrawMode
 	{
@@ -61,21 +61,22 @@ protected:
 		DRAWMODE_POLYMESH_DETAIL,		
 		MAX_DRAWMODE
 	};
-		
-	DrawMode m_drawMode;
-	
-	int m_maxTiles;
-	int m_maxPolysPerTile;
-	float m_tileSize;
-	
-	unsigned int m_tileCol;
-	float m_tileBmin[3];
-	float m_tileBmax[3];
-	float m_tileBuildTime;
-	float m_tileMemUsage;
-	int m_tileTriCount;
 
-	unsigned char* buildTileMesh(const int tx, const int ty, const float* bmin, const float* bmax, int& dataSize);
+	DrawMode m_eDrawMode;
+	
+	int m_nMaxTiles;
+	int m_nMaxPolysPerTile;
+	float m_fTileSize;
+	
+	unsigned int m_uTileCol;
+	float m_fTileBmin[3];
+	float m_fTileBmax[3];
+	float m_fTileBuildTime;
+	float m_fTileMemUsage;
+	int m_nTileTriCount;
+
+	unsigned char* buildTileMesh(const int tx, const int ty, 
+        const float* bmin, const float* bmax, int& dataSize);
 	
 	void cleanup();
 	
