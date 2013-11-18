@@ -42,7 +42,6 @@
 #	define snprintf _snprintf
 #endif
 
-
 Sample_SoloMesh::Sample_SoloMesh() :
 	m_bKeepInterResults(true),
 	m_fTotalBuildTimeMs(0),
@@ -56,12 +55,12 @@ Sample_SoloMesh::Sample_SoloMesh() :
 {
 	setTool(new NavMeshTesterTool);
 }
-		
+
 Sample_SoloMesh::~Sample_SoloMesh()
 {
 	cleanup();
 }
-	
+
 void Sample_SoloMesh::cleanup()
 {
 	delete [] m_pTriAreas;
@@ -129,7 +128,6 @@ void Sample_SoloMesh::handleTools()
 		m_pTool->handleMenu();
 
 	imguiUnindent();
-
 }
 
 void Sample_SoloMesh::handleDebugMode()
@@ -351,7 +349,6 @@ void Sample_SoloMesh::handleMeshChanged(class InputGeom* geom)
 	initToolStates(this);
 }
 
-
 bool Sample_SoloMesh::handleBuild()
 {
 	if (!m_pInputGeom || !m_pInputGeom->getMesh())
@@ -362,12 +359,12 @@ bool Sample_SoloMesh::handleBuild()
 	
 	cleanup();
 	
-	const float* bmin = m_pInputGeom->getMeshBoundsMin();
-	const float* bmax = m_pInputGeom->getMeshBoundsMax();
-	const float* verts = m_pInputGeom->getMesh()->getVerts();
-	const int nverts = m_pInputGeom->getMesh()->getVertCount();
-	const int* tris = m_pInputGeom->getMesh()->getTris();
-	const int ntris = m_pInputGeom->getMesh()->getTriCount();
+	const float* fBMin = m_pInputGeom->getMeshBoundsMin();
+	const float* fBMax = m_pInputGeom->getMeshBoundsMax();
+	const float* fVerts = m_pInputGeom->getMesh()->getVerts();
+	const int nVerts = m_pInputGeom->getMesh()->getVertCount();
+	const int* pTris = m_pInputGeom->getMesh()->getTris();
+	const int nTris = m_pInputGeom->getMesh()->getTriCount();
 	
 	//
 	// Step 1. Initialize build config.
@@ -392,8 +389,8 @@ bool Sample_SoloMesh::handleBuild()
 	// Set the area where the navigation will be build.
 	// Here the bounds of the input mesh are used, but the
 	// area could be specified by an user defined box, etc.
-	rcVcopy(m_Cfg.fBMin, bmin);
-	rcVcopy(m_Cfg.fBMax, bmax);
+	rcVcopy(m_Cfg.fBMin, fBMin);
+	rcVcopy(m_Cfg.fBMax, fBMax);
 	rcCalcGridSize(m_Cfg.fBMin, m_Cfg.fBMax, m_Cfg.fCellSize, &m_Cfg.nWidth, &m_Cfg.nHeight);
 
 	// Reset build times gathering.
@@ -404,7 +401,7 @@ bool Sample_SoloMesh::handleBuild()
 	
 	m_pCtx->log(RC_LOG_PROGRESS, "Building navigation:");
 	m_pCtx->log(RC_LOG_PROGRESS, " - %d x %d cells", m_Cfg.nWidth, m_Cfg.nHeight);
-	m_pCtx->log(RC_LOG_PROGRESS, " - %.1fK verts, %.1fK tris", nverts/1000.0f, ntris/1000.0f);
+	m_pCtx->log(RC_LOG_PROGRESS, " - %.1fK verts, %.1fK tris", nVerts / 1000.0f, nTris / 1000.0f);
 	
 	//
 	// Step 2. Rasterize input polygon soup.
@@ -426,19 +423,19 @@ bool Sample_SoloMesh::handleBuild()
 	// Allocate array that can hold triangle area types.
 	// If you have multiple meshes you need to process, allocate
 	// and array which can hold the max number of triangles you need to process.
-	m_pTriAreas = new unsigned char[ntris];
+	m_pTriAreas = new unsigned char[nTris];
 	if (!m_pTriAreas)
 	{
-		m_pCtx->log(RC_LOG_ERROR, "buildNavigation: Out of memory 'm_triareas' (%d).", ntris);
+		m_pCtx->log(RC_LOG_ERROR, "buildNavigation: Out of memory 'm_triareas' (%d).", nTris);
 		return false;
 	}
 	
 	// Find triangles which are walkable based on their slope and rasterize them.
 	// If your input data is multiple meshes, you can transform them here, calculate
 	// the are type for each of the meshes and rasterize them.
-	memset(m_pTriAreas, 0, ntris*sizeof(unsigned char));
-	rcMarkWalkableTriangles(m_pCtx, m_Cfg.fWalkableSlopeAngle, verts, nverts, tris, ntris, m_pTriAreas);
-	rcRasterizeTriangles(m_pCtx, verts, nverts, tris, m_pTriAreas, ntris, *m_pSolid, m_Cfg.nWalkableClimb);
+	memset(m_pTriAreas, 0, nTris*sizeof(unsigned char));
+	rcMarkWalkableTriangles(m_pCtx, m_Cfg.fWalkableSlopeAngle, fVerts, nVerts, pTris, nTris, m_pTriAreas);
+	rcRasterizeTriangles(m_pCtx, fVerts, nVerts, pTris, m_pTriAreas, nTris, *m_pSolid, m_Cfg.nWalkableClimb);
 
 	if (!m_bKeepInterResults)
 	{
@@ -491,9 +488,9 @@ bool Sample_SoloMesh::handleBuild()
 	}
 
 	// (Optional) Mark areas.
-	const ConvexVolume* vols = m_pInputGeom->getConvexVolumes();
+	const ConvexVolume* pVols = m_pInputGeom->getConvexVolumes();
 	for (int i  = 0; i < m_pInputGeom->getConvexVolumeCount(); ++i)
-		rcMarkConvexPolyArea(m_pCtx, vols[i].verts, vols[i].nverts, vols[i].hmin, vols[i].hmax, (unsigned char)vols[i].area, *m_pCHF);
+		rcMarkConvexPolyArea(m_pCtx, pVols[i].verts, pVols[i].nverts, pVols[i].hmin, pVols[i].hmax, (unsigned char)pVols[i].area, *m_pCHF);
 	
 	if (m_bMonotonePartitioning)
 	{
@@ -592,8 +589,8 @@ bool Sample_SoloMesh::handleBuild()
 	// Only build the detour navmesh if we do not exceed the limit.
 	if (m_Cfg.nMaxVertsPerPoly <= DT_VERTS_PER_POLYGON)
 	{
-		unsigned char* navData = 0;
-		int navDataSize = 0;
+		unsigned char* pDavData = 0;
+		int nNavDataSize = 0;
 
 		// Update poly flags from areas.
 		for (int i = 0; i < m_pMesh->nPolys; ++i)
@@ -617,38 +614,37 @@ bool Sample_SoloMesh::handleBuild()
 			}
 		}
 
-
-		dtNavMeshCreateParams params;
-		memset(&params, 0, sizeof(params));
-		params.pVerts = m_pMesh->pVerts;
-		params.nVertCount = m_pMesh->nVerts;
-		params.pPolys = m_pMesh->pPolys;
-		params.pPolyAreas = m_pMesh->pAreas;
-		params.pPolyFlags = m_pMesh->pFlags;
-		params.nPolyCount = m_pMesh->nPolys;
-		params.nMaxVertNumPerPoly = m_pMesh->nVertexNumPerPoly;
-		params.pDetailMeshes = m_pDetailMesh->pMeshes;
-		params.pDetailVerts = m_pDetailMesh->fVerts;
-		params.nDetailVertsCount = m_pDetailMesh->nVerts;
-		params.pDetailTris = m_pDetailMesh->pTris;
-		params.nDetailTriCount = m_pDetailMesh->nTris;
-		params.pOffMeshConVerts = m_pInputGeom->getOffMeshConnectionVerts();
-		params.pOffMeshConRad = m_pInputGeom->getOffMeshConnectionRads();
-		params.pOffMeshConDir = m_pInputGeom->getOffMeshConnectionDirs();
-		params.pOffMeshConAreas = m_pInputGeom->getOffMeshConnectionAreas();
-		params.pOffMeshConFlags = m_pInputGeom->getOffMeshConnectionFlags();
-		params.pOffMeshConUserID = m_pInputGeom->getOffMeshConnectionId();
-		params.nOffMeshConCount = m_pInputGeom->getOffMeshConnectionCount();
-		params.fWalkableHeight = m_fAgentHeight;
-		params.fWalkableRadius = m_fAgentRadius;
-		params.fWalkableClimb = m_fAgentMaxClimb;
-		rcVcopy(params.fBMin, m_pMesh->fBMin);
-		rcVcopy(params.fBMax, m_pMesh->fBMax);
-		params.fCellSize = m_Cfg.fCellSize;
-		params.fCellHeight = m_Cfg.fCellHeight;
-		params.bBuildBvTree = true;
+		dtNavMeshCreateParams Params;
+		memset(&Params, 0, sizeof(Params));
+		Params.pVerts = m_pMesh->pVerts;
+		Params.nVertCount = m_pMesh->nVerts;
+		Params.pPolys = m_pMesh->pPolys;
+		Params.pPolyAreas = m_pMesh->pAreas;
+		Params.pPolyFlags = m_pMesh->pFlags;
+		Params.nPolyCount = m_pMesh->nPolys;
+		Params.nMaxVertNumPerPoly = m_pMesh->nVertexNumPerPoly;
+		Params.pDetailMeshes = m_pDetailMesh->pMeshes;
+		Params.pDetailVerts = m_pDetailMesh->fVerts;
+		Params.nDetailVertsCount = m_pDetailMesh->nVerts;
+		Params.pDetailTris = m_pDetailMesh->pTris;
+		Params.nDetailTriCount = m_pDetailMesh->nTris;
+		Params.pOffMeshConVerts = m_pInputGeom->getOffMeshConnectionVerts();
+		Params.pOffMeshConRad = m_pInputGeom->getOffMeshConnectionRads();
+		Params.pOffMeshConDir = m_pInputGeom->getOffMeshConnectionDirs();
+		Params.pOffMeshConAreas = m_pInputGeom->getOffMeshConnectionAreas();
+		Params.pOffMeshConFlags = m_pInputGeom->getOffMeshConnectionFlags();
+		Params.pOffMeshConUserID = m_pInputGeom->getOffMeshConnectionId();
+		Params.nOffMeshConCount = m_pInputGeom->getOffMeshConnectionCount();
+		Params.fWalkableHeight = m_fAgentHeight;
+		Params.fWalkableRadius = m_fAgentRadius;
+		Params.fWalkableClimb = m_fAgentMaxClimb;
+		rcVcopy(Params.fBMin, m_pMesh->fBMin);
+		rcVcopy(Params.fBMax, m_pMesh->fBMax);
+		Params.fCellSize = m_Cfg.fCellSize;
+		Params.fCellHeight = m_Cfg.fCellHeight;
+		Params.bBuildBvTree = true;
 		
-		if (!dtCreateNavMeshData(&params, &navData, &navDataSize))
+		if (!dtCreateNavMeshData(&Params, &pDavData, &nNavDataSize))
 		{
 			m_pCtx->log(RC_LOG_ERROR, "Could not build Detour navmesh.");
 			return false;
@@ -657,17 +653,17 @@ bool Sample_SoloMesh::handleBuild()
 		m_pNavMesh = dtAllocNavMesh();
 		if (!m_pNavMesh)
 		{
-			dtFree(navData);
+			dtFree(pDavData);
 			m_pCtx->log(RC_LOG_ERROR, "Could not create Detour navmesh");
 			return false;
 		}
 		
 		dtStatus status;
 		
-		status = m_pNavMesh->init(navData, navDataSize, DT_TILE_FREE_DATA);
+		status = m_pNavMesh->init(pDavData, nNavDataSize, DT_TILE_FREE_DATA);
 		if (dtStatusFailed(status))
 		{
-			dtFree(navData);
+			dtFree(pDavData);
 			m_pCtx->log(RC_LOG_ERROR, "Could not init Detour navmesh");
 			return false;
 		}
@@ -686,7 +682,7 @@ bool Sample_SoloMesh::handleBuild()
 	duLogBuildTimes(*m_pCtx, m_pCtx->getAccumulatedTime(RC_TIMER_TOTAL));
 	m_pCtx->log(RC_LOG_PROGRESS, ">> Polymesh: %d vertices  %d polygons", m_pMesh->nVerts, m_pMesh->nPolys);
 	
-	m_fTotalBuildTimeMs = m_pCtx->getAccumulatedTime(RC_TIMER_TOTAL)/1000.0f;
+	m_fTotalBuildTimeMs = m_pCtx->getAccumulatedTime(RC_TIMER_TOTAL) / 1000.0f;
 	
 	if (m_pTool)
 		m_pTool->init(this);

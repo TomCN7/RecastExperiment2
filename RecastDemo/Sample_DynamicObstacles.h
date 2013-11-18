@@ -31,5 +31,4 @@ public:
     virtual void handleUpdate(const float dt);
 };
 
-
 #endif //RECASTSAMPLE_DYNAMICOBSTACLE_H
