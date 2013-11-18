@@ -144,10 +144,10 @@ struct dtPoly
 /// Defines the location of detail sub-mesh data within a dtMeshTile.
 struct dtPolyDetail
 {
-	unsigned int vertBase;			///< The offset of the vertices in the dtMeshTile::detailVerts array.
-	unsigned int triBase;			///< The offset of the triangles in the dtMeshTile::detailTris array.
-	unsigned char vertCount;		///< The number of vertices in the sub-mesh.
-	unsigned char triCount;			///< The number of triangles in the sub-mesh.
+	unsigned int uVertBase;			///< The offset of the vertices in the dtMeshTile::detailVerts array.
+	unsigned int uTriBase;			///< The offset of the triangles in the dtMeshTile::detailTris array.
+	unsigned char cVertCount;		///< The number of vertices in the sub-mesh.
+	unsigned char cTriCount;			///< The number of triangles in the sub-mesh.
 };
 
 /// Defines a link between polygons.
@@ -469,7 +469,7 @@ public:
 	///  @param[in]	ip		The index of the polygon within the tile.
 	inline dtPolyRef encodePolyId(unsigned int salt, unsigned int it, unsigned int ip) const
 	{
-		return ((dtPolyRef)salt << (m_polyBits+m_tileBits)) | ((dtPolyRef)it << m_polyBits) | (dtPolyRef)ip;
+		return ((dtPolyRef)salt << (m_nPolyBits+m_nTileBits)) | ((dtPolyRef)it << m_nPolyBits) | (dtPolyRef)ip;
 	}
 	
 	/// Decodes a standard polygon reference.
@@ -481,11 +481,11 @@ public:
 	///  @see #encodePolyId
 	inline void decodePolyId(dtPolyRef Ref, unsigned int& salt, unsigned int& it, unsigned int& ip) const
 	{
-		const dtPolyRef saltMask = ((dtPolyRef)1<<m_saltBits)-1;
-		const dtPolyRef tileMask = ((dtPolyRef)1<<m_tileBits)-1;
-		const dtPolyRef polyMask = ((dtPolyRef)1<<m_polyBits)-1;
-		salt = (unsigned int)((Ref >> (m_polyBits+m_tileBits)) & saltMask);
-		it = (unsigned int)((Ref >> m_polyBits) & tileMask);
+		const dtPolyRef saltMask = ((dtPolyRef)1<<m_nSaltBits)-1;
+		const dtPolyRef tileMask = ((dtPolyRef)1<<m_nTileBits)-1;
+		const dtPolyRef polyMask = ((dtPolyRef)1<<m_nPolyBits)-1;
+		salt = (unsigned int)((Ref >> (m_nPolyBits+m_nTileBits)) & saltMask);
+		it = (unsigned int)((Ref >> m_nPolyBits) & tileMask);
 		ip = (unsigned int)(Ref & polyMask);
 	}
 
@@ -495,8 +495,8 @@ public:
 	///  @see #encodePolyId
 	inline unsigned int decodePolyIdSalt(dtPolyRef Ref) const
 	{
-		const dtPolyRef saltMask = ((dtPolyRef)1<<m_saltBits)-1;
-		return (unsigned int)((Ref >> (m_polyBits+m_tileBits)) & saltMask);
+		const dtPolyRef saltMask = ((dtPolyRef)1<<m_nSaltBits)-1;
+		return (unsigned int)((Ref >> (m_nPolyBits+m_nTileBits)) & saltMask);
 	}
 	
 	/// Extracts the tile's index from the specified polygon reference.
@@ -505,8 +505,8 @@ public:
 	///  @see #encodePolyId
 	inline unsigned int decodePolyIdTile(dtPolyRef Ref) const
 	{
-		const dtPolyRef tileMask = ((dtPolyRef)1<<m_tileBits)-1;
-		return (unsigned int)((Ref >> m_polyBits) & tileMask);
+		const dtPolyRef tileMask = ((dtPolyRef)1<<m_nTileBits)-1;
+		return (unsigned int)((Ref >> m_nPolyBits) & tileMask);
 	}
 	
 	/// Extracts the polygon's index (within its tile) from the specified polygon reference.
@@ -515,7 +515,7 @@ public:
 	///  @see #encodePolyId
 	inline unsigned int decodePolyIdPoly(dtPolyRef Ref) const
 	{
-		const dtPolyRef polyMask = ((dtPolyRef)1<<m_polyBits)-1;
+		const dtPolyRef polyMask = ((dtPolyRef)1<<m_nPolyBits)-1;
 		return (unsigned int)(Ref & polyMask);
 	}
 
@@ -565,20 +565,20 @@ private:
 	void closestPointOnPolyInTile(const dtMeshTile* tile, unsigned int ip,
 								  const float* pos, float* closest) const;
 	
-	dtNavMeshParams m_params;			///< Current initialization params. TODO: do not store this info twice.
-	float m_orig[3];					///< Origin of the tile (0,0)
-	float m_tileWidth, m_tileHeight;	///< Dimensions of each tile.
-	int m_maxTiles;						///< Max number of tiles.
-	int m_tileLutSize;					///< Tile hash lookup size (must be pot).
-	int m_tileLutMask;					///< Tile hash lookup mask.
+	dtNavMeshParams m_Params;			///< Current initialization params. TODO: do not store this info twice.
+	float m_fOrigin[3];					///< Origin of the tile (0,0)
+	float m_fTileWidth, m_fTileHeight;	///< Dimensions of each tile.
+	int m_nMaxTiles;						///< Max number of tiles.
+	int m_nTileLutSize;					///< Tile hash lookup size (must be pot).
+	int m_nTileLutMask;					///< Tile hash lookup mask.
 
-	dtMeshTile** m_posLookup;			///< Tile hash lookup.
-	dtMeshTile* m_nextFree;				///< Freelist of tiles.
-	dtMeshTile* m_tiles;				///< List of tiles.
+	dtMeshTile** m_ppPosLookup;			///< Tile hash lookup.
+	dtMeshTile* m_pNextFree;				///< Freelist of tiles.
+	dtMeshTile* m_pTiles;				///< List of tiles.
 		
-	unsigned int m_saltBits;			///< Number of salt bits in the tile ID.
-	unsigned int m_tileBits;			///< Number of tile bits in the tile ID.
-	unsigned int m_polyBits;			///< Number of poly bits in the tile ID.
+	unsigned int m_nSaltBits;			///< Number of salt bits in the tile ID.
+	unsigned int m_nTileBits;			///< Number of tile bits in the tile ID.
+	unsigned int m_nPolyBits;			///< Number of poly bits in the tile ID.
 };
 
 /// Allocates a navigation mesh object using the Detour allocator.

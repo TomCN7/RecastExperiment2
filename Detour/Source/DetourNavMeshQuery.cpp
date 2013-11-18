@@ -562,16 +562,16 @@ void dtNavMeshQuery::closestPointOnPolyInTile(const dtMeshTile* tile, const dtPo
 	}
 
 	// Find height at the location.
-	for (int j = 0; j < pd->triCount; ++j)
+	for (int j = 0; j < pd->cTriCount; ++j)
 	{
-		const unsigned char* t = &tile->pDetailTris[(pd->triBase+j)*4];
+		const unsigned char* t = &tile->pDetailTris[(pd->uTriBase+j)*4];
 		const float* v[3];
 		for (int k = 0; k < 3; ++k)
 		{
 			if (t[k] < poly->cVertCount)
 				v[k] = &tile->fVerts[poly->Verts[t[k]]*3];
 			else
-				v[k] = &tile->fDetailVerts[(pd->vertBase+(t[k]-poly->cVertCount))*3];
+				v[k] = &tile->fDetailVerts[(pd->uVertBase+(t[k]-poly->cVertCount))*3];
 		}
 		float h;
 		if (dtClosestHeightPointTriangle(pos, v[0], v[1], v[2], h))
@@ -693,16 +693,16 @@ dtStatus dtNavMeshQuery::getPolyHeight(dtPolyRef Ref, const float* pos, float* h
 	{
 		const unsigned int ip = (unsigned int)(poly - tile->pPolys);
 		const dtPolyDetail* pd = &tile->pDetailMeshes[ip];
-		for (int j = 0; j < pd->triCount; ++j)
+		for (int j = 0; j < pd->cTriCount; ++j)
 		{
-			const unsigned char* t = &tile->pDetailTris[(pd->triBase+j)*4];
+			const unsigned char* t = &tile->pDetailTris[(pd->uTriBase+j)*4];
 			const float* v[3];
 			for (int k = 0; k < 3; ++k)
 			{
 				if (t[k] < poly->cVertCount)
 					v[k] = &tile->fVerts[poly->Verts[t[k]]*3];
 				else
-					v[k] = &tile->fDetailVerts[(pd->vertBase+(t[k]-poly->cVertCount))*3];
+					v[k] = &tile->fDetailVerts[(pd->uVertBase+(t[k]-poly->cVertCount))*3];
 			}
 			float h;
 			if (dtClosestHeightPointTriangle(pos, v[0], v[1], v[2], h))

@@ -89,16 +89,16 @@ static void drawPolyBoundaries(duDebugDraw* dd, const dtMeshTile* tile,
 			
 			// Draw detail mesh edges which align with the actual poly edge.
 			// This is really slow.
-			for (int k = 0; k < pd->triCount; ++k)
+			for (int k = 0; k < pd->cTriCount; ++k)
 			{
-				const unsigned char* t = &tile->pDetailTris[(pd->triBase+k)*4];
+				const unsigned char* t = &tile->pDetailTris[(pd->uTriBase+k)*4];
 				const float* tv[3];
 				for (int m = 0; m < 3; ++m)
 				{
 					if (t[m] < p->cVertCount)
 						tv[m] = &tile->fVerts[p->Verts[t[m]]*3];
 					else
-						tv[m] = &tile->fDetailVerts[(pd->vertBase+(t[m]-p->cVertCount))*3];
+						tv[m] = &tile->fDetailVerts[(pd->uVertBase+(t[m]-p->cVertCount))*3];
 				}
 				for (int m = 0, n = 2; m < 3; n=m++)
 				{
@@ -152,15 +152,15 @@ static void drawMeshTile(duDebugDraw* dd, const dtNavMesh& mesh, const dtNavMesh
 			}
 		}
 		
-		for (int j = 0; j < pd->triCount; ++j)
+		for (int j = 0; j < pd->cTriCount; ++j)
 		{
-			const unsigned char* t = &tile->pDetailTris[(pd->triBase+j)*4];
+			const unsigned char* t = &tile->pDetailTris[(pd->uTriBase+j)*4];
 			for (int k = 0; k < 3; ++k)
 			{
 				if (t[k] < p->cVertCount)
 					dd->vertex(&tile->fVerts[p->Verts[t[k]]*3], col);
 				else
-					dd->vertex(&tile->fDetailVerts[(pd->vertBase+t[k]-p->cVertCount)*3], col);
+					dd->vertex(&tile->fDetailVerts[(pd->uVertBase+t[k]-p->cVertCount)*3], col);
 			}
 		}
 	}
@@ -472,15 +472,15 @@ void duDebugDrawNavMeshPoly(duDebugDraw* dd, const dtNavMesh& mesh, dtPolyRef Re
 		const dtPolyDetail* pd = &tile->pDetailMeshes[ip];
 
 		dd->begin(DU_DRAW_TRIS);
-		for (int i = 0; i < pd->triCount; ++i)
+		for (int i = 0; i < pd->cTriCount; ++i)
 		{
-			const unsigned char* t = &tile->pDetailTris[(pd->triBase+i)*4];
+			const unsigned char* t = &tile->pDetailTris[(pd->uTriBase+i)*4];
 			for (int j = 0; j < 3; ++j)
 			{
 				if (t[j] < poly->cVertCount)
 					dd->vertex(&tile->fVerts[poly->Verts[t[j]]*3], c);
 				else
-					dd->vertex(&tile->fDetailVerts[(pd->vertBase+t[j]-poly->cVertCount)*3], c);
+					dd->vertex(&tile->fDetailVerts[(pd->uVertBase+t[j]-poly->cVertCount)*3], c);
 			}
 		}
 		dd->end();
