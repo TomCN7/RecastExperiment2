@@ -694,14 +694,12 @@ static void walkContour(int x, int y, int i, int dir,
 }
 
 static bool filterSmallRegions(rcContext* ctx, int minRegionArea, int mergeRegionSize,
-							   unsigned short& maxRegionId,
-							   rcCompactHeightfield& chf,
-							   unsigned short* srcReg)
+    unsigned short& maxRegionId, rcCompactHeightfield& chf, unsigned short* srcReg)
 {
 	const int w = chf.nWidth;
 	const int h = chf.nHeight;
 	
-	const int nreg = maxRegionId+1;
+	const int nreg = maxRegionId + 1;
 	rcRegion* regions = (rcRegion*)rcAlloc(sizeof(rcRegion)*nreg, RC_ALLOC_TEMP);
 	if (!regions)
 	{
@@ -718,8 +716,8 @@ static bool filterSmallRegions(rcContext* ctx, int minRegionArea, int mergeRegio
 	{
 		for (int x = 0; x < w; ++x)
 		{
-			const rcCompactCell& c = chf.pCompactCells[x+y*w];
-			for (int i = (int)c.index, ni = (int)(c.index+c.count); i < ni; ++i)
+			const rcCompactCell& c = chf.pCompactCells[x + y * w];
+			for (int i = (int)c.index, ni = (int)(c.index + c.count); i < ni; ++i)
 			{
 				unsigned short r = srcReg[i];
 				if (r == 0 || r >= nreg)
@@ -1241,8 +1239,8 @@ bool rcBuildRegions(rcContext* ctx, rcCompactHeightfield& chf,
 	
 	unsigned short* srcReg = buf;
 	unsigned short* srcDist = buf+chf.nSpanCount;
-	unsigned short* dstReg = buf+chf.nSpanCount*2;
-	unsigned short* dstDist = buf+chf.nSpanCount*3;
+	unsigned short* dstReg = buf+chf.nSpanCount * 2;
+	unsigned short* dstDist = buf+chf.nSpanCount * 3;
 	
 	memset(srcReg, 0, sizeof(unsigned short)*chf.nSpanCount);
 	memset(srcDist, 0, sizeof(unsigned short)*chf.nSpanCount);
