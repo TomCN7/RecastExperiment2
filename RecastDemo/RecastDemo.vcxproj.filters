@@ -78,6 +78,9 @@
     <ClCompile Include="Contrib\fastlz\fastlz.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Sample_DynamicObstacle.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\ChunkyTriMesh.h">
@@ -144,6 +147,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Include\ValueHistory.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Sample_DynamicObstacles.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -296,6 +296,7 @@ if errorlevel 1 goto :VCReportError</Command>
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Sample_DynamicObstacle.cpp" />
     <ClCompile Include="Source\ChunkyTriMesh.cpp" />
     <ClCompile Include="Source\ConvexVolumeTool.cpp" />
     <ClCompile Include="Source\CrowdTool.cpp" />
@@ -348,6 +349,7 @@ if errorlevel 1 goto :VCReportError</Command>
     <ClInclude Include="Include\SlideShow.h" />
     <ClInclude Include="Include\TestCase.h" />
     <ClInclude Include="Include\ValueHistory.h" />
+    <ClInclude Include="Sample_DynamicObstacles.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\DebugUtils\DebugUtils.vcxproj">
