@@ -109,36 +109,36 @@ enum dtPolyTypes
 struct dtPoly
 {
 	/// Index to first link in linked list. (Or #DT_NULL_LINK if there is no link.)
-	unsigned int firstLink;
+	unsigned int uFirstLink;
 
 	/// The indices of the polygon's vertices.
 	/// The actual vertices are located in dtMeshTile::verts.
-	unsigned short verts[DT_VERTS_PER_POLYGON];
+	unsigned short Verts[DT_VERTS_PER_POLYGON];
 
 	/// Packed data representing neighbor polygons references and flags for each edge.
-	unsigned short neis[DT_VERTS_PER_POLYGON];
+	unsigned short Neibours[DT_VERTS_PER_POLYGON];
 
 	/// The user defined polygon flags.
-	unsigned short flags;
+	unsigned short uFlags;
 
 	/// The number of vertices in the polygon.
-	unsigned char vertCount;
+	unsigned char cVertCount;
 
 	/// The bit packed area id and polygon type.
 	/// @note Use the structure's set and get methods to acess this value.
-	unsigned char areaAndtype;
+	unsigned char cAreaAndtype;
 
 	/// Sets the user defined area id. [Limit: < #DT_MAX_AREAS]
-	inline void setArea(unsigned char a) { areaAndtype = (areaAndtype & 0xc0) | (a & 0x3f); }
+	inline void setArea(unsigned char a) { cAreaAndtype = (cAreaAndtype & 0xc0) | (a & 0x3f); }
 
 	/// Sets the polygon type. (See: #dtPolyTypes.)
-	inline void setType(unsigned char t) { areaAndtype = (areaAndtype & 0x3f) | (t << 6); }
+	inline void setType(unsigned char t) { cAreaAndtype = (cAreaAndtype & 0x3f) | (t << 6); }
 
 	/// Gets the user defined area id.
-	inline unsigned char getArea() const { return areaAndtype & 0x3f; }
+	inline unsigned char getArea() const { return cAreaAndtype & 0x3f; }
 
 	/// Gets the polygon type. (See: #dtPolyTypes)
-	inline unsigned char getType() const { return areaAndtype >> 6; }
+	inline unsigned char getType() const { return cAreaAndtype >> 6; }
 };
 
 /// Defines the location of detail sub-mesh data within a dtMeshTile.

@@ -489,36 +489,36 @@ bool dtCreateNavMeshData(dtNavMeshCreateParams* params, unsigned char** outData,
 	for (int i = 0; i < params->polyCount; ++i)
 	{
 		dtPoly* p = &navPolys[i];
-		p->vertCount = 0;
-		p->flags = params->polyFlags[i];
+		p->cVertCount = 0;
+		p->uFlags = params->polyFlags[i];
 		p->setArea(params->polyAreas[i]);
 		p->setType(DT_POLYTYPE_GROUND);
 		for (int j = 0; j < nvp; ++j)
 		{
 			if (src[j] == MESH_NULL_IDX) break;
-			p->verts[j] = src[j];
+			p->Verts[j] = src[j];
 			if (src[nvp+j] & 0x8000)
 			{
 				// Border or portal edge.
 				unsigned short dir = src[nvp+j] & 0xf;
 				if (dir == 0xf) // Border
-					p->neis[j] = 0;
+					p->Neibours[j] = 0;
 				else if (dir == 0) // Portal x-
-					p->neis[j] = DT_EXT_LINK | 4;
+					p->Neibours[j] = DT_EXT_LINK | 4;
 				else if (dir == 1) // Portal z+
-					p->neis[j] = DT_EXT_LINK | 2;
+					p->Neibours[j] = DT_EXT_LINK | 2;
 				else if (dir == 2) // Portal x+
-					p->neis[j] = DT_EXT_LINK | 0;
+					p->Neibours[j] = DT_EXT_LINK | 0;
 				else if (dir == 3) // Portal z-
-					p->neis[j] = DT_EXT_LINK | 6;
+					p->Neibours[j] = DT_EXT_LINK | 6;
 			}
 			else
 			{
 				// Normal connection
-				p->neis[j] = src[nvp+j]+1;
+				p->Neibours[j] = src[nvp+j]+1;
 			}
 			
-			p->vertCount++;
+			p->cVertCount++;
 		}
 		src += nvp*2;
 	}
@@ -530,10 +530,10 @@ bool dtCreateNavMeshData(dtNavMeshCreateParams* params, unsigned char** outData,
 		if (offMeshConClass[i*2+0] == 0xff)
 		{
 			dtPoly* p = &navPolys[offMeshPolyBase+n];
-			p->vertCount = 2;
-			p->verts[0] = (unsigned short)(offMeshVertsBase + n*2+0);
-			p->verts[1] = (unsigned short)(offMeshVertsBase + n*2+1);
-			p->flags = params->offMeshConFlags[i];
+			p->cVertCount = 2;
+			p->Verts[0] = (unsigned short)(offMeshVertsBase + n*2+0);
+			p->Verts[1] = (unsigned short)(offMeshVertsBase + n*2+1);
+			p->uFlags = params->offMeshConFlags[i];
 			p->setArea(params->offMeshConAreas[i]);
 			p->setType(DT_POLYTYPE_OFFMESH_CONNECTION);
 			n++;
@@ -551,7 +551,7 @@ bool dtCreateNavMeshData(dtNavMeshCreateParams* params, unsigned char** outData,
 			dtPolyDetail& dtl = navDMeshes[i];
 			const int vb = (int)params->detailMeshes[i*4+0];
 			const int ndv = (int)params->detailMeshes[i*4+1];
-			const int nv = navPolys[i].vertCount;
+			const int nv = navPolys[i].cVertCount;
 			dtl.vertBase = (unsigned int)vbase;
 			dtl.vertCount = (unsigned char)(ndv-nv);
 			dtl.triBase = (unsigned int)params->detailMeshes[i*4+2];
@@ -573,7 +573,7 @@ bool dtCreateNavMeshData(dtNavMeshCreateParams* params, unsigned char** outData,
 		for (int i = 0; i < params->polyCount; ++i)
 		{
 			dtPolyDetail& dtl = navDMeshes[i];
-			const int nv = navPolys[i].vertCount;
+			const int nv = navPolys[i].cVertCount;
 			dtl.vertBase = 0;
 			dtl.vertCount = 0;
 			dtl.triBase = (unsigned int)tbase;
@@ -727,10 +727,10 @@ bool dtNavMeshDataSwapEndian(unsigned char* data, const int /*dataSize*/)
 		// poly->firstLink is update when tile is added, no need to swap.
 		for (int j = 0; j < DT_VERTS_PER_POLYGON; ++j)
 		{
-			dtSwapEndian(&p->verts[j]);
-			dtSwapEndian(&p->neis[j]);
+			dtSwapEndian(&p->Verts[j]);
+			dtSwapEndian(&p->Neibours[j]);
 		}
-		dtSwapEndian(&p->flags);
+		dtSwapEndian(&p->uFlags);
 	}
 
 	// Links are rebuild when tile is added, no need to swap.

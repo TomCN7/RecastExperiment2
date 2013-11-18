@@ -54,16 +54,16 @@ static void drawPolyBoundaries(duDebugDraw* dd, const dtMeshTile* tile,
 		
 		const dtPolyDetail* pd = &tile->pDetailMeshes[i];
 		
-		for (int j = 0, nj = (int)p->vertCount; j < nj; ++j)
+		for (int j = 0, nj = (int)p->cVertCount; j < nj; ++j)
 		{
 			unsigned int c = col;
 			if (inner)
 			{
-				if (p->neis[j] == 0) continue;
-				if (p->neis[j] & DT_EXT_LINK)
+				if (p->Neibours[j] == 0) continue;
+				if (p->Neibours[j] & DT_EXT_LINK)
 				{
 					bool con = false;
-					for (unsigned int k = p->firstLink; k != DT_NULL_LINK; k = tile->pLinks[k].next)
+					for (unsigned int k = p->uFirstLink; k != DT_NULL_LINK; k = tile->pLinks[k].next)
 					{
 						if (tile->pLinks[k].edge == j)
 						{
@@ -81,11 +81,11 @@ static void drawPolyBoundaries(duDebugDraw* dd, const dtMeshTile* tile,
 			}
 			else
 			{
-				if (p->neis[j] != 0) continue;
+				if (p->Neibours[j] != 0) continue;
 			}
 			
-			const float* v0 = &tile->fVerts[p->verts[j]*3];
-			const float* v1 = &tile->fVerts[p->verts[(j+1) % nj]*3];
+			const float* v0 = &tile->fVerts[p->Verts[j]*3];
+			const float* v1 = &tile->fVerts[p->Verts[(j+1) % nj]*3];
 			
 			// Draw detail mesh edges which align with the actual poly edge.
 			// This is really slow.
@@ -95,10 +95,10 @@ static void drawPolyBoundaries(duDebugDraw* dd, const dtMeshTile* tile,
 				const float* tv[3];
 				for (int m = 0; m < 3; ++m)
 				{
-					if (t[m] < p->vertCount)
-						tv[m] = &tile->fVerts[p->verts[t[m]]*3];
+					if (t[m] < p->cVertCount)
+						tv[m] = &tile->fVerts[p->Verts[t[m]]*3];
 					else
-						tv[m] = &tile->fDetailVerts[(pd->vertBase+(t[m]-p->vertCount))*3];
+						tv[m] = &tile->fDetailVerts[(pd->vertBase+(t[m]-p->cVertCount))*3];
 				}
 				for (int m = 0, n = 2; m < 3; n=m++)
 				{
@@ -157,10 +157,10 @@ static void drawMeshTile(duDebugDraw* dd, const dtNavMesh& mesh, const dtNavMesh
 			const unsigned char* t = &tile->pDetailTris[(pd->triBase+j)*4];
 			for (int k = 0; k < 3; ++k)
 			{
-				if (t[k] < p->vertCount)
-					dd->vertex(&tile->fVerts[p->verts[t[k]]*3], col);
+				if (t[k] < p->cVertCount)
+					dd->vertex(&tile->fVerts[p->Verts[t[k]]*3], col);
 				else
-					dd->vertex(&tile->fDetailVerts[(pd->vertBase+t[k]-p->vertCount)*3], col);
+					dd->vertex(&tile->fDetailVerts[(pd->vertBase+t[k]-p->cVertCount)*3], col);
 			}
 		}
 	}
@@ -188,13 +188,13 @@ static void drawMeshTile(duDebugDraw* dd, const dtNavMesh& mesh, const dtNavMesh
 				col = duDarkenCol(duIntToCol(p->getArea(), 220));
 			
 			const dtOffMeshConnection* con = &tile->pOffMeshCons[i - tile->pHeader->nOffMeshBase];
-			const float* va = &tile->fVerts[p->verts[0]*3];
-			const float* vb = &tile->fVerts[p->verts[1]*3];
+			const float* va = &tile->fVerts[p->Verts[0]*3];
+			const float* vb = &tile->fVerts[p->Verts[1]*3];
 
 			// Check to see if start and end end-points have links.
 			bool startSet = false;
 			bool endSet = false;
-			for (unsigned int k = p->firstLink; k != DT_NULL_LINK; k = tile->pLinks[k].next)
+			for (unsigned int k = p->uFirstLink; k != DT_NULL_LINK; k = tile->pLinks[k].next)
 			{
 				if (tile->pLinks[k].edge == 0)
 					startSet = true;
@@ -354,16 +354,16 @@ static void drawMeshTilePortal(duDebugDraw* dd, const dtMeshTile* tile)
 			dtPoly* poly = &tile->pPolys[i];
 			
 			// Create new links.
-			const int nv = poly->vertCount;
+			const int nv = poly->cVertCount;
 			for (int j = 0; j < nv; ++j)
 			{
 				// Skip edges which do not point to the right side.
-				if (poly->neis[j] != m)
+				if (poly->Neibours[j] != m)
 					continue;
 				
 				// Create new links
-				const float* va = &tile->fVerts[poly->verts[j]*3];
-				const float* vb = &tile->fVerts[poly->verts[(j+1) % nv]*3];
+				const float* va = &tile->fVerts[poly->Verts[j]*3];
+				const float* vb = &tile->fVerts[poly->Verts[(j+1) % nv]*3];
 				
 				if (side == 0 || side == 4)
 				{
@@ -435,7 +435,7 @@ void duDebugDrawNavMeshPolysWithFlags(struct duDebugDraw* dd, const dtNavMesh& m
 		for (int j = 0; j < tile->pHeader->nPolyCount; ++j)
 		{
 			const dtPoly* p = &tile->pPolys[j];
-			if ((p->flags & polyFlags) == 0) continue;
+			if ((p->uFlags & polyFlags) == 0) continue;
 			duDebugDrawNavMeshPoly(dd, mesh, base|(dtPolyRef)j, col);
 		}
 	}
@@ -477,10 +477,10 @@ void duDebugDrawNavMeshPoly(duDebugDraw* dd, const dtNavMesh& mesh, dtPolyRef Re
 			const unsigned char* t = &tile->pDetailTris[(pd->triBase+i)*4];
 			for (int j = 0; j < 3; ++j)
 			{
-				if (t[j] < poly->vertCount)
-					dd->vertex(&tile->fVerts[poly->verts[t[j]]*3], c);
+				if (t[j] < poly->cVertCount)
+					dd->vertex(&tile->fVerts[poly->Verts[t[j]]*3], c);
 				else
-					dd->vertex(&tile->fDetailVerts[(pd->vertBase+t[j]-poly->vertCount)*3], c);
+					dd->vertex(&tile->fDetailVerts[(pd->vertBase+t[j]-poly->cVertCount)*3], c);
 			}
 		}
 		dd->end();
