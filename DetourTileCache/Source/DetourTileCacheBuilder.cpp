@@ -570,8 +570,8 @@ static void simplifyContour(dtTempContour& cont, const float maxError)
 		int uri = 0;
 		for (int i = 1; i < cont.nVerts; ++i)
 		{
-			int x = cont.fVerts[i*4+0];
-			int z = cont.fVerts[i*4+2];
+			int x = cont.fVerts[i * 4 + 0];
+			int z = cont.fVerts[i * 4 + 2];
 			if (x < llx || (x == llx && z < llz))
 			{
 				llx = x;
@@ -594,15 +594,15 @@ static void simplifyContour(dtTempContour& cont, const float maxError)
 	// error tolerance to the simplified shape.
 	for (int i = 0; i < cont.npoly; )
 	{
-		int ii = (i+1) % cont.npoly;
+		int ii = (i + 1) % cont.npoly;
 		
 		const int ai = (int)cont.pPoly[i];
-		const int ax = (int)cont.fVerts[ai*4+0];
-		const int az = (int)cont.fVerts[ai*4+2];
+		const int ax = (int)cont.fVerts[ai * 4 + 0];
+		const int az = (int)cont.fVerts[ai * 4 + 2];
 		
 		const int bi = (int)cont.pPoly[ii];
-		const int bx = (int)cont.fVerts[bi*4+0];
-		const int bz = (int)cont.fVerts[bi*4+2];
+		const int bx = (int)cont.fVerts[bi * 4 + 0];
+		const int bz = (int)cont.fVerts[bi * 4 + 2];
 		
 		// Find maximum deviation from the segment.
 		float maxd = 0;
@@ -615,37 +615,36 @@ static void simplifyContour(dtTempContour& cont, const float maxError)
 		if (bx > ax || (bx == ax && bz > az))
 		{
 			cinc = 1;
-			ci = (ai+cinc) % cont.nVerts;
+			ci = (ai + cinc) % cont.nVerts;
 			endi = bi;
 		}
 		else
 		{
-			cinc = cont.nVerts-1;
-			ci = (bi+cinc) % cont.nVerts;
+			cinc = cont.nVerts - 1;
+			ci = (bi + cinc) % cont.nVerts;
 			endi = ai;
 		}
 		
 		// Tessellate only outer edges or edges between areas.
 		while (ci != endi)
 		{
-			float d = distancePtSeg(cont.fVerts[ci*4+0], cont.fVerts[ci*4+2], ax, az, bx, bz);
+			float d = distancePtSeg(cont.fVerts[ci * 4 + 0], cont.fVerts[ci * 4 + 2], ax, az, bx, bz);
 			if (d > maxd)
 			{
 				maxd = d;
 				maxi = ci;
 			}
-			ci = (ci+cinc) % cont.nVerts;
+			ci = (ci + cinc) % cont.nVerts;
 		}
-		
 		
 		// If the max deviation is larger than accepted error,
 		// add new point, else continue to next segment.
-		if (maxi != -1 && maxd > (maxError*maxError))
+		if (maxi != -1 && maxd > (maxError * maxError))
 		{
 			cont.npoly++;
-			for (int j = cont.npoly-1; j > i; --j)
-				cont.pPoly[j] = cont.pPoly[j-1];
-			cont.pPoly[i+1] = (unsigned short)maxi;
+			for (int j = cont.npoly - 1; j > i; --j)
+				cont.pPoly[j] = cont.pPoly[j - 1];
+			cont.pPoly[i + 1] = (unsigned short)maxi;
 		}
 		else
 		{
@@ -727,10 +726,9 @@ static unsigned char getCornerHeight(dtTileCacheLayer& layer,
 
 
 // TODO: move this somewhere else, once the layer meshing is done.
-dtStatus dtBuildTileCacheContours(dtTileCacheAlloc* alloc,
-								  dtTileCacheLayer& layer,
-								  const int walkableClimb, 	const float maxError,
-								  dtTileCacheContourSet& lcset)
+dtStatus dtBuildTileCacheContours(
+    dtTileCacheAlloc* alloc, dtTileCacheLayer& layer,
+    const int walkableClimb, const float maxError, dtTileCacheContourSet& lcset)
 {
 	dtAssert(alloc);
 
@@ -761,7 +759,7 @@ dtStatus dtBuildTileCacheContours(dtTileCacheAlloc* alloc,
 	{
 		for (int x = 0; x < w; ++x)
 		{
-			const int idx = x+y*w;
+			const int idx = x + y * w;
 			const unsigned char ri = layer.pRegions[idx];
 			if (ri == 0xff)
 				continue;
@@ -785,41 +783,39 @@ dtStatus dtBuildTileCacheContours(dtTileCacheAlloc* alloc,
 			
 			// Store contour.
 			cont.nVerts = temp.nVerts;
-			if (cont.nVerts > 0)
-			{
-				cont.pVerts = (unsigned char*)alloc->alloc(sizeof(unsigned char)*4*temp.nVerts);
-				if (!cont.pVerts)
-					return DT_FAILURE | DT_OUT_OF_MEMORY;
+			if (cont.nVerts <= 0)
+                continue;
+
+            cont.pVerts = (unsigned char*)alloc->alloc(sizeof(unsigned char) * 4 * temp.nVerts);
+			if (!cont.pVerts)
+				return DT_FAILURE | DT_OUT_OF_MEMORY;
 				
-				for (int i = 0, j = temp.nVerts-1; i < temp.nVerts; j=i++)
-				{
-					unsigned char* dst = &cont.pVerts[j*4];
-					unsigned char* v = &temp.fVerts[j*4];
-					unsigned char* vn = &temp.fVerts[i*4];
-					unsigned char nei = vn[3]; // The neighbour reg is stored at segment vertex of a segment. 
-					bool shouldRemove = false;
-					unsigned char lh = getCornerHeight(layer, (int)v[0], (int)v[1], (int)v[2],
-													   walkableClimb, shouldRemove);
+			for (int i = 0, j = temp.nVerts - 1; i < temp.nVerts; j = i++)
+			{
+				unsigned char* dst = &cont.pVerts[j * 4];
+				unsigned char* v = &temp.fVerts[j * 4];
+				unsigned char* vn = &temp.fVerts[i * 4];
+				unsigned char nei = vn[3]; // The neighbour reg is stored at segment vertex of a segment. 
+				bool shouldRemove = false;
+				unsigned char lh = getCornerHeight(
+                    layer, (int)v[0], (int)v[1], (int)v[2], walkableClimb, shouldRemove);
 					
-					dst[0] = v[0];
-					dst[1] = lh;
-					dst[2] = v[2];
-					
-					// Store portal direction and remove status to the fourth component.
-					dst[3] = 0x0f;
-					if (nei != 0xff && nei >= 0xf8)
-						dst[3] = nei - 0xf8;
-					if (shouldRemove)
-						dst[3] |= 0x80;
-				}
+				dst[0] = v[0];
+				dst[1] = lh;
+				dst[2] = v[2];
+
+                // Store portal direction and remove status to the fourth component.
+				dst[3] = 0x0f;
+				if (nei != 0xff && nei >= 0xf8)
+					dst[3] = nei - 0xf8;
+				if (shouldRemove)
+					dst[3] |= 0x80;
 			}
 		}
 	}
 	
 	return DT_SUCCESS;
 }	
-
-
 
 static const int VERTEX_BUCKET_COUNT2 = (1<<8);
 
@@ -915,7 +911,7 @@ static bool buildMeshAdjacency(dtTileCacheAlloc* alloc,
 	
 	for (int i = 0; i < npolys; ++i)
 	{
-		unsigned short* t = &polys[i*MAX_VERTS_PER_POLY*2];
+		unsigned short* t = &polys[i*MAX_VERTS_PER_POLY * 2];
 		for (int j = 0; j < MAX_VERTS_PER_POLY; ++j)
 		{
 			if (t[j] == DT_TILECACHE_NULL_IDX) break;
@@ -1033,7 +1029,6 @@ static bool buildMeshAdjacency(dtTileCacheAlloc* alloc,
 		}
 	}
 	
-	
 	// Store adjacency
 	for (int i = 0; i < edgeCount; ++i)
 	{
@@ -1050,7 +1045,6 @@ static bool buildMeshAdjacency(dtTileCacheAlloc* alloc,
 			unsigned short* p0 = &polys[e.poly[0]*MAX_VERTS_PER_POLY*2];
 			p0[MAX_VERTS_PER_POLY + e.polyEdge[0]] = 0x8000 | (unsigned short)e.polyEdge[1];
 		}
-		
 	}
 	
 	return true;
@@ -1824,8 +1818,9 @@ dtStatus dtBuildTileCachePolyMesh(
 		for (int j = 0; j < cont.nVerts; ++j)
 		{
 			const unsigned char* v = &cont.pVerts[j * 4];
-			indices[j] = addVertex((unsigned short)v[0], (unsigned short)v[1], (unsigned short)v[2],
-								   mesh.pVerts, firstVert, nextVert, mesh.nVerts);
+			indices[j] = addVertex(
+                (unsigned short)v[0], (unsigned short)v[1], (unsigned short)v[2],
+                mesh.pVerts, firstVert, nextVert, mesh.nVerts);
 			if (v[3] & 0x80)
 			{
 				// This vertex should be removed.
@@ -1992,15 +1987,13 @@ dtStatus dtMarkCylinderArea(dtTileCacheLayer& layer, const float* orig, const fl
 
 
 dtStatus dtBuildTileCacheLayer(dtTileCacheCompressor* comp,
-							   dtTileCacheLayerHeader* header,
-							   const unsigned char* heights,
-							   const unsigned char* areas,
-							   const unsigned char* cons,
-							   unsigned char** outData, int* outDataSize)
+    dtTileCacheLayerHeader* header, const unsigned char* heights,
+    const unsigned char* areas, const unsigned char* cons,
+    unsigned char** outData, int* outDataSize)
 {
 	const int headerSize = dtAlign4(sizeof(dtTileCacheLayerHeader));
 	const int gridSize = (int)header->cWidth * (int)header->cHeight;
-	const int maxDataSize = headerSize + comp->maxCompressedSize(gridSize*3);
+	const int maxDataSize = headerSize + comp->maxCompressedSize(gridSize * 3);
 	unsigned char* data = (unsigned char*)dtAlloc(maxDataSize, DT_ALLOC_PERM);
 	if (!data)
 		return DT_FAILURE | DT_OUT_OF_MEMORY;
@@ -2010,7 +2003,7 @@ dtStatus dtBuildTileCacheLayer(dtTileCacheCompressor* comp,
 	memcpy(data, header, sizeof(dtTileCacheLayerHeader));
 	
 	// Concatenate grid data for compression.
-	const int bufferSize = gridSize*3;
+	const int bufferSize = gridSize * 3;
 	unsigned char* buffer = (unsigned char*)dtAlloc(bufferSize, DT_ALLOC_TEMP);
 	if (!buffer)
 		return DT_FAILURE | DT_OUT_OF_MEMORY;

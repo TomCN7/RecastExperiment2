@@ -31,24 +31,24 @@ struct dtNavMeshCreateParams
 	/// See #rcPolyMesh for details related to these attributes.
 	/// @{
 
-	const unsigned short* verts;			///< The polygon mesh vertices. [(x, y, z) * #vertCount] [Unit: vx]
-	int vertCount;							///< The number vertices in the polygon mesh. [Limit: >= 3]
-	const unsigned short* polys;			///< The polygon data. [Size: #polyCount * 2 * #nvp]
-	const unsigned short* polyFlags;		///< The user defined flags assigned to each polygon. [Size: #polyCount]
-	const unsigned char* polyAreas;			///< The user defined area ids assigned to each polygon. [Size: #polyCount]
-	int polyCount;							///< Number of polygons in the mesh. [Limit: >= 1]
-	int nvp;								///< Number maximum number of vertices per polygon. [Limit: >= 3]
+	const unsigned short* pVerts;			///< The polygon mesh vertices. [(x, y, z) * #vertCount] [Unit: vx]
+	int nVertCount;							///< The number vertices in the polygon mesh. [Limit: >= 3]
+	const unsigned short* pPolys;			///< The polygon data. [Size: #polyCount * 2 * #nvp]
+	const unsigned short* pPolyFlags;		///< The user defined flags assigned to each polygon. [Size: #polyCount]
+	const unsigned char* pPolyAreas;			///< The user defined area ids assigned to each polygon. [Size: #polyCount]
+	int nPolyCount;							///< Number of polygons in the mesh. [Limit: >= 1]
+	int nMaxVertNumPerPoly;								///< Number maximum number of vertices per polygon. [Limit: >= 3]
 
 	/// @}
 	/// @name Height Detail Attributes (Optional)
 	/// See #rcPolyMeshDetail for details related to these attributes.
 	/// @{
 
-	const unsigned int* detailMeshes;		///< The height detail sub-mesh data. [Size: 4 * #polyCount]
-	const float* detailVerts;				///< The detail mesh vertices. [Size: 3 * #detailVertsCount] [Unit: wu]
-	int detailVertsCount;					///< The number of vertices in the detail mesh.
-	const unsigned char* detailTris;		///< The detail mesh triangles. [Size: 4 * #detailTriCount]
-	int detailTriCount;						///< The number of triangles in the detail mesh.
+	const unsigned int* pDetailMeshes;		///< The height detail sub-mesh data. [Size: 4 * #polyCount]
+	const float* pDetailVerts;				///< The detail mesh vertices. [Size: 3 * #detailVertsCount] [Unit: wu]
+	int nDetailVertsCount;					///< The number of vertices in the detail mesh.
+	const unsigned char* pDetailTris;		///< The detail mesh triangles. [Size: 4 * #detailTriCount]
+	int nDetailTriCount;						///< The number of triangles in the detail mesh.
 
 	/// @}
 	/// @name Off-Mesh Connections Attributes (Optional)
@@ -58,48 +58,48 @@ struct dtNavMeshCreateParams
 	/// @{
 
 	/// Off-mesh connection vertices. [(ax, ay, az, bx, by, bz) * #offMeshConCount] [Unit: wu]
-	const float* offMeshConVerts;
+	const float* pOffMeshConVerts;
 	/// Off-mesh connection radii. [Size: #offMeshConCount] [Unit: wu]
-	const float* offMeshConRad;
+	const float* pOffMeshConRad;
 	/// User defined flags assigned to the off-mesh connections. [Size: #offMeshConCount]
-	const unsigned short* offMeshConFlags;
+	const unsigned short* pOffMeshConFlags;
 	/// User defined area ids assigned to the off-mesh connections. [Size: #offMeshConCount]
-	const unsigned char* offMeshConAreas;
+	const unsigned char* pOffMeshConAreas;
 	/// The permitted travel direction of the off-mesh connections. [Size: #offMeshConCount]
 	///
 	/// 0 = Travel only from endpoint A to endpoint B.<br/>
 	/// #DT_OFFMESH_CON_BIDIR = Bidirectional travel.
-	const unsigned char* offMeshConDir;	
+	const unsigned char* pOffMeshConDir;	
 	/// The user defined ids of the off-mesh connection. [Size: #offMeshConCount]
-	const unsigned int* offMeshConUserID;
+	const unsigned int* pOffMeshConUserID;
 	/// The number of off-mesh connections. [Limit: >= 0]
-	int offMeshConCount;
+	int nOffMeshConCount;
 
 	/// @}
 	/// @name Tile Attributes
 	/// @note The tile grid/layer data can be left at zero if the destination is a single tile mesh.
 	/// @{
 
-	unsigned int userId;	///< The user defined id of the tile.
-	int tileX;				///< The tile's x-grid location within the multi-tile destination mesh. (Along the x-axis.)
-	int tileY;				///< The tile's y-grid location within the multi-tile desitation mesh. (Along the z-axis.)
-	int tileLayer;			///< The tile's layer within the layered destination mesh. [Limit: >= 0] (Along the y-axis.)
-	float bmin[3];			///< The minimum bounds of the tile. [(x, y, z)] [Unit: wu]
-	float bmax[3];			///< The maximum bounds of the tile. [(x, y, z)] [Unit: wu]
+	unsigned int nUserID;	///< The user defined id of the tile.
+	int nTileX;				///< The tile's x-grid location within the multi-tile destination mesh. (Along the x-axis.)
+	int nTileY;				///< The tile's y-grid location within the multi-tile desitation mesh. (Along the z-axis.)
+	int nTileLayer;			///< The tile's layer within the layered destination mesh. [Limit: >= 0] (Along the y-axis.)
+	float fBMin[3];			///< The minimum bounds of the tile. [(x, y, z)] [Unit: wu]
+	float fBMax[3];			///< The maximum bounds of the tile. [(x, y, z)] [Unit: wu]
 
 	/// @}
 	/// @name General Configuration Attributes
 	/// @{
 
-	float walkableHeight;	///< The agent height. [Unit: wu]
-	float walkableRadius;	///< The agent radius. [Unit: wu]
-	float walkableClimb;	///< The agent maximum traversable ledge. (Up/Down) [Unit: wu]
-	float cs;				///< The xz-plane cell size of the polygon mesh. [Limit: > 0] [Unit: wu]
-	float ch;				///< The y-axis cell height of the polygon mesh. [Limit: > 0] [Unit: wu]
+	float fWalkableHeight;	///< The agent height. [Unit: wu]
+	float fWalkableRadius;	///< The agent radius. [Unit: wu]
+	float fWalkableClimb;	///< The agent maximum traversable ledge. (Up/Down) [Unit: wu]
+	float fCellSize;				///< The xz-plane cell size of the polygon mesh. [Limit: > 0] [Unit: wu]
+	float fCellHeight;				///< The y-axis cell height of the polygon mesh. [Limit: > 0] [Unit: wu]
 
 	/// True if a bounding volume tree should be built for the tile.
 	/// @note The BVTree is not normally needed for layered navigation meshes.
-	bool buildBvTree;
+	bool bBuildBvTree;
 
 	/// @}
 };

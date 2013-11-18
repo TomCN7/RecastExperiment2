@@ -531,7 +531,7 @@ dtStatus dtTileCache::update(const float /*dt*/, dtNavMesh* navmesh)
 				{
 					if (ob->Pending[j] == Ref)
 					{
-						ob->Pending[j] = ob->Pending[(int)ob->nPending-1];
+						ob->Pending[j] = ob->Pending[(int)ob->nPending - 1];
 						ob->nPending--;
 						break;
 					}
@@ -646,24 +646,24 @@ dtStatus dtTileCache::buildNavMeshTile(const dtCompressedTileRef Ref, dtNavMesh*
 	
 	dtNavMeshCreateParams params;
 	memset(&params, 0, sizeof(params));
-	params.verts = bc.lmesh->pVerts;
-	params.vertCount = bc.lmesh->nVerts;
-	params.polys = bc.lmesh->pPolys;
-	params.polyAreas = bc.lmesh->pAreaIDs;
-	params.polyFlags = bc.lmesh->pFlags;
-	params.polyCount = bc.lmesh->npolys;
-	params.nvp = DT_VERTS_PER_POLYGON;
-	params.walkableHeight = m_Params.fWalkableHeight;
-	params.walkableRadius = m_Params.fWalkableRadius;
-	params.walkableClimb = m_Params.fWalkableClimb;
-	params.tileX = tile->pHeader->nTileX;
-	params.tileY = tile->pHeader->nTileY;
-	params.tileLayer = tile->pHeader->nTileLayer;
-	params.cs = m_Params.fCellSize;
-	params.ch = m_Params.fCellHeight;
-	params.buildBvTree = false;
-	dtVcopy(params.bmin, tile->pHeader->fBMin);
-	dtVcopy(params.bmax, tile->pHeader->fBMax);
+	params.pVerts = bc.lmesh->pVerts;
+	params.nVertCount = bc.lmesh->nVerts;
+	params.pPolys = bc.lmesh->pPolys;
+	params.pPolyAreas = bc.lmesh->pAreaIDs;
+	params.pPolyFlags = bc.lmesh->pFlags;
+	params.nPolyCount = bc.lmesh->npolys;
+	params.nMaxVertNumPerPoly = DT_VERTS_PER_POLYGON;
+	params.fWalkableHeight = m_Params.fWalkableHeight;
+	params.fWalkableRadius = m_Params.fWalkableRadius;
+	params.fWalkableClimb = m_Params.fWalkableClimb;
+	params.nTileX = tile->pHeader->nTileX;
+	params.nTileY = tile->pHeader->nTileY;
+	params.nTileLayer = tile->pHeader->nTileLayer;
+	params.fCellSize = m_Params.fCellSize;
+	params.fCellHeight = m_Params.fCellHeight;
+	params.bBuildBvTree = false;
+	dtVcopy(params.fBMin, tile->pHeader->fBMin);
+	dtVcopy(params.fBMax, tile->pHeader->fBMax);
 	
 	if (m_tmproc)
 	{
@@ -696,12 +696,12 @@ dtStatus dtTileCache::buildNavMeshTile(const dtCompressedTileRef Ref, dtNavMesh*
 void dtTileCache::calcTightTileBounds(const dtTileCacheLayerHeader* header, float* bmin, float* bmax) const
 {
 	const float cs = m_Params.fCellSize;
-	bmin[0] = header->fBMin[0] + header->cMinX*cs;
+	bmin[0] = header->fBMin[0] + header->cMinX * cs;
 	bmin[1] = header->fBMin[1];
-	bmin[2] = header->fBMin[2] + header->cMinY*cs;
-	bmax[0] = header->fBMin[0] + (header->cMaxX+1)*cs;
+	bmin[2] = header->fBMin[2] + header->cMinY * cs;
+	bmax[0] = header->fBMin[0] + (header->cMaxX + 1) * cs;
 	bmax[1] = header->fBMax[1];
-	bmax[2] = header->fBMin[2] + (header->cMaxY+1)*cs;
+	bmax[2] = header->fBMin[2] + (header->cMaxY + 1) * cs;
 }
 
 void dtTileCache::getObstacleBounds(const struct dtTileCacheObstacle* ob, float* bmin, float* bmax) const

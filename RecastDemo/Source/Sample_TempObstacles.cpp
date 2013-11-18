@@ -185,7 +185,7 @@ struct MeshProcess : public dtTileCacheMeshProcess
 						 unsigned char* polyAreas, unsigned short* polyFlags)
 	{
 		// Update poly flags from areas.
-		for (int i = 0; i < params->polyCount; ++i)
+		for (int i = 0; i < params->nPolyCount; ++i)
 		{
 			if (polyAreas[i] == DT_TILECACHE_WALKABLE_AREA)
 				polyAreas[i] = SAMPLE_POLYAREA_GROUND;
@@ -209,13 +209,13 @@ struct MeshProcess : public dtTileCacheMeshProcess
 		// Pass in off-mesh connections.
 		if (m_geom)
 		{
-			params->offMeshConVerts = m_geom->getOffMeshConnectionVerts();
-			params->offMeshConRad = m_geom->getOffMeshConnectionRads();
-			params->offMeshConDir = m_geom->getOffMeshConnectionDirs();
-			params->offMeshConAreas = m_geom->getOffMeshConnectionAreas();
-			params->offMeshConFlags = m_geom->getOffMeshConnectionFlags();
-			params->offMeshConUserID = m_geom->getOffMeshConnectionId();
-			params->offMeshConCount = m_geom->getOffMeshConnectionCount();	
+			params->pOffMeshConVerts = m_geom->getOffMeshConnectionVerts();
+			params->pOffMeshConRad = m_geom->getOffMeshConnectionRads();
+			params->pOffMeshConDir = m_geom->getOffMeshConnectionDirs();
+			params->pOffMeshConAreas = m_geom->getOffMeshConnectionAreas();
+			params->pOffMeshConFlags = m_geom->getOffMeshConnectionFlags();
+			params->pOffMeshConUserID = m_geom->getOffMeshConnectionId();
+			params->nOffMeshConCount = m_geom->getOffMeshConnectionCount();	
 		}
 	}
 };
@@ -262,10 +262,8 @@ struct RasterizationContext
 };
 
 static int rasterizeTileLayers(BuildContext* ctx, InputGeom* geom,
-							   const int tx, const int ty,
-							   const rcConfig& cfg,
-							   TileCacheData* tiles,
-							   const int maxTiles)
+    const int tx, const int ty, const rcConfig& cfg,
+    TileCacheData* tiles, const int maxTiles)
 {
 	if (!geom || !geom->getMesh() || !geom->getChunkyMesh())
 	{
@@ -420,8 +418,9 @@ static int rasterizeTileLayers(BuildContext* ctx, InputGeom* geom,
 		header.uHeightMin = (unsigned short)layer->nMinHeight;
 		header.uHeightMax = (unsigned short)layer->nMaxHeight;
 
-		dtStatus status = dtBuildTileCacheLayer(&comp, &header, layer->pHeights, layer->pAreas, layer->pConnections,
-												&tile->data, &tile->dataSize);
+		dtStatus status = dtBuildTileCacheLayer(
+            &comp, &header, layer->pHeights, layer->pAreas, layer->pConnections,
+            &tile->data, &tile->dataSize);
 		if (dtStatusFailed(status))
 		{
 			return 0;
@@ -439,7 +438,6 @@ static int rasterizeTileLayers(BuildContext* ctx, InputGeom* geom,
 	
 	return n;
 }
-
 
 void drawTiles(duDebugDraw* dd, dtTileCache* tc)
 {
@@ -470,7 +468,6 @@ void drawTiles(duDebugDraw* dd, dtTileCache* tc)
 		duDebugDrawBoxWire(dd, bmin[0]-pad,bmin[1]-pad,bmin[2]-pad,
 						   bmax[0]+pad,bmax[1]+pad,bmax[2]+pad, col, 2.0f);
 	}
-
 }
 
 enum DrawDetailType
