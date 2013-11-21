@@ -75,7 +75,6 @@ struct dtTileCachePolyMesh
 	unsigned char* pAreaIDs;	///< Area ID of polygons.
 };
 
-
 struct dtTileCacheAlloc
 {
 	virtual void reset()
@@ -97,24 +96,21 @@ struct dtTileCacheCompressor
 {
 	virtual int maxCompressedSize(const int bufferSize) = 0;
 	virtual dtStatus compress(const unsigned char* buffer, const int bufferSize,
-							  unsigned char* compressed, const int maxCompressedSize, int* compressedSize) = 0;
+        unsigned char* compressed, const int maxCompressedSize, int* compressedSize) = 0;
 	virtual dtStatus decompress(const unsigned char* compressed, const int compressedSize,
-								unsigned char* buffer, const int maxBufferSize, int* bufferSize) = 0;
+        unsigned char* buffer, const int maxBufferSize, int* bufferSize) = 0;
 };
 
-
 dtStatus dtBuildTileCacheLayer(dtTileCacheCompressor* comp,
-							   dtTileCacheLayerHeader* header,
-							   const unsigned char* heights,
-							   const unsigned char* areas,
-							   const unsigned char* cons,
-							   unsigned char** outData, int* outDataSize);
+    dtTileCacheLayerHeader* header, const unsigned char* heights,
+    const unsigned char* areas, const unsigned char* cons,
+    unsigned char** outData, int* outDataSize);
 
 void dtFreeTileCacheLayer(dtTileCacheAlloc* alloc, dtTileCacheLayer* layer);
 
-dtStatus dtDecompressTileCacheLayer(dtTileCacheAlloc* alloc, dtTileCacheCompressor* comp,
-									unsigned char* compressed, const int compressedSize,
-									dtTileCacheLayer** layerOut);
+dtStatus dtDecompressTileCacheLayer(
+    dtTileCacheAlloc* alloc, dtTileCacheCompressor* comp,
+    unsigned char* compressed, const int compressedSize, dtTileCacheLayer** layerOut);
 
 dtTileCacheContourSet* dtAllocTileCacheContourSet(dtTileCacheAlloc* alloc);
 void dtFreeTileCacheContourSet(dtTileCacheAlloc* alloc, dtTileCacheContourSet* cset);
@@ -122,21 +118,19 @@ void dtFreeTileCacheContourSet(dtTileCacheAlloc* alloc, dtTileCacheContourSet* c
 dtTileCachePolyMesh* dtAllocTileCachePolyMesh(dtTileCacheAlloc* alloc);
 void dtFreeTileCachePolyMesh(dtTileCacheAlloc* alloc, dtTileCachePolyMesh* lmesh);
 
-dtStatus dtMarkCylinderArea(dtTileCacheLayer& layer, const float* orig, const float cs, const float ch,
-							const float* pos, const float radius, const float height, const unsigned char areaId);
+dtStatus dtMarkCylinderArea(
+    dtTileCacheLayer& layer, const float* orig, const float cs, const float ch,
+    const float* pos, const float radius, const float height, const unsigned char areaId);
 
-dtStatus dtBuildTileCacheRegions(dtTileCacheAlloc* alloc,
-								 dtTileCacheLayer& layer,
-								 const int walkableClimb);
+dtStatus dtBuildTileCacheRegions(
+    dtTileCacheAlloc* alloc, dtTileCacheLayer& layer, const int walkableClimb);
 
-dtStatus dtBuildTileCacheContours(dtTileCacheAlloc* alloc,
-								  dtTileCacheLayer& layer,
-								  const int walkableClimb, 	const float maxError,
-								  dtTileCacheContourSet& lcset);
+dtStatus dtBuildTileCacheContours(
+    dtTileCacheAlloc* alloc, dtTileCacheLayer& layer,
+    const int walkableClimb, const float maxError, dtTileCacheContourSet& lcset);
 
-dtStatus dtBuildTileCachePolyMesh(dtTileCacheAlloc* alloc,
-								  dtTileCacheContourSet& lcset,
-								  dtTileCachePolyMesh& mesh);
+dtStatus dtBuildTileCachePolyMesh(
+    dtTileCacheAlloc* alloc, dtTileCacheContourSet& lcset, dtTileCachePolyMesh& mesh);
 
 /// Swaps the endianess of the compressed tile data's header (#dtTileCacheLayerHeader).
 /// Tile layer data does not need endian swapping as it consits only of bytes.

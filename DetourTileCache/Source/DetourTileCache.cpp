@@ -409,6 +409,7 @@ dtObstacleRef dtTileCache::removeObstacle(const dtObstacleRef Ref)
 	return DT_SUCCESS;
 }
 
+//Which tiles require update ?
 dtStatus dtTileCache::queryTiles(const float* bmin, const float* bmax,
 	dtCompressedTileRef* results, int* resultCount, const int maxResults) const 
 {
@@ -417,20 +418,20 @@ dtStatus dtTileCache::queryTiles(const float* bmin, const float* bmax,
 	
 	int n = 0;
 	
-	const float tw = m_Params.nWidth * m_Params.fCellSize;
-	const float th = m_Params.nHeight * m_Params.fCellSize;
-	const int tx0 = (int)floorf((bmin[0] - m_Params.fOrigin[0]) / tw);
-	const int tx1 = (int)floorf((bmax[0] - m_Params.fOrigin[0]) / tw);
-	const int ty0 = (int)floorf((bmin[2] - m_Params.fOrigin[2]) / th);
-	const int ty1 = (int)floorf((bmax[2] - m_Params.fOrigin[2]) / th);
+	const float fTileWidth = m_Params.nWidth * m_Params.fCellSize;
+	const float fTileHeight = m_Params.nHeight * m_Params.fCellSize;
+	const int tx0 = (int)floorf((bmin[0] - m_Params.fOrigin[0]) / fTileWidth);
+	const int tx1 = (int)floorf((bmax[0] - m_Params.fOrigin[0]) / fTileWidth);
+	const int ty0 = (int)floorf((bmin[2] - m_Params.fOrigin[2]) / fTileHeight);
+	const int ty1 = (int)floorf((bmax[2] - m_Params.fOrigin[2]) / fTileHeight);
 	
 	for (int ty = ty0; ty <= ty1; ++ty)
 	{
 		for (int tx = tx0; tx <= tx1; ++tx)
 		{
-			const int ntiles = getTilesAt(tx, ty, tiles, MAX_TILES);
+			const int nTiles = getTilesAt(tx, ty, tiles, MAX_TILES);
 			
-			for (int i = 0; i < ntiles; ++i)
+			for (int i = 0; i < nTiles; ++i)
 			{
 				const dtCompressedTile* tile = &m_pCompressedTiles[decodeTileIdTile(tiles[i])];
 				float tbmin[3], tbmax[3];
