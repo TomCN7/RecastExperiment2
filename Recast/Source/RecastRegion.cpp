@@ -693,61 +693,61 @@ static void walkContour(int x, int y, int i, int dir,
 	}
 }
 
-static bool filterSmallRegions(rcContext* ctx, int minRegionArea, int mergeRegionSize,
-    unsigned short& maxRegionId, rcCompactHeightfield& chf, unsigned short* srcReg)
+static bool FilterSmallRegions(rcContext* pCtx, int nMinRegionArea, int nMergeRegionSize,
+    unsigned short& uMaxRegionID, rcCompactHeightfield& rCHF, unsigned short* pSrcReg)
 {
-	const int w = chf.nWidth;
-	const int h = chf.nHeight;
+	const int w = rCHF.nWidth;
+	const int h = rCHF.nHeight;
 	
-	const int nreg = maxRegionId + 1;
-	rcRegion* regions = (rcRegion*)rcAlloc(sizeof(rcRegion)*nreg, RC_ALLOC_TEMP);
-	if (!regions)
+	const int nReg = uMaxRegionID + 1;
+	rcRegion* pRegions = (rcRegion*)rcAlloc(sizeof(rcRegion)*nReg, RC_ALLOC_TEMP);
+	if (!pRegions)
 	{
-		ctx->log(RC_LOG_ERROR, "filterSmallRegions: Out of memory 'regions' (%d).", nreg);
+		pCtx->log(RC_LOG_ERROR, "filterSmallRegions: Out of memory 'regions' (%d).", nReg);
 		return false;
 	}
 
 	// Construct regions
-	for (int i = 0; i < nreg; ++i)
-		new(&regions[i]) rcRegion((unsigned short)i);
+	for (int i = 0; i < nReg; ++i)
+		new(&pRegions[i]) rcRegion((unsigned short)i);
 	
 	// Find edge of a region and find connections around the contour.
 	for (int y = 0; y < h; ++y)
 	{
 		for (int x = 0; x < w; ++x)
 		{
-			const rcCompactCell& c = chf.pCompactCells[x + y * w];
-			for (int i = (int)c.index, ni = (int)(c.index + c.count); i < ni; ++i)
+			const rcCompactCell& Cell = rCHF.pCompactCells[x + y * w];
+			for (int i = (int)Cell.index, ni = (int)(Cell.index + Cell.count); i < ni; ++i)
 			{
-				unsigned short r = srcReg[i];
-				if (r == 0 || r >= nreg)
+				unsigned short uRegion = pSrcReg[i];
+				if (uRegion == 0 || uRegion >= nReg)
 					continue;
 				
-				rcRegion& reg = regions[r];
-				reg.spanCount++;
+				rcRegion& rRegion = pRegions[uRegion];
+				rRegion.spanCount++;
 				
 				
 				// Update floors.
-				for (int j = (int)c.index; j < ni; ++j)
+				for (int j = (int)Cell.index; j < ni; ++j)
 				{
 					if (i == j) continue;
-					unsigned short floorId = srcReg[j];
-					if (floorId == 0 || floorId >= nreg)
+					unsigned short uFloorID = pSrcReg[j];
+					if (uFloorID == 0 || uFloorID >= nReg)
 						continue;
-					addUniqueFloorRegion(reg, floorId);
+					addUniqueFloorRegion(rRegion, uFloorID);
 				}
 				
 				// Have found contour
-				if (reg.connections.size() > 0)
+				if (rRegion.connections.size() > 0)
 					continue;
 				
-				reg.areaType = chf.pAreas[i];
+				rRegion.areaType = rCHF.pAreas[i];
 				
 				// Check if this cell is next to a border.
 				int ndir = -1;
 				for (int dir = 0; dir < 4; ++dir)
 				{
-					if (isSolidEdge(chf, srcReg, x, y, i, dir))
+					if (isSolidEdge(rCHF, pSrcReg, x, y, i, dir))
 					{
 						ndir = dir;
 						break;
@@ -758,59 +758,59 @@ static bool filterSmallRegions(rcContext* ctx, int minRegionArea, int mergeRegio
 				{
 					// The cell is at border.
 					// Walk around the contour to find all the neighbours.
-					walkContour(x, y, i, ndir, chf, srcReg, reg.connections);
+					walkContour(x, y, i, ndir, rCHF, pSrcReg, rRegion.connections);
 				}
 			}
 		}
 	}
 
 	// Remove too small regions.
-	rcIntArray stack(32);
-	rcIntArray trace(32);
-	for (int i = 0; i < nreg; ++i)
+	rcIntArray Stack(32);
+	rcIntArray Trace(32);
+	for (int i = 0; i < nReg; ++i)
 	{
-		rcRegion& reg = regions[i];
-		if (reg.id == 0 || (reg.id & RC_BORDER_REG))
+		rcRegion& rRegion = pRegions[i];
+		if (rRegion.id == 0 || (rRegion.id & RC_BORDER_REG))
 			continue;                       
-		if (reg.spanCount == 0)
+		if (rRegion.spanCount == 0)
 			continue;
-		if (reg.visited)
+		if (rRegion.visited)
 			continue;
 		
 		// Count the total size of all the connected regions.
 		// Also keep track of the regions connects to a tile border.
-		bool connectsToBorder = false;
-		int spanCount = 0;
-		stack.resize(0);
-		trace.resize(0);
+		bool bConnectsToBorder = false;
+		int nSpanCount = 0;
+		Stack.resize(0);
+		Trace.resize(0);
 
-		reg.visited = true;
-		stack.push(i);
+		rRegion.visited = true;
+		Stack.push(i);
 		
-		while (stack.size())
+		while (Stack.size())
 		{
 			// Pop
-			int ri = stack.pop();
+			int ri = Stack.pop();
 			
-			rcRegion& creg = regions[ri];
+			rcRegion& creg = pRegions[ri];
 
-			spanCount += creg.spanCount;
-			trace.push(ri);
+			nSpanCount += creg.spanCount;
+			Trace.push(ri);
 
 			for (int j = 0; j < creg.connections.size(); ++j)
 			{
 				if (creg.connections[j] & RC_BORDER_REG)
 				{
-					connectsToBorder = true;
+					bConnectsToBorder = true;
 					continue;
 				}
-				rcRegion& neireg = regions[creg.connections[j]];
+				rcRegion& neireg = pRegions[creg.connections[j]];
 				if (neireg.visited)
 					continue;
 				if (neireg.id == 0 || (neireg.id & RC_BORDER_REG))
 					continue;
 				// Visit
-				stack.push(neireg.id);
+				Stack.push(neireg.id);
 				neireg.visited = true;
 			}
 		}
@@ -819,13 +819,13 @@ static bool filterSmallRegions(rcContext* ctx, int minRegionArea, int mergeRegio
 		// Do not remove areas which connect to tile borders
 		// as their size cannot be estimated correctly and removing them
 		// can potentially remove necessary areas.
-		if (spanCount < minRegionArea && !connectsToBorder)
+		if (nSpanCount < nMinRegionArea && !bConnectsToBorder)
 		{
 			// Kill all visited regions.
-			for (int j = 0; j < trace.size(); ++j)
+			for (int j = 0; j < Trace.size(); ++j)
 			{
-				regions[trace[j]].spanCount = 0;
-				regions[trace[j]].id = 0;
+				pRegions[Trace[j]].spanCount = 0;
+				pRegions[Trace[j]].id = 0;
 			}
 		}
 	}
@@ -835,16 +835,16 @@ static bool filterSmallRegions(rcContext* ctx, int minRegionArea, int mergeRegio
 	do
 	{
 		mergeCount = 0;
-		for (int i = 0; i < nreg; ++i)
+		for (int i = 0; i < nReg; ++i)
 		{
-			rcRegion& reg = regions[i];
+			rcRegion& reg = pRegions[i];
 			if (reg.id == 0 || (reg.id & RC_BORDER_REG))
 				continue;                       
 			if (reg.spanCount == 0)
 				continue;
 			
 			// Check to see if the region should be merged.
-			if (reg.spanCount > mergeRegionSize && isRegionConnectedToBorder(reg))
+			if (reg.spanCount > nMergeRegionSize && isRegionConnectedToBorder(reg))
 				continue;
 			
 			// Small region with more than 1 connection.
@@ -855,7 +855,7 @@ static bool filterSmallRegions(rcContext* ctx, int minRegionArea, int mergeRegio
 			for (int j = 0; j < reg.connections.size(); ++j)
 			{
 				if (reg.connections[j] & RC_BORDER_REG) continue;
-				rcRegion& mreg = regions[reg.connections[j]];
+				rcRegion& mreg = pRegions[reg.connections[j]];
 				if (mreg.id == 0 || (mreg.id & RC_BORDER_REG)) continue;
 				if (mreg.spanCount < smallest &&
 					canMergeWithRegion(reg, mreg) &&
@@ -869,22 +869,22 @@ static bool filterSmallRegions(rcContext* ctx, int minRegionArea, int mergeRegio
 			if (mergeId != reg.id)
 			{
 				unsigned short oldId = reg.id;
-				rcRegion& target = regions[mergeId];
+				rcRegion& target = pRegions[mergeId];
 				
 				// Merge neighbours.
 				if (mergeRegions(target, reg))
 				{
 					// Fixup regions pointing to current region.
-					for (int j = 0; j < nreg; ++j)
+					for (int j = 0; j < nReg; ++j)
 					{
-						if (regions[j].id == 0 || (regions[j].id & RC_BORDER_REG)) continue;
+						if (pRegions[j].id == 0 || (pRegions[j].id & RC_BORDER_REG)) continue;
 						// If another region was already merged into current region
 						// change the nid of the previous region too.
-						if (regions[j].id == oldId)
-							regions[j].id = mergeId;
+						if (pRegions[j].id == oldId)
+							pRegions[j].id = mergeId;
 						// Replace the current region with the new one if the
 						// current regions is neighbour.
-						replaceNeighbour(regions[j], oldId, mergeId);
+						replaceNeighbour(pRegions[j], oldId, mergeId);
 					}
 					mergeCount++;
 				}
@@ -894,42 +894,42 @@ static bool filterSmallRegions(rcContext* ctx, int minRegionArea, int mergeRegio
 	while (mergeCount > 0);
 	
 	// Compress region Ids.
-	for (int i = 0; i < nreg; ++i)
+	for (int i = 0; i < nReg; ++i)
 	{
-		regions[i].remap = false;
-		if (regions[i].id == 0) continue;       // Skip nil regions.
-		if (regions[i].id & RC_BORDER_REG) continue;    // Skip external regions.
-		regions[i].remap = true;
+		pRegions[i].remap = false;
+		if (pRegions[i].id == 0) continue;       // Skip nil regions.
+		if (pRegions[i].id & RC_BORDER_REG) continue;    // Skip external regions.
+		pRegions[i].remap = true;
 	}
 	
 	unsigned short regIdGen = 0;
-	for (int i = 0; i < nreg; ++i)
+	for (int i = 0; i < nReg; ++i)
 	{
-		if (!regions[i].remap)
+		if (!pRegions[i].remap)
 			continue;
-		unsigned short oldId = regions[i].id;
+		unsigned short oldId = pRegions[i].id;
 		unsigned short newId = ++regIdGen;
-		for (int j = i; j < nreg; ++j)
+		for (int j = i; j < nReg; ++j)
 		{
-			if (regions[j].id == oldId)
+			if (pRegions[j].id == oldId)
 			{
-				regions[j].id = newId;
-				regions[j].remap = false;
+				pRegions[j].id = newId;
+				pRegions[j].remap = false;
 			}
 		}
 	}
-	maxRegionId = regIdGen;
+	uMaxRegionID = regIdGen;
 	
 	// Remap regions.
-	for (int i = 0; i < chf.nSpanCount; ++i)
+	for (int i = 0; i < rCHF.nSpanCount; ++i)
 	{
-		if ((srcReg[i] & RC_BORDER_REG) == 0)
-			srcReg[i] = regions[srcReg[i]].id;
+		if ((pSrcReg[i] & RC_BORDER_REG) == 0)
+			pSrcReg[i] = pRegions[pSrcReg[i]].id;
 	}
 	
-	for (int i = 0; i < nreg; ++i)
-		regions[i].~rcRegion();
-	rcFree(regions);
+	for (int i = 0; i < nReg; ++i)
+		pRegions[i].~rcRegion();
+	rcFree(pRegions);
 	
 	return true;
 }
@@ -1182,7 +1182,7 @@ bool rcBuildRegionsMonotone(rcContext* ctx, rcCompactHeightfield& chf,
 
 	// Filter out small regions.
 	chf.uMaxRegions = id;
-	if (!filterSmallRegions(ctx, minRegionArea, mergeRegionArea, chf.uMaxRegions, chf, srcReg))
+	if (!FilterSmallRegions(ctx, minRegionArea, mergeRegionArea, chf.uMaxRegions, chf, srcReg))
 		return false;
 
 	ctx->stopTimer(RC_TIMER_BUILD_REGIONS_FILTER);
@@ -1317,7 +1317,7 @@ bool rcBuildRegions(rcContext* ctx, rcCompactHeightfield& chf,
 	
 	// Filter out small regions.
 	chf.uMaxRegions = regionId;
-	if (!filterSmallRegions(ctx, minRegionArea, mergeRegionArea, chf.uMaxRegions, chf, srcReg))
+	if (!FilterSmallRegions(ctx, minRegionArea, mergeRegionArea, chf.uMaxRegions, chf, srcReg))
 		return false;
 	
 	ctx->stopTimer(RC_TIMER_BUILD_REGIONS_FILTER);
